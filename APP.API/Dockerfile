@@ -36,8 +36,7 @@ COPY APP.API.csproj ./
 #COPY APP.Bus.csproj ../APP.Bus
 #COPY APP.DAL.csproj ../APP.DAL
 
-RUN dotnet restore *.sln
-RUN dotnet restore APP.API.csproj
+RUN dotnet restore ./APP.API.csproj
 
 # Copy everything else and build
 COPY . ./
