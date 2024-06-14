@@ -40,7 +40,7 @@ RUN dotnet restore ./APP.API.csproj
 
 # Copy everything else and build
 COPY . ./
-WORKDIR /app/APP.Api
+WORKDIR /app
 RUN dotnet publish APP.API.csproj -c Release -o out
 
 ## Build runtime image
