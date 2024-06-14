@@ -58,4 +58,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "HyperSAPI/APP.Api.dll"]
+ENTRYPOINT ["dotnet", "./APP.Api.dll"]
