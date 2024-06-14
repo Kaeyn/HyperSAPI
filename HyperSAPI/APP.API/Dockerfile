@@ -48,7 +48,7 @@ RUN dotnet publish APP.API.csproj -c Release -o /app/publish
 #ENTRYPOINT ["dotnet", "APP.Api.dll"]
 
 # Stage 2: Create the runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM base AS final
 WORKDIR /app
 
 # Copy the built application from the build stage
