@@ -33,13 +33,11 @@ WORKDIR /app
 # Copy the csproj and restore as distinct layers
 COPY *.sln ./
 COPY APP.API.csproj ./
-COPY APP.Bus.csproj ../APP.Bus/
-COPY APP.DAL.csproj ../APP.DAL/
+#COPY APP.Bus.csproj ../APP.Bus
+#COPY APP.DAL.csproj ../APP.DAL
 
 RUN dotnet restore *.sln
 RUN dotnet restore APP.API.csproj
-RUN dotnet restore APP.Bus.csproj
-RUN dotnet restore APP.DAL.csproj
 
 # Copy everything else and build
 COPY . ./
