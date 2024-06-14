@@ -28,13 +28,13 @@ EXPOSE 8081
 
 # Use the official .NET 8.0 SDK image
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
 # Copy the csproj and restore as distinct layers
 COPY *.sln ./
-#COPY /APP.Bus/*.csproj APP.Bus/
-#COPY /APP.DAL/*.csproj APP.DAL/
-#COPY /APP.Api/*.csproj APP.Api/
+COPY /APP.Bus/*.csproj APP.Bus/
+COPY /APP.DAL/*.csproj APP.DAL/
+COPY /APP.Api/*.csproj APP.Api/
 
 RUN dotnet restore
 
