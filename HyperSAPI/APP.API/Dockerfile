@@ -51,7 +51,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
 # Copy the built application from the build stage
-COPY --from=publish /app/publish
+COPY --from=publish /app/publish .
 
 # Set the entry point for the application
 ENTRYPOINT ["dotnet", "APP.Api.dll"]
