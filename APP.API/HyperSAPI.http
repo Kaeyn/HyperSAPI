@@ -1,0 +1,6 @@
+@HyperSAPI_HostAddress = http://localhost:5035
+
+GET {{HyperSAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

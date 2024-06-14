@@ -1,0 +1,61 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Visual Studio Code auto-generated files
+.vscode/
+
+# Visual Studio auto-generated files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+
+# .NET Core
+*.DS_Store
+*.pdb
+*.dll
+*.exe
+*.cache
+*.log
+project.lock.json
+project.fragment.lock.json
+*/bin/*
+*/obj/*
+*.dll
+*.exe
+
+# NuGet Packages
+packages/
+
+# .NET Core Dependency Manager
+.project.assets.json
+*.csproj.nuget.cache
+
+# User-specific files
+*.user
+
+# .NET Core runtime store directory
+.runtimes/
+
+# Visual Studio IntelliSense, code analysis, and diagnostics folder
+.vs/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Resharper
+_ReSharper*/
+
+# NCrunch
+.ncrunch*
+
+# Visual Studio Code - add .vscode if you use VSCode for development
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
