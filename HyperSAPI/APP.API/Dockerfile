@@ -34,7 +34,7 @@ COPY APP.API/APP.API.csproj HyperSAPI/
 #COPY APP.Bus.csproj ../APP.Bus
 #COPY APP.DAL.csproj ../APP.DAL
 
-RUN dotnet restore APP.API/APP.API.csproj
+RUN dotnet restore APP.API.csproj
 
 COPY . .
 WORKDIR /src/APP.API
