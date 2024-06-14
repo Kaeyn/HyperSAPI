@@ -41,7 +41,7 @@ RUN dotnet restore ./APP.API.csproj
 # Copy everything else and build
 COPY . ./
 WORKDIR /app/APP.Api
-RUN dotnet publish -c Release -o out
+RUN dotnet publish APP.API.csproj -c Release -o out
 
 ## Build runtime image
 #FROM mcr.microsoft.com/dotnet/aspnet:8.0
