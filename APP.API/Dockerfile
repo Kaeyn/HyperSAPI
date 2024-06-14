@@ -43,8 +43,18 @@ COPY . ./
 WORKDIR /app/APP.Api
 RUN dotnet publish -c Release -o out
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+## Build runtime image
+#FROM mcr.microsoft.com/dotnet/aspnet:8.0
+#WORKDIR /app
+#COPY --from=out /app/out .
+#ENTRYPOINT ["dotnet", "APP.Api.dll"]
+
+# Stage 2: Create the runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=out /app/out .
+
+# Copy the built application from the build stage
+COPY --from=build /app/APP.Api/out ./
+
+# Set the entry point for the application
 ENTRYPOINT ["dotnet", "APP.Api.dll"]
