@@ -36,9 +36,12 @@ COPY APP.API/APP.API.csproj HyperSAPI/
 
 RUN dotnet restore APP.API/APP.API.csproj
 
-# Copy everything else and build
 COPY . .
 WORKDIR /src/APP.API
+RUN dotnet publish APP.API.csproj -c Release -o /app/build
+# Copy everything else and build
+
+FROM build AS publish
 RUN dotnet publish APP.API.csproj -c Release -o /app/publish
 
 ## Build runtime image
