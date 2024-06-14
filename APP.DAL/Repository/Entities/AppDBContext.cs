@@ -41,7 +41,7 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
-        optionsBuilder.UseMySql("server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;port=17997;database=defaultdb;user=avnadmin;password=AVNS_EBxOtAQ6lHdDe2fbQEh;sslmode=Required", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
+        optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
            
     protected override void OnModelCreating(ModelBuilder modelBuilder)
