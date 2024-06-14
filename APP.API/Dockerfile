@@ -31,10 +31,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the csproj and restore as distinct layers
-#COPY *.sln ./
-COPY ./APP.Bus/APP.Bus.csproj APP.Bus/
-COPY ./APP.DAL/APP.DAL.csproj APP.DAL/
-COPY ./APP.Api/APP.DAL.csproj APP.Api/
+COPY *.sln ./
+COPY ["APP.Bus/APP.Bus.csproj", "APP.Bus/"]
+COPY  ["APP.DAL/APP.DAL.csproj", "APP.DAL/"]
+COPY  ["APP.Api/APP.DAL.csproj", "APP.Api/"]
 
 RUN dotnet restore
 
