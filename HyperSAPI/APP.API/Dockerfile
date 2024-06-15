@@ -27,35 +27,56 @@ EXPOSE 8081
 #ENTRYPOINT ["dotnet", "HyperSAPI.dll"]
 
 # Use the official .NET 8.0 SDK image
+#FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+#WORKDIR /src
+#
+#COPY APP.API/APP.API.csproj HyperSAPI/
+##COPY APP.Bus.csproj ../APP.Bus
+##COPY APP.DAL.csproj ../APP.DAL
+#
+#RUN dotnet restore HyperSAPI/APP.API.csproj
+#
+#COPY . .
+#WORKDIR /src/APP.API
+#RUN dotnet publish APP.API.csproj -c Release -o /app/build
+## Copy everything else and build
+#
+#FROM build AS publish
+#RUN dotnet publish APP.API.csproj -c Release -o /app/publish
+#
+### Build runtime image
+##FROM mcr.microsoft.com/dotnet/aspnet:8.0
+##WORKDIR /app
+##COPY --from=out /app/out .
+##ENTRYPOINT ["dotnet", "APP.Api.dll"]
+#
+## Stage 2: Create the runtime image
+#FROM base AS final
+#WORKDIR /app
+#
+## Copy the built application from the build stage
+#COPY --from=publish /app/publish .
+#
+## Set the entry point for the application
+#ENTRYPOINT ["dotnet", "HyperSAPI.dll"]
+
+# Use the official .NET SDK image to build the app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY APP.API/APP.API.csproj HyperSAPI/
-#COPY APP.Bus.csproj ../APP.Bus
-#COPY APP.DAL.csproj ../APP.DAL
+# Copy the .csproj file and restore dependencies
+COPY ["HyperSAPI/HyperSAPI.csproj", "HyperSAPI/"]
+RUN dotnet restore "HyperSAPI/HyperSAPI.csproj"
 
-RUN dotnet restore HyperSAPI/APP.API.csproj
-
+# Copy the rest of the application code
 COPY . .
-WORKDIR /src/APP.API
-RUN dotnet publish APP.API.csproj -c Release -o /app/build
-# Copy everything else and build
 
-FROM build AS publish
-RUN dotnet publish APP.API.csproj -c Release -o /app/publish
+# Publish the application
+WORKDIR "/src/HyperSAPI"
+RUN dotnet publish "HyperSAPI.csproj" -c Release -o /app/publish
 
-## Build runtime image
-#FROM mcr.microsoft.com/dotnet/aspnet:8.0
-#WORKDIR /app
-#COPY --from=out /app/out .
-#ENTRYPOINT ["dotnet", "APP.Api.dll"]
-
-# Stage 2: Create the runtime image
-FROM base AS final
+# Use the official .NET runtime image for the app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-
-# Copy the built application from the build stage
 COPY --from=build /app/publish .
-
-# Set the entry point for the application
 ENTRYPOINT ["dotnet", "HyperSAPI.dll"]
