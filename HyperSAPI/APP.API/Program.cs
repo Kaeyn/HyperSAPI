@@ -13,15 +13,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-/*var serviceProvider = app.Services;
-using (var scope = serviceProvider.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    dbContext.Database.EnsureCreated();
-}*/
-
-app.MapGet("/health", () => Results.Ok("Healthy"));
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -34,5 +25,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/health", () => Results.Ok("Healthy"));
 
 app.Run();
