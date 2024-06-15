@@ -1,0 +1,4 @@
+﻿@HyperSAPI_HostAddress = http://localhost:5035
+###
+POST {{HyperSAPI_HostAddress}}/api/product/GetAllProducts
+###
