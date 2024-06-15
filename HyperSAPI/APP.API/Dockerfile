@@ -55,7 +55,7 @@ FROM base AS final
 WORKDIR /app
 
 # Copy the built application from the build stage
-COPY --from=publih /app/publish .
+COPY --from=publish /app/publish .
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "HyperSAPI.dll"]
+ENTRYPOINT ["dotnet", "APP.API.dll"]
