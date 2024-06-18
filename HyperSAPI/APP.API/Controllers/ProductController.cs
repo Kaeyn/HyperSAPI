@@ -37,7 +37,7 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetListProduct([FromBody] DataSourceRequest options)
+        public ActionResult GetListProduct([FromBody] dynamic options)
         {
             var products = _BLL.GetListProduct(options);
             if (products.ObjectReturn?.Data == null)
@@ -48,7 +48,7 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetListProductSale([FromBody] DataSourceRequest options)
+        public ActionResult GetListProductSale([FromBody] dynamic options)
         {
             var products = _BLL.GetListProductSale(options);
             if (products.ObjectReturn?.Data == null)
