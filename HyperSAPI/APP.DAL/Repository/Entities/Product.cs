@@ -11,33 +11,15 @@ public partial class Product
 
     public string ProductName { get; set; } = null!;
 
-    public int ProductType { get; set; }
-
-    public int Brand { get; set; }
-
-    public int Price { get; set; }
+    public double Price { get; set; }
 
     public string? Description { get; set; }
 
-    public int? Stock { get; set; }
+    public int Stock { get; set; }
 
-    public int? Sold { get; set; }
-
-    public string? Color { get; set; }
-
-    public int? Gender { get; set; }
-
-    public int? Discount { get; set; }
-
-    public string? DiscountDescription { get; set; }
-
-    public int Status { get; set; }
-
-    public virtual Brand BrandNavigation { get; set; } = null!;
+    public int Brand { get; set; }
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
     public virtual ICollection<ProductSize> ProductSizes { get; set; } = new List<ProductSize>();
-
-    public virtual ProductType ProductTypeNavigation { get; set; } = null!;
 }

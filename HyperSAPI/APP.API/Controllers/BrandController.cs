@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APP.API.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BrandController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace APP.API.Controllers
             _BLL = new BrandBLL();
         }
 
-        [HttpPost]
+        [HttpPost("GetAllBrands")]
         public ActionResult GetAllBrands()
         {
             var brands = _BLL.GetAllBrands();

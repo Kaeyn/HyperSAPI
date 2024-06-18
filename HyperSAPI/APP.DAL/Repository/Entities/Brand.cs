@@ -10,6 +10,4 @@ public partial class Brand
     public string? IdBrand { get; set; }
 
     public string? BrandName { get; set; }
-
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

@@ -9,9 +9,9 @@ public partial class ProductSize
 
     public int CodeProduct { get; set; }
 
-    public int CodeSize { get; set; }
+    public int? CodeSize { get; set; }
 
     public virtual Product CodeProductNavigation { get; set; } = null!;
 
-    public virtual Size CodeSizeNavigation { get; set; } = null!;
+    public virtual Size? CodeSizeNavigation { get; set; }
 }
