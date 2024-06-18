@@ -24,19 +24,16 @@ public partial class User
     public int? Gender { get; set; }
 
     /// <summary>
-    /// 0: Normal;
-    /// 1: Blocked;
+    /// 0: Normal;\n1: Blocked;
     /// </summary>
     public int Status { get; set; }
 
     /// <summary>
-    /// 0: Customer;
-    /// 1: Admin;
-    /// 2: Staff;
+    /// 0: Customer;\n1: Admin;\n2: Staff;
     /// </summary>
     public int Permission { get; set; }
 
-    public string? Avatar { get; set; }
+    public string? ImageUrl { get; set; }
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 

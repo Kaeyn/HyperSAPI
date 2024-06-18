@@ -1,11 +1,13 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs;
+using KendoNET.DynamicLinq;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace APP.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -17,10 +19,48 @@ namespace APP.API.Controllers
         }
 
         // POST api/<ProductController>
-        [HttpPost("GetAllProducts")]
-        public ActionResult GetAllProducts()
+
+        [HttpPost]
+        public ActionResult GetProduct([FromBody] DTOProduct request)
         {
-            var products = _BLL.GetAllProducts();
+            var products = _BLL.GetProduct(request);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public ActionResult GetListProduct([FromBody] DataSourceRequest options)
+        {
+            var products = _BLL.GetListProduct(options);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public ActionResult GetListProductSale([FromBody] DataSourceRequest options)
+        {
+            var products = _BLL.GetListProductSale(options);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public ActionResult GetListProductType()
+        {
+            var products = _BLL.GetListProductType();
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 
