@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="KendoNET.DynamicLinq" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
