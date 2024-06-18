@@ -74,12 +74,13 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListProduct(DataSourceRequest options)
+        public DTOResponse GetListProduct(dynamic options)
         {
             var respond = new DTOResponse();           
             try
             {
-                options = StaticFunc.FormatFilter(options);
+                var param = JsonConvert.DeserializeObject<DataSourceRequest>(options.ToString());
+                /*options = StaticFunc.FormatFilter(options);*/
 
                 var products = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation)
                     .Select(p => new 
@@ -112,7 +113,7 @@ namespace APP.Bus.Repository.BLLs
                         Status = p.Status
                     }).ToList();
 
-                respond.ObjectReturn = products.AsQueryable().ToDataSourceResult(options.Take, options.Skip, options.Sort, options.Filter, options.Aggregate, options.Group);
+                respond.ObjectReturn = products.AsQueryable().ToDataSourceResult((DataSourceRequest)param);
             }
             catch (Exception ex)
             {
@@ -123,12 +124,13 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListProductSale(DataSourceRequest options)
+        public DTOResponse GetListProductSale(dynamic options)
         {
             var respond = new DTOResponse();
             try
             {
-                options = StaticFunc.FormatFilter(options);
+                var param = JsonConvert.DeserializeObject<DataSourceRequest>(options.ToString());
+                /*options = StaticFunc.FormatFilter(options);*/
 
                 var products = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation).Where(p => p.Discount.HasValue)
                     .Select(p => new 
@@ -161,14 +163,13 @@ namespace APP.Bus.Repository.BLLs
                         Status = p.Status
                     }).ToList();
 
-                respond.ObjectReturn = products.AsQueryable().ToDataSourceResult(options.Take, options.Skip, options.Sort, options.Filter, options.Aggregate, options.Group);
+                respond.ObjectReturn = products.AsQueryable().ToDataSourceResult((DataSourceRequest)param);
             }
             catch (Exception ex)
             {
                 respond.StatusCode = 500;
                 respond.ErrorString = ex.Message;
             }
-
             return respond;
         }
 
