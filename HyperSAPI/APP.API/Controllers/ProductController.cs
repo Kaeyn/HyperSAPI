@@ -19,6 +19,11 @@ namespace APP.API.Controllers
         }
 
         // POST api/<ProductController>
+        [HttpGet]
+        public ActionResult HealthCheck()
+        {
+            return Ok("OK");
+        }
 
         [HttpPost]
         public ActionResult GetProduct([FromBody] DTOProduct request)
