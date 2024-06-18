@@ -57,6 +57,7 @@ namespace APP.Bus.Repository.BLLs
                         ProductType = p.ProductTypeNavigation.Name,
                         CodeBrand = p.Brand,
                         BrandName = p.BrandNavigation.BrandName ?? "",
+                        Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
                         Status = p.Status
@@ -105,6 +106,7 @@ namespace APP.Bus.Repository.BLLs
                         ProductType = p.ProductTypeNavigation.Name,
                         CodeBrand = p.Brand,
                         BrandName = p.BrandNavigation.BrandName ?? "",
+                        Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
                         Status = p.Status
@@ -153,6 +155,7 @@ namespace APP.Bus.Repository.BLLs
                         ProductType = p.ProductTypeNavigation.Name,
                         CodeBrand = p.Brand,
                         BrandName = p.BrandNavigation.BrandName ?? "",
+                        Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
                         Status = p.Status
