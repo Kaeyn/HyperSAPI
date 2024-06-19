@@ -5,23 +5,13 @@ namespace APP.DAL.Repository.Entities;
 
 public partial class User
 {
-    public string IdUser { get; set; } = null!;
-
     public int Code { get; set; }
 
-    public string? Name { get; set; }
+    public string? IdUser { get; set; }
 
-    public string? PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = null!;
 
-    public string? Email { get; set; }
-
-    public DateOnly? Birth { get; set; }
-
-    /// <summary>
-    /// 0: Male;
-    /// 1: Female;
-    /// </summary>
-    public int? Gender { get; set; }
+    public string Email { get; set; } = null!;
 
     /// <summary>
     /// 0: Normal;\n1: Blocked;
@@ -33,9 +23,9 @@ public partial class User
     /// </summary>
     public int Permission { get; set; }
 
-    public string? ImageUrl { get; set; }
-
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
+    public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

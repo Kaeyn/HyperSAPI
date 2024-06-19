@@ -1,4 +1,4 @@
-﻿namespace APP.Bus.Repository.DTOs
+﻿namespace APP.Bus.Repository.DTOs.Product
 {
     public class DTOProductType
     {

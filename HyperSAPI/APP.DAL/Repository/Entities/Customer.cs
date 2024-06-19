@@ -9,13 +9,20 @@ public partial class Customer
 
     public int CodeUser { get; set; }
 
+    public string? Idcustomer { get; set; }
+
     public string? Name { get; set; }
 
-    public DateOnly? Birth { get; set; }
+    public DateOnly? Birthday { get; set; }
 
     public int? Gender { get; set; }
 
-    public string? Avartar { get; set; }
+    public string? ImageUrl { get; set; }
+<<<<<<< HEAD
+
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+=======
+>>>>>>> 3f148d2352e6bce80086d58951daa0530ad21d12
 
     public virtual User CodeUserNavigation { get; set; } = null!;
 
