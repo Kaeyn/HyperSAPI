@@ -60,6 +60,7 @@ namespace APP.Bus.Repository.BLLs
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
+                        Sold = p.Sold,
                         Status = p.Status
                     }).ToList();
 
@@ -110,6 +111,7 @@ namespace APP.Bus.Repository.BLLs
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
+                        Sold = p.Sold,
                         Status = p.Status
                     }).ToList();
 
@@ -160,6 +162,7 @@ namespace APP.Bus.Repository.BLLs
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.Stock,
+                        Sold = p.Sold,
                         Status = p.Status
                     }).ToList();
 
@@ -188,6 +191,38 @@ namespace APP.Bus.Repository.BLLs
                     }).ToList();
 
                 respond.ObjectReturn = products.AsQueryable().ToDataSourceResult(dataSourceRequest);
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
+
+        public DTOResponse AddProductToCart(DTOAddToCart request)
+        {
+            var respond = new DTOResponse();
+            try
+            {
+                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct);
+                if (existedCartItem != null)
+                {
+                    existedCartItem.Quantity += 1;
+                }
+                else
+                {
+                    var newCartItem = new Cart
+                    {
+                        CodeProduct = request.CodeProduct,
+                        CodeCustomer = request.CodeCustomer,
+                        Quantity = 1
+                    };
+                    DB.Carts.Add(newCartItem);
+                }
+                DB.SaveChanges();
+                respond.ObjectReturn = new {};
             }
             catch (Exception ex)
             {

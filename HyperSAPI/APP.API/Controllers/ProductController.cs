@@ -69,5 +69,12 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [HttpPost]
+        public ActionResult AddProductToCart(DTOAddToCart request)
+        {
+            var products = _BLL.AddProductToCart(request);
+            return Ok(products);
+        }
+
     }
 }

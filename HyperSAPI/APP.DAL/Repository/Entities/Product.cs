@@ -31,6 +31,12 @@ public partial class Product
 
     public string? DiscountDescription { get; set; }
 
+    /// <summary>
+    /// 0: Normal
+    /// 1: New
+    /// </summary>
+    public int? IsNew { get; set; }
+
     public int Status { get; set; }
 
     public virtual Brand BrandNavigation { get; set; } = null!;
