@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APP.Bus.Repository.DTOs
+namespace APP.Bus.Repository.DTOs.Product
 {
     public class DTOProduct
     {
@@ -38,7 +38,7 @@ namespace APP.Bus.Repository.DTOs
 
         public int? Discount { get; set; } = null;
 
-        public decimal? PriceAfterDiscount { get; set; } = null;
+        public float? PriceAfterDiscount { get; set; } = null;
 
         public string? DiscountDescription { get; set; } = string.Empty;
 
@@ -48,6 +48,6 @@ namespace APP.Bus.Repository.DTOs
 
         public List<DTOProductSize> ListOfSize { get; set; } = new List<DTOProductSize>();
 
-               
+
     }
 }

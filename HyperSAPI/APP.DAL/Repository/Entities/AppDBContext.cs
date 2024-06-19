@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace APP.DAL.Repository.Entities;
@@ -17,7 +16,13 @@ public partial class AppDBContext : DbContext
     {
     }
 
+    public virtual DbSet<Bill> Bills { get; set; }
+
+    public virtual DbSet<BillInfo> BillInfos { get; set; }
+
     public virtual DbSet<Brand> Brands { get; set; }
+
+    public virtual DbSet<Cart> Carts { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
 
@@ -39,12 +44,13 @@ public partial class AppDBContext : DbContext
 
     public virtual DbSet<Size> Sizes { get; set; }
 
+    public virtual DbSet<Staff> Staff { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-       
-        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");   
+        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");      
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +58,45 @@ public partial class AppDBContext : DbContext
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Bill>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
+
+            entity.ToTable("Bill");
+
+            entity.Property(e => e.CreateAt).HasColumnType("datetime");
+            entity.Property(e => e.CustomerName).HasMaxLength(45);
+            entity.Property(e => e.PaymentMethod).HasComment("0: COD\n1: QR\n");
+            entity.Property(e => e.PhoneNumber).HasMaxLength(13);
+            entity.Property(e => e.ShippingAddress).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<BillInfo>(entity =>
+        {
+            entity.HasKey(e => new { e.Code, e.TotalPrice })
+                .HasName("PRIMARY")
+                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+
+            entity.ToTable("BillInfo");
+
+            entity.HasIndex(e => e.CodeBill, "FkBillInfo_Bill_CodeBill_idx");
+
+            entity.HasIndex(e => e.CodeProduct, "FkBillInfo_Product_CodeProduct_idx");
+
+            entity.Property(e => e.Code).ValueGeneratedOnAdd();
+            entity.Property(e => e.TotalPrice).HasMaxLength(45);
+
+            entity.HasOne(d => d.CodeBillNavigation).WithMany(p => p.BillInfos)
+                .HasForeignKey(d => d.CodeBill)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkBillInfo_Bill_CodeBill");
+
+            entity.HasOne(d => d.CodeProductNavigation).WithMany(p => p.BillInfos)
+                .HasForeignKey(d => d.CodeProduct)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkBillInfo_Product_CodeProduct");
+        });
 
         modelBuilder.Entity<Brand>(entity =>
         {
@@ -61,6 +106,30 @@ public partial class AppDBContext : DbContext
 
             entity.Property(e => e.BrandName).HasMaxLength(45);
             entity.Property(e => e.IdBrand).HasMaxLength(45);
+            entity.Property(e => e.ImageUrl)
+                .HasMaxLength(100)
+                .HasColumnName("ImageURL");
+        });
+
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
+
+            entity.ToTable("Cart");
+
+            entity.HasIndex(e => e.CodeCustomer, "FkCart_Customer_CodeCustomer_idx");
+
+            entity.HasIndex(e => e.CodeProduct, "FkCart_Product_CodeProduct_idx");
+
+            entity.HasOne(d => d.CodeCustomerNavigation).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.CodeCustomer)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkCart_Customer_CodeCustomer");
+
+            entity.HasOne(d => d.CodeProductNavigation).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.CodeProduct)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkCart_Product_CodeProduct");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -82,7 +151,12 @@ public partial class AppDBContext : DbContext
 
             entity.HasIndex(e => e.CodeUser, "FkCustomer_User_IdUser_idx");
 
-            entity.Property(e => e.Avartar).HasMaxLength(45);
+            entity.Property(e => e.Idcustomer)
+                .HasMaxLength(100)
+                .HasColumnName("IDCustomer");
+            entity.Property(e => e.ImageUrl)
+                .HasMaxLength(100)
+                .HasColumnName("ImageURL");
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasOne(d => d.CodeUserNavigation).WithMany(p => p.Customers)
@@ -134,6 +208,9 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(300);
             entity.Property(e => e.DiscountDescription).HasMaxLength(100);
             entity.Property(e => e.IdProduct).HasMaxLength(45);
+            entity.Property(e => e.IsNew)
+                .HasDefaultValueSql("'1'")
+                .HasComment("0: Normal\n1: New");
             entity.Property(e => e.ProductName).HasMaxLength(45);
             entity.Property(e => e.Stock).HasDefaultValueSql("'0'");
 
@@ -160,7 +237,7 @@ public partial class AppDBContext : DbContext
 
             entity.Property(e => e.IdImage).HasMaxLength(10);
             entity.Property(e => e.Img)
-                .HasMaxLength(200)
+                .HasMaxLength(500)
                 .HasColumnName("IMG");
             entity.Property(e => e.IsThumbnail).HasComment("0: FALSE\n1: TRUE");
 
@@ -179,8 +256,6 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.CodeProduct, "FkProductSize_Product_CodeProduct_idx");
 
             entity.HasIndex(e => e.CodeSize, "FkProductSize_Size_CodeSize_idx");
-
-            entity.Property(e => e.Code).ValueGeneratedNever();
 
             entity.HasOne(d => d.CodeProductNavigation).WithMany(p => p.ProductSizes)
                 .HasForeignKey(d => d.CodeProduct)
@@ -235,19 +310,39 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.Size1).HasColumnName("Size");
         });
 
+        modelBuilder.Entity<Staff>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
+
+            entity.HasIndex(e => e.CodeUser, "FkStaff_User_CodeUser_idx");
+
+            entity.Property(e => e.Identication).HasMaxLength(45);
+            entity.Property(e => e.Idstaff)
+                .HasMaxLength(100)
+                .HasColumnName("IDStaff");
+            entity.Property(e => e.ImageUrl)
+                .HasMaxLength(100)
+                .HasColumnName("ImageURL");
+            entity.Property(e => e.Name).HasMaxLength(100);
+
+            entity.HasOne(d => d.CodeUserNavigation).WithMany(p => p.Staff)
+                .HasForeignKey(d => d.CodeUser)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkStaff_User_CodeUser");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Code).HasName("PRIMARY");
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.IdUser, "idUser_UNIQUE").IsUnique();
+            entity.HasIndex(e => e.Email, "Email_UNIQUE").IsUnique();
+
+            entity.HasIndex(e => e.PhoneNumber, "PhoneNumber_UNIQUE").IsUnique();
 
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.Gender).HasComment("0: Male;\n1: Female;");
             entity.Property(e => e.IdUser).HasMaxLength(10);
-            entity.Property(e => e.ImageUrl).HasMaxLength(100);
-            entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Permission).HasComment("0: Customer;\\n1: Admin;\\n2: Staff;");
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.Status).HasComment("0: Normal;\\n1: Blocked;");

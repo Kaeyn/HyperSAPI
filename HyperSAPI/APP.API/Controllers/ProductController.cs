@@ -1,5 +1,6 @@
 ﻿using APP.Bus.Repository.BLLs;
-using APP.Bus.Repository.DTOs;
+using APP.Bus.Repository.DTOs.Cart;
+using APP.Bus.Repository.DTOs.Product;
 using KendoNET.DynamicLinq;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,6 +67,13 @@ namespace APP.API.Controllers
             {
                 return NotFound();
             }
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public ActionResult AddProductToCart(DTOAddToCart request)
+        {
+            var products = _BLL.AddProductToCart(request);
             return Ok(products);
         }
 

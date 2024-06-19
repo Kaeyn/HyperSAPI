@@ -12,6 +12,14 @@ namespace APP.Bus.Repository.Mathmathics
 
     public static class StaticFunc
     {
+        public static float CalculatePriceAfterDiscount(int price, int? discount)
+        {
+            if (discount.HasValue && discount.Value > 0)
+            {
+                return price - (price * discount.Value / 100);
+            }
+            return price;
+        }
         public static List<Sort> GetSortDescriptor(string field, string dir)
         {
             List<Sort> sorts = new List<Sort>();
@@ -61,6 +69,26 @@ namespace APP.Bus.Repository.Mathmathics
                             // Add other cases as needed
                     }
                 }
+            }
+        }
+
+        public static string ConvertStatusToStr(int status) {
+            switch (status)
+            {
+                case 0: return "Normal";
+                case 1: return "Blocked";
+                default: return "null";
+            }
+        }
+
+        public static string ConvertPermissionToStr(int permission)
+        {
+            switch (permission)
+            {
+                case 0: return "Customer";
+                case 1: return "Admin";
+                case 2: return "Staff";
+                default: return "null";
             }
         }
     }

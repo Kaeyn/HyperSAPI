@@ -31,9 +31,19 @@ public partial class Product
 
     public string? DiscountDescription { get; set; }
 
+    /// <summary>
+    /// 0: Normal
+    /// 1: New
+    /// </summary>
+    public int? IsNew { get; set; }
+
     public int Status { get; set; }
 
+    public virtual ICollection<BillInfo> BillInfos { get; set; } = new List<BillInfo>();
+
     public virtual Brand BrandNavigation { get; set; } = null!;
+
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
