@@ -50,11 +50,11 @@ public partial class AppDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-<<<<<<< HEAD
-        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");      
-=======
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
->>>>>>> 3f148d2352e6bce80086d58951daa0530ad21d12
+        if (connectionString == null)
+        {
+            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
+        }
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -120,7 +120,6 @@ public partial class AppDBContext : DbContext
             entity.HasKey(e => e.Code).HasName("PRIMARY");
 
             entity.ToTable("Cart");
-<<<<<<< HEAD
 
             entity.HasIndex(e => e.CodeCustomer, "FkCart_Customer_CodeCustomer_idx");
 
@@ -135,8 +134,6 @@ public partial class AppDBContext : DbContext
                 .HasForeignKey(d => d.CodeProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FkCart_Product_CodeProduct");
-=======
->>>>>>> 3f148d2352e6bce80086d58951daa0530ad21d12
         });
 
         modelBuilder.Entity<Category>(entity =>
