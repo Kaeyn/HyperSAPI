@@ -14,6 +14,7 @@ using APP.Bus.Repository.Mathmathics;
 using static APP.Bus.Repository.Mathmathics.StaticFunc;
 using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.DTOs.Product;
+using System.Diagnostics;
 namespace APP.Bus.Repository.BLLs
 {
     public class ProductBLL
@@ -203,93 +204,9 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse AddProductToCart(DTOAddToCart request)
-<<<<<<< HEAD
-=======
-        {
-            var respond = new DTOResponse();
-            try
-            {
-                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct);
-                if (existedCartItem != null)
-                {
-                    existedCartItem.Quantity += 1;
-                }
-                else
-                {
-                    var newCartItem = new Cart
-                    {
-                        CodeProduct = request.CodeProduct,
-                        CodeCustomer = request.CodeCustomer,
-                        Quantity = 1
-                    };
-                    DB.Carts.Add(newCartItem);
-                }
-                DB.SaveChanges();
-                respond.ObjectReturn = new {};
-            }
-            catch (Exception ex)
-            {
-                respond.StatusCode = 500;
-                respond.ErrorString = ex.Message;
-            }
-
-            return respond;
-        }
-
         private static decimal CalculatePriceAfterDiscount(decimal price, int? discount)
->>>>>>> 3f148d2352e6bce80086d58951daa0530ad21d12
         {
-            var respond = new DTOResponse();
-            try
-            {
-                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
-                if (request.Type.Equals("Add"))
-                {
-                    Console.WriteLine("ADDED");
-                    if (existedCartItem != null)
-                    {
-                        if (request.Quantity == 1 && request.SelectedSize == existedCartItem?.SelectedSize)
-                        {
-                            if (existedCartItem != null)
-                            {
-                                existedCartItem.Quantity += 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var newCartItem = new Cart
-                        {
-                            CodeProduct = request.CodeProduct,
-                            CodeCustomer = request.CodeCustomer,
-                            SelectedSize = request.SelectedSize,
-                            Quantity = request.Quantity
-                        };
-                        DB.Carts.Add(newCartItem);
-                    }
-  
-                }
-                else if(request.Type.Equals("Update"))
-                {
-                    
-                    if (existedCartItem != null)
-                    {
-                        Console.WriteLine("Update");
-                        existedCartItem.Quantity = request.Quantity;
-                    }
-                }
-                else if (request.Type.Equals("Delete"))
-                {
-                    if(existedCartItem != null)
-                    {
-                        DB.Carts.Remove(existedCartItem);
-                    }
-                }
-                DB.SaveChanges();
-                respond.ObjectReturn = new {};
-            }
-            catch (Exception ex)
+            if (discount.HasValue && discount.Value > 0)
             {
                 respond.StatusCode = 500;
                 respond.ErrorString = ex.Message;
