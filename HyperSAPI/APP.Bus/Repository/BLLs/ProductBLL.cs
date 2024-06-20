@@ -204,9 +204,59 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        private static decimal CalculatePriceAfterDiscount(decimal price, int? discount)
+        public DTOResponse AddProductToCart(DTOAddToCart request)
         {
-            if (discount.HasValue && discount.Value > 0)
+            
+            var respond = new DTOResponse();
+            try
+            {
+                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
+                if (request.Type.Equals("Add"))
+                {
+                    Console.WriteLine("ADDED");
+                    if (existedCartItem != null)
+                    {
+                        if (request.Quantity == 1 && request.SelectedSize == existedCartItem?.SelectedSize)
+                        {
+                            if (existedCartItem != null)
+                            {
+                                existedCartItem.Quantity += 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var newCartItem = new Cart
+                        {
+                            CodeProduct = request.CodeProduct,
+                            CodeCustomer = request.CodeCustomer,
+                            SelectedSize = request.SelectedSize,
+                            Quantity = request.Quantity
+                        };
+                        DB.Carts.Add(newCartItem);
+                    }
+
+                }
+                else if (request.Type.Equals("Update"))
+                {
+
+                    if (existedCartItem != null)
+                    {
+                        Console.WriteLine("Update");
+                        existedCartItem.Quantity = request.Quantity;
+                    }
+                }
+                else if (request.Type.Equals("Delete"))
+                {
+                    if (existedCartItem != null)
+                    {
+                        DB.Carts.Remove(existedCartItem);
+                    }
+                }
+                DB.SaveChanges();
+                respond.ObjectReturn = new { };
+            }
+            catch (Exception ex)
             {
                 respond.StatusCode = 500;
                 respond.ErrorString = ex.Message;
