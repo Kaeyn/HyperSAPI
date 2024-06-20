@@ -204,6 +204,41 @@ namespace APP.Bus.Repository.BLLs
         }
 
         public DTOResponse AddProductToCart(DTOAddToCart request)
+<<<<<<< HEAD
+=======
+        {
+            var respond = new DTOResponse();
+            try
+            {
+                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct);
+                if (existedCartItem != null)
+                {
+                    existedCartItem.Quantity += 1;
+                }
+                else
+                {
+                    var newCartItem = new Cart
+                    {
+                        CodeProduct = request.CodeProduct,
+                        CodeCustomer = request.CodeCustomer,
+                        Quantity = 1
+                    };
+                    DB.Carts.Add(newCartItem);
+                }
+                DB.SaveChanges();
+                respond.ObjectReturn = new {};
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
+
+        private static decimal CalculatePriceAfterDiscount(decimal price, int? discount)
+>>>>>>> 3f148d2352e6bce80086d58951daa0530ad21d12
         {
             var respond = new DTOResponse();
             try
