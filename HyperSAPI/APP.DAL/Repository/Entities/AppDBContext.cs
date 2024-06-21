@@ -30,7 +30,9 @@ public partial class AppDBContext : DbContext
 
     public virtual DbSet<EfmigrationsHistory> EfmigrationsHistories { get; set; }
 
-    public virtual DbSet<Employee> Employees { get; set; }
+    public virtual DbSet<Permission> Permissions { get; set; }
+
+    public virtual DbSet<Position> Positions { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -51,8 +53,13 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+        if (connectionString == null)
+        {
+            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
+        }
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -175,21 +182,24 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.ProductVersion).HasMaxLength(32);
         });
 
-        modelBuilder.Entity<Employee>(entity =>
+        modelBuilder.Entity<Permission>(entity =>
         {
             entity.HasKey(e => e.Code).HasName("PRIMARY");
 
-            entity.ToTable("Employee");
+            entity.ToTable("Permission");
 
-            entity.HasIndex(e => e.CodeUser, "FkEmployee_User_CodeUser_idx");
+            entity.Property(e => e.IdPermission).HasMaxLength(45);
+            entity.Property(e => e.PermissionName).HasMaxLength(45);
+        });
 
-            entity.Property(e => e.Avartar).HasMaxLength(45);
-            entity.Property(e => e.Name).HasMaxLength(100);
+        modelBuilder.Entity<Position>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
 
-            entity.HasOne(d => d.CodeUserNavigation).WithMany(p => p.Employees)
-                .HasForeignKey(d => d.CodeUser)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FkEmployee_User_CodeUser");
+            entity.ToTable("Position");
+
+            entity.Property(e => e.IdPosition).HasMaxLength(45);
+            entity.Property(e => e.PositionName).HasMaxLength(45);
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -314,8 +324,11 @@ public partial class AppDBContext : DbContext
         {
             entity.HasKey(e => e.Code).HasName("PRIMARY");
 
+            entity.HasIndex(e => e.Position, "FkStaff_Position_CodePosition_idx");
+
             entity.HasIndex(e => e.CodeUser, "FkStaff_User_CodeUser_idx");
 
+            entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.Identication).HasMaxLength(45);
             entity.Property(e => e.Idstaff)
                 .HasMaxLength(100)
@@ -329,6 +342,11 @@ public partial class AppDBContext : DbContext
                 .HasForeignKey(d => d.CodeUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FkStaff_User_CodeUser");
+
+            entity.HasOne(d => d.PositionNavigation).WithMany(p => p.Staff)
+                .HasForeignKey(d => d.Position)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkStaff_Position_CodePosition");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -339,6 +357,8 @@ public partial class AppDBContext : DbContext
 
             entity.HasIndex(e => e.Email, "Email_UNIQUE").IsUnique();
 
+            entity.HasIndex(e => e.Permission, "FkUser_Permission_CodePermission_idx");
+
             entity.HasIndex(e => e.PhoneNumber, "PhoneNumber_UNIQUE").IsUnique();
 
             entity.Property(e => e.Email).HasMaxLength(100);
@@ -346,6 +366,11 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.Permission).HasComment("0: Customer;\\n1: Admin;\\n2: Staff;");
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.Status).HasComment("0: Normal;\\n1: Blocked;");
+
+            entity.HasOne(d => d.PermissionNavigation).WithMany(p => p.Users)
+                .HasForeignKey(d => d.Permission)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FkUser_Permission_CodePermission");
         });
 
         OnModelCreatingPartial(modelBuilder);

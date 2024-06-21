@@ -70,6 +70,11 @@ namespace APP.Bus.Repository.BLLs
                 if (result != null) {
                     result.Status = status;
                 }
+                else
+                {
+                    respond.StatusCode = 500;
+                    respond.ErrorString = "User not exists !";
+                }
 
                 DB.SaveChanges();
                 respond.ObjectReturn = new {};
