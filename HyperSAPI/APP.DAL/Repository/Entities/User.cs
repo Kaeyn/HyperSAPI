@@ -11,7 +11,7 @@ public partial class User
 
     public string PhoneNumber { get; set; } = null!;
 
-    public string Email { get; set; } = null!;
+    public string? Email { get; set; }
 
     /// <summary>
     /// 0: Normal;\n1: Blocked;
@@ -25,7 +25,7 @@ public partial class User
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public virtual Permission PermissionNavigation { get; set; } = null!;
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }
