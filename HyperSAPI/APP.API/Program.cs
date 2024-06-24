@@ -23,11 +23,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
-if (connectionString == null)
-{
-    connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=authdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
-}
+var connectionString = Environment.GetEnvironmentVariable("MYSQLAUTH_CONNECTION_STRING");
 
 builder.Services.AddDbContext<AuthDBContext>(options =>
 options.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql")));
