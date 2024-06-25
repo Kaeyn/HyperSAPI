@@ -77,5 +77,11 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [HttpPost]
+        public Task<ActionResult> UpdateProduct([FromBody] dynamic request)
+        {
+            var products = _BLL.UpdateProduct(request);
+            return Ok(products);
+        }
     }
 }

@@ -23,6 +23,49 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
+        public DTOResponse GetStaff(DTOStaff requestStaff)
+        {
+            DataSourceRequest dataSourceRequest = new DataSourceRequest();
+            dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+            var respond = new DTOResponse();
+            try
+            {
+
+
+                var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
+                    .Include(s => s.CodeUserNavigation).Where(s => s.Code == requestStaff.Code)
+                    .Select(s => new DTOStaff
+                    {
+                        Code = s.Code,
+                        IDStaff = s.Idstaff,
+                        Name = s.Name,
+                        ImageURL = s.ImageUrl,
+                        Gender = s.Gender,
+                        Birth = s.Birthday,
+                        PhoneNumber = s.CodeUserNavigation.PhoneNumber,
+                        Email = s.CodeUserNavigation.Email,
+                        Address = s.Address,
+                        Identication = s.Identication,
+                        Position = s.Position,
+                        PositionStr = s.PositionNavigation.PositionName,
+                        ListShift = new List<dynamic>(),
+                        TotalSalary = 0,
+                        CodeAccount = s.CodeUser,
+                        StatusAccount = s.CodeUserNavigation.Status,
+                        StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
+                        Permission = s.CodeUserNavigation.Permission
+                    }).ToList();
+
+                respond.ObjectReturn = result.AsQueryable().ToDataSourceResult(dataSourceRequest);
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+
         public DTOResponse GetListStaff(dynamic requestParam)
         {
             var respond = new DTOResponse();
@@ -51,9 +94,8 @@ namespace APP.Bus.Repository.BLLs
                         CodeAccount = s.CodeUser,
                         StatusAccount = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
-                        Permission = s.CodeUserNavigation.Permission,
-                        PermissionStr = ConvertPermissionToStr(s.CodeUserNavigation.Permission)
-                    });
+                        Permission = s.CodeUserNavigation.Permission
+                    }).ToList();
                             
                 respond.ObjectReturn = result.AsQueryable().ToDataSourceResult((DataSourceRequest)param);
             }
@@ -65,7 +107,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse UpdateStaff(dynamic requestParam)
+        /*public DTOResponse UpdateStaff(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try
@@ -156,7 +198,7 @@ namespace APP.Bus.Repository.BLLs
                 respond.ErrorString = ex.Message;
             }
             return respond;
-        }
+        }*/
 
     }
 }

@@ -53,9 +53,12 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+        if (connectionString == null)
+        {
+            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
+        }
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -218,7 +221,6 @@ public partial class AppDBContext : DbContext
                 .HasDefaultValueSql("'1'")
                 .HasComment("0: Normal\n1: New");
             entity.Property(e => e.ProductName).HasMaxLength(45);
-            entity.Property(e => e.Stock).HasDefaultValueSql("'0'");
 
             entity.HasOne(d => d.BrandNavigation).WithMany(p => p.Products)
                 .HasForeignKey(d => d.Brand)
@@ -262,6 +264,9 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.CodeProduct, "FkProductSize_Product_CodeProduct_idx");
 
             entity.HasIndex(e => e.CodeSize, "FkProductSize_Size_CodeSize_idx");
+
+            entity.Property(e => e.Sold).HasDefaultValueSql("'0'");
+            entity.Property(e => e.Stock).HasDefaultValueSql("'0'");
 
             entity.HasOne(d => d.CodeProductNavigation).WithMany(p => p.ProductSizes)
                 .HasForeignKey(d => d.CodeProduct)
@@ -353,20 +358,17 @@ public partial class AppDBContext : DbContext
 
             entity.HasIndex(e => e.Email, "Email_UNIQUE").IsUnique();
 
-            entity.HasIndex(e => e.Permission, "FkUser_Permission_CodePermission_idx");
+            entity.HasIndex(e => e.IdUser, "IdUser_UNIQUE").IsUnique();
 
             entity.HasIndex(e => e.PhoneNumber, "PhoneNumber_UNIQUE").IsUnique();
 
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.IdUser).HasMaxLength(10);
-            entity.Property(e => e.Permission).HasComment("0: Customer;\\n1: Admin;\\n2: Staff;");
+            entity.Property(e => e.Permission)
+                .HasMaxLength(100)
+                .HasDefaultValueSql("'0'")
+                .HasComment("0: Customer;\\\\n1: Admin;\\\\n2: Staff;");
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.Status).HasComment("0: Normal;\\n1: Blocked;");
-
-            entity.HasOne(d => d.PermissionNavigation).WithMany(p => p.Users)
-                .HasForeignKey(d => d.Permission)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FkUser_Permission_CodePermission");
         });
 
         OnModelCreatingPartial(modelBuilder);

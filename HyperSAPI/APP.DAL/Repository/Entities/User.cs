@@ -19,13 +19,11 @@ public partial class User
     public int Status { get; set; }
 
     /// <summary>
-    /// 0: Customer;\n1: Admin;\n2: Staff;
+    /// 0: Customer;\\n1: Admin;\\n2: Staff;
     /// </summary>
-    public int Permission { get; set; }
+    public string Permission { get; set; } = null!;
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
-
-    public virtual Permission PermissionNavigation { get; set; } = null!;
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

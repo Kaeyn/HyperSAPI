@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs.Staff;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,17 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
+        public ActionResult GetStaff(DTOStaff request)
+        {
+            var products = _BLL.GetStaff(request);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
+        }
+
+        [HttpPost]
         public ActionResult GetListStaff([FromBody] dynamic request)
         {
             var products = _BLL.GetListStaff(request);
@@ -26,11 +38,11 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult UpdateStaff([FromBody] dynamic request)
         {
             var products = _BLL.UpdateStaff(request);
             return Ok(products);
-        }
+        }*/
     }
 }
