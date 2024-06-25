@@ -172,8 +172,8 @@ namespace APP.Bus.Repository.BLLs
                 BrandName = p.BrandNavigation.BrandName ?? "",
                 Gender = p.Gender,
                 Color = p.Color,
-                Stock = p.Stock,
-                Sold = p.Sold,
+                Stock = p.ProductSizes.Sum(p => p.Stock),
+                Sold = p.ProductSizes.Sum(p => p.Sold),
                 Status = p.Status
             }).FirstOrDefault();
             return result;

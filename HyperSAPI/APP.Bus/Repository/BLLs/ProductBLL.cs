@@ -88,9 +88,7 @@ namespace APP.Bus.Repository.BLLs
             {
                 var param = JsonConvert.DeserializeObject<DataSourceRequest>(options.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
-                if (param != null && param.Filter.Filters.Count == 0) {
-                    param.Filter = null;
-                }
+                
                 var products = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation)
                     .Select(p => new 
                     {
