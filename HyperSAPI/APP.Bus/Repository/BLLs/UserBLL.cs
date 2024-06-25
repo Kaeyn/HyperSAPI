@@ -2,6 +2,7 @@
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Login;
 using APP.Bus.Repository.DTOs.User;
+using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ namespace APP.Bus.Repository.BLLs
 {
     public class UserBLL
     {
+        private AppDBContext DB;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -27,6 +29,7 @@ namespace APP.Bus.Repository.BLLs
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
+            DB = new AppDBContext();
         }
 
         public async Task<DTOResponse> RegisterUserAsync(dynamic requestParam)
@@ -54,7 +57,15 @@ namespace APP.Bus.Repository.BLLs
                 else
                 {
                     await _userManager.AddToRoleAsync(newUser, "Customer");
-                    
+                    User newDBUser = new User
+                    {
+                        IdUser = newUser.Id,
+                        PhoneNumber = newUser.PhoneNumber,
+                        Email = newUser.Email,
+                        Status = 0,
+                        Permission = _userManager.GetRolesAsync(newUser).Result.First()
+                    };
+                    DB.Users.Add(newDBUser);
                 }
 
                 respond.ObjectReturn = result;
@@ -78,8 +89,16 @@ namespace APP.Bus.Repository.BLLs
                 IdentityUser user = await FindUserAsync(param.Username);
                 if (user != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user.UserName, param.Password, false, false);
-                    respond.ObjectReturn = result;
+                    var userInDB = DB.Users.FirstOrDefault(u => u.IdUser == user.Id);
+                    if (userInDB != null && userInDB.Status == 0)
+                    {
+                        var result = await _signInManager.PasswordSignInAsync(user.UserName, param.Password, false, false);
+                        respond.ObjectReturn = result;
+                    }
+                    else
+                    {
+                        respond.ErrorString = "Your account has been blocked";
+                    }
                 }
                 else
                 {
@@ -163,11 +182,11 @@ namespace APP.Bus.Repository.BLLs
                 // Login is an email
                 user = await _userManager.FindByEmailAsync(username);
             }
-            else if (username.All(char.IsDigit))
+            /*else if (username.All(char.IsDigit))
             {
                 // Login is a phone number
                 user = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == username);
-            }
+            }*/
             else
             {
                 // Login is a username

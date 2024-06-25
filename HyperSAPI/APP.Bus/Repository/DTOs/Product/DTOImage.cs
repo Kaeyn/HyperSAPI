@@ -10,8 +10,6 @@ namespace APP.Bus.Repository.DTOs.Product
 
         public string ImgUrl { get; set; } = null!;
 
-        public int ProductCode { get; set; }
-
         /// <summary>
         /// 0: FALSE
         /// 1: TRUE

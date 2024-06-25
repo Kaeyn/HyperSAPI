@@ -27,7 +27,6 @@ namespace APP.Bus.Repository.DTOs.Staff
         public int CodeAccount { get; set; }
         public int StatusAccount { get; set; }
         public string StatusAccountStr { get; set; } = string.Empty;
-        public int Permission { get; set; }
-        public string PermissionStr { get; set; } = string.Empty;
+        public string Permission { get; set; } = string.Empty;
     }
 }

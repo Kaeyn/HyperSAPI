@@ -15,11 +15,11 @@ namespace APP.API.Controllers
             _BLL = new BrandBLL();
         }
 
-        /*[HttpPost]
+        [HttpPost]
         public ActionResult GetAllBrands()
         {
-            var brands = _BLL.GetAllBrands();
+            var brands = _BLL.GetListBrand();
             return Ok(brands);
-        }*/
+        }
     }
 }

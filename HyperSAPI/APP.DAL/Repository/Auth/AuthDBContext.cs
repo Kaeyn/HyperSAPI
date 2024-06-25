@@ -15,8 +15,10 @@ namespace APP.DAL.Repository.Auth
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            var connectionString = Environment.GetEnvironmentVariable("MYSQLAUTH_CONNECTION_STRING");
-            optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
+            {
+                var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+                optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
+            }
         }
     }
 }

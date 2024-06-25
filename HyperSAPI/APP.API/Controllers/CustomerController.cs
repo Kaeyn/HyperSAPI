@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Product;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,17 @@ namespace APP.API.Controllers
         public CustomerController()
         {
             _BLL = new CustomerBLL();
+        }
+
+        [HttpPost]
+        public ActionResult GetCustomer(DTOCustomer request)
+        {
+            var products = _BLL.GetCustomer(request);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
         }
 
         [HttpPost]

@@ -1,5 +1,6 @@
 ﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Customer;
+using APP.Bus.Repository.DTOs.Product;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,43 @@ namespace APP.Bus.Repository.BLLs
         public CustomerBLL()
         {
             DB = new AppDBContext();
+        }
+
+        public DTOResponse GetCustomer(DTOCustomer dtoRequest)
+        {
+            DataSourceRequest dataSourceRequest = new DataSourceRequest();
+            dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+            var respond = new DTOResponse();
+            try
+            {
+
+                var result = DB.Customers.AsQueryable()
+                           .Include(c => c.CodeUserNavigation).Where(c => c.Code == dtoRequest.Code)
+                           .Select(c => new DTOCustomer
+                           {
+                               Code = c.Code,
+                               IDCustomer = c.Idcustomer,
+                               Name = c.Name,
+                               ImageURL = c.ImageUrl,
+                               Gender = c.Gender,
+                               Birth = c.Birthday,
+                               PhoneNumber = c.CodeUserNavigation.PhoneNumber,
+                               Email = c.CodeUserNavigation.Email,
+                               CodeAccount = c.CodeUserNavigation.Code,
+                               StatusAccount = c.CodeUserNavigation.Status,
+                               StatusAccountStr = ConvertStatusToStr(c.CodeUserNavigation.Status),
+                               Permission = c.CodeUserNavigation.Permission,
+                           }).ToList();
+
+                respond.ObjectReturn = result.AsQueryable().ToDataSourceResult(dataSourceRequest);
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
         }
 
         public DTOResponse GetListCustomer(dynamic requestParam)
@@ -46,7 +84,6 @@ namespace APP.Bus.Repository.BLLs
                                 StatusAccount = c.CodeUserNavigation.Status,
                                 StatusAccountStr = ConvertStatusToStr(c.CodeUserNavigation.Status),
                                 Permission = c.CodeUserNavigation.Permission,
-                                PermissionStr = ConvertPermissionToStr(c.CodeUserNavigation.Permission)
                             }).ToList().OrderBy(c => c.Name);
                 respond.ObjectReturn = result.AsQueryable().ToDataSourceResult((DataSourceRequest)param);
             }
