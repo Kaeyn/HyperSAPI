@@ -44,6 +44,8 @@ namespace APP.Bus.Repository.DTOs.Product
 
         public int Status { get; set; } = 0;
 
+        public string ThumbnailImg = string.Empty;
+
         public List<DTOImage> ListOfImage { get; set; } = new List<DTOImage>();
 
         public List<DTOProductSize> ListOfSize { get; set; } = new List<DTOProductSize>();

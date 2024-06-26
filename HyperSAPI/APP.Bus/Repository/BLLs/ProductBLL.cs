@@ -67,7 +67,7 @@ namespace APP.Bus.Repository.BLLs
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
                         Sold = p.ProductSizes.Sum(p => p.Sold),
-                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1),
+                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1).Img,
                         Status = p.Status
                     }).ToList();
 
@@ -122,7 +122,7 @@ namespace APP.Bus.Repository.BLLs
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
                         Sold = p.ProductSizes.Sum(p => p.Sold),
-                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1),
+                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1).Img,
                         Status = p.Status
                     }).ToList();
 
@@ -176,7 +176,7 @@ namespace APP.Bus.Repository.BLLs
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
                         Sold = p.ProductSizes.Sum(p => p.Sold),
-                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1),
+                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1).Img,
                         Status = p.Status
                     }).ToList();
 

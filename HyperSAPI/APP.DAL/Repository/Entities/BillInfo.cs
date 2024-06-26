@@ -11,6 +11,8 @@ public partial class BillInfo
 
     public int CodeProduct { get; set; }
 
+    public int SelectedSize { get; set; }
+
     public int Quantity { get; set; }
 
     public int Price { get; set; }
