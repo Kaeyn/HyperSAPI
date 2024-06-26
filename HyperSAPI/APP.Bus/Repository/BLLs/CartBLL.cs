@@ -29,9 +29,68 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse ProceedToPayment()
+        public DTOResponse ProceedToPayment(dynamic requestParam)
         {
-            return new DTOResponse() {};
+            var request = JsonConvert.DeserializeObject<DTOProccedToPayment>(requestParam.ToString());
+            var respond = new DTOResponse();
+            try
+            {
+                string reqCusName = request.CustomerName;
+                string reqPhoneNumber = request.PhoneNumber;
+                string reqShippingAddress = request.ShippingAddress;
+                int reqPaymentMethod = request.PaymentMethod;
+                int reqTotalBill = request.TotalBill;
+                bool reqIsGuess = request.IsGuess;
+
+                if (!reqIsGuess)
+                {
+                    /*List<DTOGuessCartProduct> reqListProduct = request.ListProduct;*/
+
+                }
+                else
+                {
+                    List<DTOGuessCartProduct> reqListProduct = request.ListProduct;
+                    Bill newBill = new Bill
+                    {
+                        CustomerName = reqCusName,
+                        PhoneNumber = reqPhoneNumber,
+                        ShippingAddress = reqShippingAddress,
+                        CreateAt = DateTime.Now,
+                        PaymentMethod = reqPaymentMethod,
+                        TotalBill = reqTotalBill,
+                        Status = 0
+                    };
+
+                    DB.Bills.Add(newBill);
+                    DB.SaveChanges();
+                    foreach (var product in reqListProduct)
+                    {
+                        var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Code);
+                        if (productInDB != null)
+                        {
+                            BillInfo newBI = new BillInfo
+                            {
+                                CodeBill = newBill.Code,
+                                CodeProduct = product.Code,
+                                SelectedSize = product.SelectedSize,
+                                Quantity = product.Quantity,
+                                Price = productInDB.Price,
+                                TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity)
+                            };
+                            DB.BillInfos.Add(newBI);
+                        }      
+                    }
+                    DB.SaveChanges();
+                }
+
+                respond.ObjectReturn = new { };
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
         }
 
         public DTOResponse GetListCartProduct(dynamic requestParam)

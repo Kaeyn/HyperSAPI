@@ -78,18 +78,13 @@ public partial class AppDBContext : DbContext
 
         modelBuilder.Entity<BillInfo>(entity =>
         {
-            entity.HasKey(e => new { e.Code, e.TotalPrice })
-                .HasName("PRIMARY")
-                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
 
             entity.ToTable("BillInfo");
 
             entity.HasIndex(e => e.CodeBill, "FkBillInfo_Bill_CodeBill_idx");
 
             entity.HasIndex(e => e.CodeProduct, "FkBillInfo_Product_CodeProduct_idx");
-
-            entity.Property(e => e.Code).ValueGeneratedOnAdd();
-            entity.Property(e => e.TotalPrice).HasMaxLength(45);
 
             entity.HasOne(d => d.CodeBillNavigation).WithMany(p => p.BillInfos)
                 .HasForeignKey(d => d.CodeBill)

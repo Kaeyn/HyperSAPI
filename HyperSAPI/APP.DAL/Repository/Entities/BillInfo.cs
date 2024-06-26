@@ -11,13 +11,13 @@ public partial class BillInfo
 
     public int CodeProduct { get; set; }
 
+    public int SelectedSize { get; set; }
+
     public int Quantity { get; set; }
 
     public int Price { get; set; }
 
-    public int? Discount { get; set; }
-
-    public string TotalPrice { get; set; } = null!;
+    public int TotalPrice { get; set; }
 
     public virtual Bill CodeBillNavigation { get; set; } = null!;
 
