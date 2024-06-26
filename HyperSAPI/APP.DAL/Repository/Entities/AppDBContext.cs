@@ -69,9 +69,11 @@ public partial class AppDBContext : DbContext
 
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.CustomerName).HasMaxLength(45);
+            entity.Property(e => e.Note).HasMaxLength(255);
             entity.Property(e => e.PaymentMethod).HasComment("0: COD\n1: QR\n");
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.ShippingAddress).HasMaxLength(255);
+            entity.Property(e => e.Status).HasComment("0: Chờ xác nhận\n1: Đã xác nhận\n2: Đang đóng gói\n3: Đang vận chuyển\n4: Giao hàng thành công\n5: Giao hàng thất bại");
         });
 
         modelBuilder.Entity<BillInfo>(entity =>
@@ -253,7 +255,9 @@ public partial class AppDBContext : DbContext
 
         modelBuilder.Entity<ProductSize>(entity =>
         {
-            entity.HasKey(e => e.Code).HasName("PRIMARY");
+            entity.HasKey(e => new { e.CodeProduct, e.CodeSize })
+                .HasName("PRIMARY")
+                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 
             entity.ToTable("ProductSize");
 

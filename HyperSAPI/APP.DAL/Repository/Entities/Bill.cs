@@ -22,7 +22,19 @@ public partial class Bill
     /// </summary>
     public int PaymentMethod { get; set; }
 
+    public string? Note { get; set; }
+
     public int TotalBill { get; set; }
+
+    /// <summary>
+    /// 0: Chờ xác nhận
+    /// 1: Đã xác nhận
+    /// 2: Đang đóng gói
+    /// 3: Đang vận chuyển
+    /// 4: Giao hàng thành công
+    /// 5: Giao hàng thất bại
+    /// </summary>
+    public int Status { get; set; }
 
     public virtual ICollection<BillInfo> BillInfos { get; set; } = new List<BillInfo>();
 }

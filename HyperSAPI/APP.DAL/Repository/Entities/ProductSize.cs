@@ -5,8 +5,6 @@ namespace APP.DAL.Repository.Entities;
 
 public partial class ProductSize
 {
-    public int Code { get; set; }
-
     public int CodeProduct { get; set; }
 
     public int CodeSize { get; set; }
