@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins",
         builder => builder.WithOrigins("http://localhost:4200")
-        .AllowAnyHeader().AllowAnyMethod());
+        .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -49,6 +49,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(2);
     options.LoginPath = "/api/Auth/Login";
     options.SlidingExpiration = true;
+    options.Cookie.SameSite = SameSiteMode.None;
 });
 
 

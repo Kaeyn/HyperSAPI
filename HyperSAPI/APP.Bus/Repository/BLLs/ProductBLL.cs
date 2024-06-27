@@ -221,7 +221,13 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
+                if (request.CodeCustomer == -1)
+                {
+
+                }
                 var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
+                var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
+
                 if (request.Type.Equals("Add"))
                 {
                     if (existedCartItem != null)
@@ -230,7 +236,15 @@ namespace APP.Bus.Repository.BLLs
                         {
                             if (existedCartItem.Quantity < 10)
                             {
-                                existedCartItem.Quantity += 1;
+                                if(stock.Stock < existedCartItem.Quantity)
+                                {
+                                    existedCartItem.Quantity += 1;
+                                }
+                                else
+                                {
+                                    var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                                    respond.ErrorString = errorString;
+                                }
                             }
                         }
                     }
