@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins",
-        builder => builder.WithOrigins("http://localhost:4200")
+        builder => builder.AllowAnyOrigin()
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
@@ -49,7 +49,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(2);
     options.LoginPath = "/api/Auth/Login";
     options.SlidingExpiration = true;
-    options.Cookie.SameSite = SameSiteMode.None;
+    /*options.Cookie.SameSite = SameSiteMode.None;*/
+    /*options.Cookie.SecurePolicy = CookieSecurePolicy.Always;*/
 });
 
 
