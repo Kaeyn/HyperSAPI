@@ -49,8 +49,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(2);
     options.LoginPath = "/api/Auth/Login";
     options.SlidingExpiration = true;
-    /*options.Cookie.SameSite = SameSiteMode.None;*/
-    /*options.Cookie.SecurePolicy = CookieSecurePolicy.Always;*/
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 
