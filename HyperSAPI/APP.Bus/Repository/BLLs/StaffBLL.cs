@@ -184,7 +184,8 @@ namespace APP.Bus.Repository.BLLs
                             }
                         }
                     }
-                    else {
+                    else
+                    {
                         respond.StatusCode = 404;
                         respond.ErrorString = "Staff not found.";
                     }
@@ -198,7 +199,7 @@ namespace APP.Bus.Repository.BLLs
                 respond.ErrorString = ex.Message;
             }
             return respond;
-        }*/
-
+        }
+*/
     }
 }

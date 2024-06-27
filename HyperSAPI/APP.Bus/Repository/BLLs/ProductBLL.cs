@@ -224,12 +224,11 @@ namespace APP.Bus.Repository.BLLs
                 var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
                 if (request.Type.Equals("Add"))
                 {
-                    Console.WriteLine("ADDED");
                     if (existedCartItem != null)
                     {
                         if (request.Quantity == 1 && request.SelectedSize == existedCartItem?.SelectedSize)
                         {
-                            if (existedCartItem != null)
+                            if (existedCartItem.Quantity < 10)
                             {
                                 existedCartItem.Quantity += 1;
                             }

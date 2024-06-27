@@ -49,7 +49,8 @@ namespace APP.Bus.Repository.BLLs
                             Size = bi.SelectedSize,
                             Price = bi.Price,
                             Quantity = bi.Quantity,
-                            TotalPrice = bi.TotalPrice
+                            TotalPrice = bi.TotalPrice,
+                            Status = bi.Status,
                         }),
                         Voucher = "",
                         Discount = 0,
@@ -93,7 +94,9 @@ namespace APP.Bus.Repository.BLLs
                             Size = bi.SelectedSize,
                             Price = bi.Price,
                             Quantity = bi.Quantity,
-                            TotalPrice = bi.TotalPrice
+                            TotalPrice = bi.TotalPrice,
+                            Status = bi.Status
+
                         }),
                         Voucher = "",
                         Discount = 0,
@@ -138,7 +141,9 @@ namespace APP.Bus.Repository.BLLs
                             Size = bi.SelectedSize,
                             Price = bi.Price,
                             Quantity = bi.Quantity,
-                            TotalPrice = bi.TotalPrice
+                            TotalPrice = bi.TotalPrice,
+                            Status = bi.Status
+
                         }),
                         Voucher = "",
                         Discount = 0,
@@ -166,6 +171,7 @@ namespace APP.Bus.Repository.BLLs
                 /*options = StaticFunc.FormatFilter(options);*/
                 int reqCodeBill = param.CodeBill;
                 int reqStatus = param.Status;
+                List<DTOBillInfo> reqListOfBI = param.ListOfBillInfo;
                 string reqNote = param.Note ?? "";
 
                 var existedBill = DB.Bills.FirstOrDefault(b => b.Code == reqCodeBill);
@@ -173,6 +179,11 @@ namespace APP.Bus.Repository.BLLs
                 {
                     existedBill.Status = reqStatus;
                     existedBill.Note = reqNote;
+                    foreach(var bill in reqListOfBI)
+                    {
+                        var billInfoInDB = DB.BillInfos.FirstOrDefault(bi => bi.Code == bill.Code);
+                        billInfoInDB.Status = bill.Status;
+                    }
                     DB.SaveChanges();
                 }
                 else

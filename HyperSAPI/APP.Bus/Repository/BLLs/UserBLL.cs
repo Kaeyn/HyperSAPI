@@ -65,7 +65,18 @@ namespace APP.Bus.Repository.BLLs
                         Status = 0,
                         Permission = _userManager.GetRolesAsync(newUser).Result.First()
                     };
+
                     DB.Users.Add(newDBUser);
+                    DB.SaveChanges();
+
+                    Customer newDBCustomer = new Customer
+                    {
+                        CodeUser = newDBUser.Code,
+                        Name = param.Name
+                    };
+                    
+                    DB.Customers.Add(newDBCustomer);
+                    DB.SaveChanges();
                 }
 
                 respond.ObjectReturn = result;

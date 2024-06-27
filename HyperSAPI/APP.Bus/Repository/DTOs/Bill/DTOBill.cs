@@ -15,7 +15,7 @@ namespace APP.Bus.Repository.DTOs.Bill
         public string ShippingAddress { get; set; }
         public DateTime CreateAt { get; set; }
         public int PaymentMethod { get; set; }
-        /*public List<DTOBillInfo> ListBillInfo { get; set; } = = new List<DTOBillInfo>();*/
+        public List<DTOBillInfo> ListBillInfo { get; set; } = new List<DTOBillInfo>();
         public int Status { get; set; }
         public string Voucher { get; set; }
         public int TotalDiscount { get; set; }

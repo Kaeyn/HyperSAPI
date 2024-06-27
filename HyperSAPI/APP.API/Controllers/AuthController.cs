@@ -27,7 +27,7 @@ namespace APP.API.Controllers
         }
 
         [HttpPost, Authorize]
-        public async Task<ActionResult> CheckLogin(string username)
+        public async Task<ActionResult> CheckLogin()
         {
             IdentityUser user = new();
             var user_ = HttpContext.User;

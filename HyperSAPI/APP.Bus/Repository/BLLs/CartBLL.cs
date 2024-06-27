@@ -41,46 +41,67 @@ namespace APP.Bus.Repository.BLLs
                 int reqPaymentMethod = request.PaymentMethod;
                 int reqTotalBill = request.TotalBill;
                 bool reqIsGuess = request.IsGuess;
+                List<string> errorList= new List<string>();
 
                 if (!reqIsGuess)
                 {
-                    /*List<DTOGuessCartProduct> reqListProduct = request.ListProduct;*/
+                    List<DTOCartItem> reqListProduct = request.ListProduct;
 
                 }
                 else
                 {
                     List<DTOGuessCartProduct> reqListProduct = request.ListProduct;
-                    Bill newBill = new Bill
+                    foreach(var product in reqListProduct)
                     {
-                        CustomerName = reqCusName,
-                        PhoneNumber = reqPhoneNumber,
-                        ShippingAddress = reqShippingAddress,
-                        CreateAt = DateTime.Now,
-                        PaymentMethod = reqPaymentMethod,
-                        TotalBill = reqTotalBill,
-                        Status = 0
-                    };
-
-                    DB.Bills.Add(newBill);
-                    DB.SaveChanges();
-                    foreach (var product in reqListProduct)
-                    {
-                        var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Code);
-                        if (productInDB != null)
+                        var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
+                        if(stock.Stock < product.Quantity)
                         {
-                            BillInfo newBI = new BillInfo
-                            {
-                                CodeBill = newBill.Code,
-                                CodeProduct = product.Code,
-                                SelectedSize = product.SelectedSize,
-                                Quantity = product.Quantity,
-                                Price = productInDB.Price,
-                                TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity)
-                            };
-                            DB.BillInfos.Add(newBI);
-                        }      
+                            var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                            errorList.Add(errorString);
+                        }
                     }
-                    DB.SaveChanges();
+                    if (errorList.Count == 0)
+                    {
+                        Bill newBill = new Bill
+                        {
+                            CustomerName = reqCusName,
+                            PhoneNumber = reqPhoneNumber,
+                            ShippingAddress = reqShippingAddress,
+                            CreateAt = DateTime.Now,
+                            PaymentMethod = reqPaymentMethod,
+                            TotalBill = reqTotalBill,
+                            Status = 0
+                        };
+
+                        DB.Bills.Add(newBill);
+                        DB.SaveChanges();
+                        foreach (var product in reqListProduct)
+                        {
+                            var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Code);
+                            var stockOfProduct = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
+                            if (productInDB != null)
+                            {
+                                BillInfo newBI = new BillInfo
+                                {
+                                    CodeBill = newBill.Code,
+                                    CodeProduct = product.Code,
+                                    SelectedSize = product.SelectedSize,
+                                    Quantity = product.Quantity,
+                                    Price = productInDB.Price,
+                                    TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity),
+                                    Status = 0
+                                };
+                                DB.BillInfos.Add(newBI);
+                                stockOfProduct.Stock -= product.Quantity;
+                                stockOfProduct.Sold += product.Quantity;
+                            }
+                        }
+                        DB.SaveChanges();
+                    }
+                    else
+                    {
+                        respond.ObjectReturn = new { ErrorList = errorList };
+                    }
                 }
 
                 respond.ObjectReturn = new { };
