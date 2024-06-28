@@ -27,17 +27,6 @@ namespace APP.API.Controllers
         }
 
         [HttpPost, Authorize]
-        public async Task<ActionResult> CheckLogin()
-        {
-            IdentityUser user = new();
-            var user_ = HttpContext.User;
-            var principals = new ClaimsPrincipal(user_);
-            var result = await _BLL.CheckUser(principals);
-            return Ok(result);
-        }
-
-
-        [HttpPost, Authorize]
         public async Task<ActionResult> LogOut()
         {
             var result = await _BLL.LogOut();
@@ -53,6 +42,12 @@ namespace APP.API.Controllers
                 return NotFound();
             }*/
             return Ok(products);
+        }
+
+        [HttpPost, Authorize(Roles = "Admin")]
+        public async Task<ActionResult> TestAdmin()
+        {    
+            return Ok("ADMIN");
         }
 
     }

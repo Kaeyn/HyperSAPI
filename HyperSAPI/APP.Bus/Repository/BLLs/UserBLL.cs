@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -23,6 +25,7 @@ namespace APP.Bus.Repository.BLLs
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private string secretKey = "";
 
         public UserBLL(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -30,6 +33,7 @@ namespace APP.Bus.Repository.BLLs
             _userManager = userManager;
             _roleManager = roleManager;
             DB = new AppDBContext();
+            secretKey = Environment.GetEnvironmentVariable("MYAPI_SECRET_KEY");
         }
 
         public async Task<DTOResponse> RegisterUserAsync(dynamic requestParam)
@@ -104,7 +108,41 @@ namespace APP.Bus.Repository.BLLs
                     if (userInDB != null && userInDB.Status == 0)
                     {
                         var result = await _signInManager.PasswordSignInAsync(user.UserName, param.Password, false, false);
-                        respond.ObjectReturn = result;
+                        if (result.Succeeded)
+                        {
+                            var roles = await _userManager.GetRolesAsync(user);
+                            var redirect = "";
+                            if (roles.Contains("Customer"))
+                            {
+                                redirect = "jkwt";
+                            }
+                            else
+                            {
+                                redirect = "uije";
+                            }
+
+                            
+
+                            var authClaims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, user.UserName),
+                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                            };
+
+                            authClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+                            var authToken = GetToken(authClaims); 
+
+                            var token = new
+                            {
+                                Token = new JwtSecurityTokenHandler().WriteToken(authToken),
+                                Expires = authToken.ValidTo,
+                            };
+                          
+
+                            respond.ObjectReturn = new { ResultLogin = result, ResultToken = token, ResultRedirect = redirect };
+                        }
+                        else respond.ObjectReturn = new { ResultLogin = result};
                     }
                     else
                     {
@@ -152,7 +190,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public async Task<DTOResponse> CheckUser(ClaimsPrincipal claims)
+/*        public async Task<DTOResponse> CheckUser(ClaimsPrincipal claims)
         {
             DTOResponse respond = new DTOResponse();
             try
@@ -182,7 +220,7 @@ namespace APP.Bus.Repository.BLLs
                 respond.ErrorString = ex.Message;
             }
             return respond;
-        }
+        }*/
 
         private async Task<IdentityUser> FindUserAsync(string username)
         {
@@ -205,6 +243,21 @@ namespace APP.Bus.Repository.BLLs
             }
 
             return user;
+        }
+
+        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            var token = new JwtSecurityToken(
+                issuer: "https://hypersapi.onrender.com",
+                audience: "https://hypersshop.online",
+                expires: DateTime.UtcNow.AddHours(20),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return token;
         }
     }
 }
