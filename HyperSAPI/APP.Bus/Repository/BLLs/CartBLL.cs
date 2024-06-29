@@ -53,7 +53,7 @@ namespace APP.Bus.Repository.BLLs
                     List<DTOGuessCartProduct> reqListProduct = JsonConvert.DeserializeObject<List<DTOGuessCartProduct>>(request.ListProduct.ToString());
                     foreach(var product in reqListProduct)
                     {
-                        var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
+                        var stock = DB.ProductSizes.Include(ps => ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
                         if(stock.Stock < product.Quantity)
                         {
                             var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
@@ -103,8 +103,6 @@ namespace APP.Bus.Repository.BLLs
                         respond.ObjectReturn = new { ErrorList = errorList };
                     }
                 }
-
-                respond.ObjectReturn = new { };
             }
             catch (Exception ex)
             {
