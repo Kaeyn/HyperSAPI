@@ -50,10 +50,10 @@ namespace APP.Bus.Repository.BLLs
                 }
                 else
                 {
-                    List<DTOGuessCartProduct> reqListProduct = JsonConvert.DeserializeObject<List<DTOGuessCartProduct>>(request.ListProduct.ToString());
+                    List<DTOProductInCart> reqListProduct = JsonConvert.DeserializeObject<List<DTOProductInCart>>(request.ListProduct.ToString());
                     foreach(var product in reqListProduct)
                     {
-                        var stock = DB.ProductSizes.Include(ps => ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
+                        var stock = DB.ProductSizes.Include(ps => ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == product.SizeSelected.Code && p.CodeProduct == product.Product.Code);
                         if(stock.Stock < product.Quantity)
                         {
                             var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
@@ -77,15 +77,15 @@ namespace APP.Bus.Repository.BLLs
                         DB.SaveChanges();
                         foreach (var product in reqListProduct)
                         {
-                            var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Code);
-                            var stockOfProduct = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
+                            var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Product.Code);
+                            var stockOfProduct = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SizeSelected.Code && p.CodeProduct == product.Product.Code);
                             if (productInDB != null)
                             {
                                 BillInfo newBI = new BillInfo
                                 {
                                     CodeBill = newBill.Code,
-                                    CodeProduct = product.Code,
-                                    SelectedSize = product.SelectedSize,
+                                    CodeProduct = product.Product.Code,
+                                    SelectedSize = product.SizeSelected.Size,
                                     Quantity = product.Quantity,
                                     Price = productInDB.Price,
                                     TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity),

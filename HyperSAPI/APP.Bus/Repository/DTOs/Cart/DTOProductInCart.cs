@@ -12,9 +12,7 @@ namespace APP.Bus.Repository.DTOs.Cart
     {
         public DTOProduct Product { get; set; }
 
-        public int? Quantity { get; set; }
-
-        public int CodeSizeSelected { get; set; }
+        public int Quantity { get; set; }
 
         public DTOProductSize SizeSelected { get; set; }
 
