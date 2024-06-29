@@ -13,7 +13,7 @@ namespace APP.Bus.Repository.DTOs.Cart
         public string PhoneNumber { get; set; }
         public string ShippingAddress { get; set; }
         public int PaymentMethod { get; set; }
-        public List<dynamic> ListProduct {  get; set; } = new List<dynamic>();
+        public dynamic ListProduct {  get; set; }
         public int TotalBill { get; set; }
         public bool IsGuess { get; set; } = true;
     }

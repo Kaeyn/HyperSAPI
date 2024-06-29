@@ -50,7 +50,7 @@ namespace APP.Bus.Repository.BLLs
                 }
                 else
                 {
-                    List<DTOGuessCartProduct> reqListProduct = request.ListProduct;
+                    List<DTOGuessCartProduct> reqListProduct = JsonConvert.DeserializeObject<List<DTOGuessCartProduct>>(request.ListProduct.ToString());
                     foreach(var product in reqListProduct)
                     {
                         var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SelectedSize && p.CodeProduct == product.Code);
