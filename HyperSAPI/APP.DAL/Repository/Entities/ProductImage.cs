@@ -7,11 +7,11 @@ public partial class ProductImage
 {
     public int Code { get; set; }
 
-    public string IdImage { get; set; } = null!;
+    public string? IdImage { get; set; }
 
     public string Img { get; set; } = null!;
 
-    public int ProductCode { get; set; }
+    public int? ProductCode { get; set; }
 
     /// <summary>
     /// 0: FALSE
@@ -19,5 +19,5 @@ public partial class ProductImage
     /// </summary>
     public sbyte IsThumbnail { get; set; }
 
-    public virtual Product ProductCodeNavigation { get; set; } = null!;
+    public virtual Product? ProductCodeNavigation { get; set; }
 }

@@ -76,6 +76,10 @@ builder.Services.AddScoped<RoleManager<IdentityRole>>();
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });*/
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.ClaimsIdentity.UserIdClaimType = JwtBearerDefaults.AuthenticationScheme;
+});
 
 var app = builder.Build();
 

@@ -112,9 +112,11 @@ namespace APP.Bus.Repository.BLLs
                         {
                             var roles = await _userManager.GetRolesAsync(user);
                             var redirect = "";
+                            int objectRes = -1;
                             if (roles.Contains("Customer"))
                             {
                                 redirect = "jkwt";
+                                objectRes = DB.Customers.FirstOrDefault(c => c.CodeUser == userInDB.Code).Code;
                             }
                             else
                             {
@@ -140,7 +142,7 @@ namespace APP.Bus.Repository.BLLs
                             };
                           
 
-                            respond.ObjectReturn = new { ResultLogin = result, ResultToken = token, ResultRedirect = redirect };
+                            respond.ObjectReturn = new { ResultLogin = result, ResultToken = token, ResultRedirect = redirect, ResultCus = objectRes };
                         }
                         else respond.ObjectReturn = new { ResultLogin = result};
                     }

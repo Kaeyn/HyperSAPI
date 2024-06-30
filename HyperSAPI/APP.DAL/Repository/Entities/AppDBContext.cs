@@ -55,6 +55,7 @@ public partial class AppDBContext : DbContext
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -234,8 +235,6 @@ public partial class AppDBContext : DbContext
 
             entity.HasIndex(e => e.ProductCode, "FkProductImage_Product_ProductCode_idx");
 
-            entity.HasIndex(e => e.IdImage, "IdImage_UNIQUE").IsUnique();
-
             entity.Property(e => e.IdImage).HasMaxLength(10);
             entity.Property(e => e.Img)
                 .HasMaxLength(500)
@@ -244,7 +243,6 @@ public partial class AppDBContext : DbContext
 
             entity.HasOne(d => d.ProductCodeNavigation).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductCode)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FkProductImage_Product_ProductCode");
         });
 
