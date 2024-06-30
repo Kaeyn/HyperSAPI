@@ -375,7 +375,7 @@ namespace APP.Bus.Repository.BLLs
                             }
                         }
 
-                        existingProd.ProductImages.Clear();
+                        DB.ProductImages.RemoveRange(existingProd.ProductImages);
                         foreach(var image in reqProd.ListOfImage)
                         {
                             existingProd.ProductImages.Add(new ProductImage
@@ -386,7 +386,7 @@ namespace APP.Bus.Repository.BLLs
                             });
                         }
 
-                        existingProd.ProductSizes.Clear();
+                        DB.ProductSizes.RemoveRange(existingProd.ProductSizes);
                         foreach (var size in reqProd.ListOfSize)
                         {
                             existingProd.ProductSizes.Add(new ProductSize
@@ -397,6 +397,9 @@ namespace APP.Bus.Repository.BLLs
                                 Sold = size.Sold
                             });
                         }
+
+                        
+                        
                         DB.SaveChanges();
                     }
                     else
