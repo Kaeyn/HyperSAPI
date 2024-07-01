@@ -212,6 +212,7 @@ namespace APP.Bus.Repository.BLLs
                     customer.EmailConfirm = 1;
                 }
                 respond.ErrorString = "Thành công";
+                DB.SaveChanges();
                 return respond;
             }
             else
