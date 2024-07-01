@@ -102,7 +102,7 @@ namespace APP.Bus.Repository.BLLs
                     AuthDB.Database.ExecuteSqlRaw(sqlStatement);
                     DB.Database.ExecuteSqlRaw(sqlStatement);
                     // Send the confirmation email with a link including the token
-                    var confirmTokenStr = $"http://localhost:5035/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
+                    var confirmTokenStr = $"https://hypersapi.onrender.com/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
                     await _emailSender.SendEmailAsync(newUser.Email, "Confirm your email",
                     $"Please confirm your account by clicking this link: <button href='{confirmTokenStr}'>Confirm</button> <br/> Or this: <a href='{confirmTokenStr}'>Confirm</a>");
                 }
@@ -245,29 +245,29 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-/*        public async Task<DTOResponse> CheckUser(ClaimsPrincipal claims)
+        public async Task<DTOResponse> ForgotPassword(string phoneNumber)
         {
             DTOResponse respond = new DTOResponse();
             try
             {
-                var result = _signInManager.IsSignedIn(claims);
-                if (result)
+                IdentityUser user = await _userManager.FindByNameAsync(phoneNumber);
+                if(user != null)
                 {
-                    var user = await _signInManager.UserManager.GetUserAsync(claims);
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Contains("Customer"))
-                    {
-                        respond.ObjectReturn = new { Res = "jkwt" };
-                    }
-                    else
-                    {
-                        respond.ObjectReturn = new { Res = "uije" };
-                    }                                       
+                    var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(phoneNumber)}&token={HttpUtility.UrlEncode(resetToken)}";
+                    await _emailSender.SendEmailAsync(user.Email, "Reset your password",
+                    $"To reset your password please clicking this link: <button href='{resetLink}'>Confirm</button> <br/> Or this: <a href='{resetLink}'>Confirm</a>");
                 }
-                else
-                {
-                    respond.ErrorString = "UnSingedin";
-                }
+                /* string[] roleNames = { "Admin", "Customer", "Staff"};
+                 foreach (var roleName in roleNames)
+                 {
+                     var roleExist = await _roleManager.RoleExistsAsync(roleName);
+                     if (!roleExist)
+                     {
+                         await _roleManager.CreateAsync(new IdentityRole(roleName));
+                     }
+                 }*/
+                
             }
             catch (Exception ex)
             {
@@ -275,7 +275,7 @@ namespace APP.Bus.Repository.BLLs
                 respond.ErrorString = ex.Message;
             }
             return respond;
-        }*/
+        }
 
         private async Task<IdentityUser> FindUserAsync(string username)
         {
@@ -302,7 +302,7 @@ namespace APP.Bus.Repository.BLLs
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ImTestingSecretKeyToCheckIfItSecretOrNot"));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             var token = new JwtSecurityToken(
                 issuer: "https://hypersapi.onrender.com",
