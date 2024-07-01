@@ -63,10 +63,10 @@ namespace APP.API.Controllers
             var result = await _BLL.ConfirmEmailAsync(userId, token);
             if (result.ErrorString == "Thành công")
             {
-                Redirect("");
+                return Redirect("http://localhost:4200/HyperS/ecom/home");
             }
             return Ok(result);
             
-        }
+        }   
     }
 }
