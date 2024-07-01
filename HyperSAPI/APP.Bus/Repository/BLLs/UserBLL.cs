@@ -98,7 +98,7 @@ namespace APP.Bus.Repository.BLLs
                     CREATE EVENT {eventName}
                     ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 10 MINUTE
                     DO
-                    CALL DeleteUser('{newUser.UserName}');";
+                    CALL DeleteUser('{newUser.Id}');";
                     AuthDB.Database.ExecuteSqlRaw(sqlStatement);
                     DB.Database.ExecuteSqlRaw(sqlStatement);
                     // Send the confirmation email with a link including the token
