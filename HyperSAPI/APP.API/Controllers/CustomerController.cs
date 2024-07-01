@@ -45,5 +45,11 @@ namespace APP.API.Controllers
             var products = _BLL.UpdateCustomer(request);          
             return Ok(products);
         }
+
+        [HttpPost]
+        public ActionResult AddNewAddress([FromBody] dynamic request)
+        {
+            return Ok("");
+        }
     }
 }

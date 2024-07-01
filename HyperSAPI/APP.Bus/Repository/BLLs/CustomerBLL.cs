@@ -123,6 +123,36 @@ namespace APP.Bus.Repository.BLLs
             }
             return respond;
         }
-      
+
+        public DTOResponse AddNewAddress(dynamic requestParam)
+        {
+            DTOResponse respond = new DTOResponse();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOUpdateCustomerRequest>(requestParam.ToString());
+                int codeAccount = param.CodeAccount;
+                int status = param.CodeStatus;
+                var result = DB.Users.FirstOrDefault(c => c.Code == codeAccount);
+                if (result != null)
+                {
+                    result.Status = status;
+                }
+                else
+                {
+                    respond.StatusCode = 500;
+                    respond.ErrorString = "User not exists !";
+                }
+
+                DB.SaveChanges();
+                respond.ObjectReturn = new { };
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+
     }
 }

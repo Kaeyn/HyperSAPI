@@ -23,6 +23,8 @@ public partial class User
     /// </summary>
     public string Permission { get; set; } = null!;
 
+    public int? EmailConfirm { get; set; }
+
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();

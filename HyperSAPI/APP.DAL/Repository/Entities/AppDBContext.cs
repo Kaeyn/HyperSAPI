@@ -55,7 +55,6 @@ public partial class AppDBContext : DbContext
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -356,6 +355,7 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.PhoneNumber, "PhoneNumber_UNIQUE").IsUnique();
 
             entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.EmailConfirm).HasDefaultValueSql("'0'");
             entity.Property(e => e.Permission)
                 .HasMaxLength(100)
                 .HasDefaultValueSql("'0'")

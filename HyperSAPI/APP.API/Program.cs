@@ -1,7 +1,9 @@
+using APP.Bus.Repository.Services;
 using APP.DAL.Repository.Auth;
 using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -55,14 +57,17 @@ builder.Services.AddAuthorization();
 /*builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AuthDBContext>();*/
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     
     options.Lockout.AllowedForNewUsers = true;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
+
 }).AddEntityFrameworkStores<AuthDBContext>().AddDefaultTokenProviders();
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
 

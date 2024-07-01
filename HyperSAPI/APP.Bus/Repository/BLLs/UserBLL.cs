@@ -2,38 +2,48 @@
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Login;
 using APP.Bus.Repository.DTOs.User;
+using APP.DAL.Repository.Auth;
 using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Dynamic.Core.Tokenizer;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace APP.Bus.Repository.BLLs
 {
     public class UserBLL
     {
         private AppDBContext DB;
+        private AuthDBContext AuthDB;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private IEmailSender _emailSender;
         private string secretKey = "";
 
-        public UserBLL(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserBLL(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _roleManager = roleManager;
             DB = new AppDBContext();
+            AuthDB = new AuthDBContext();
             secretKey = Environment.GetEnvironmentVariable("MYAPI_SECRET_KEY");
+            _emailSender = emailSender;
         }
 
         public async Task<DTOResponse> RegisterUserAsync(dynamic requestParam)
@@ -44,6 +54,7 @@ namespace APP.Bus.Repository.BLLs
             try
             {
                 var param = JsonConvert.DeserializeObject<DTORegister>(requestParam.ToString());
+
                 IdentityUser newUser = new IdentityUser
                 {
                     UserName = param.PhoneNumber,
@@ -51,7 +62,6 @@ namespace APP.Bus.Repository.BLLs
                     PhoneNumber = param.PhoneNumber,
                 };
                 result = await _userManager.CreateAsync(newUser, param.Password);
-
                 
 
                 if (!result.Succeeded)
@@ -68,6 +78,7 @@ namespace APP.Bus.Repository.BLLs
                         Email = newUser.Email,
                         Status = 0,
                         Permission = _userManager.GetRolesAsync(newUser).Result.First()
+                        
                     };
 
                     DB.Users.Add(newDBUser);
@@ -78,9 +89,22 @@ namespace APP.Bus.Repository.BLLs
                         CodeUser = newDBUser.Code,
                         Name = param.Name
                     };
-                    
                     DB.Customers.Add(newDBCustomer);
                     DB.SaveChanges();
+
+                    var confirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                    string eventName = $"DeleteUnconfirmedUsers_{newUser.UserName}";
+                    string sqlStatement = $@"
+                    CREATE EVENT {eventName}
+                    ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 10 MINUTE
+                    DO
+                    CALL DeleteUser('{newUser.UserName}');";
+                    AuthDB.Database.ExecuteSqlRaw(sqlStatement);
+                    DB.Database.ExecuteSqlRaw(sqlStatement);
+                    // Send the confirmation email with a link including the token
+                    var confirmTokenStr = $"http://localhost:5035/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
+                    await _emailSender.SendEmailAsync(newUser.Email, "Confirm your email",
+                    $"Please confirm your account by clicking this link: <button href='{confirmTokenStr}'>Confirm</button> <br/> Or this: <a href='{confirmTokenStr}'>Confirm</a>");
                 }
 
                 respond.ObjectReturn = result;
@@ -110,9 +134,9 @@ namespace APP.Bus.Repository.BLLs
                         var result = await _signInManager.PasswordSignInAsync(user.UserName, param.Password, false, false);
                         if (result.Succeeded)
                         {
-                            var roles = await _userManager.GetRolesAsync(user);
                             var redirect = "";
                             int objectRes = -1;
+                            var roles = await _userManager.GetRolesAsync(user);
                             if (roles.Contains("Customer"))
                             {
                                 redirect = "jkwt";
@@ -144,7 +168,7 @@ namespace APP.Bus.Repository.BLLs
 
                             respond.ObjectReturn = new { ResultLogin = result, ResultToken = token, ResultRedirect = redirect, ResultCus = objectRes };
                         }
-                        else respond.ObjectReturn = new { ResultLogin = result};
+                        else respond.ObjectReturn = new { ResultLogin = result, ResultToken = string.Empty, ResultRedirect = string.Empty, ResultCus = -1 };
                     }
                     else
                     {
@@ -166,6 +190,35 @@ namespace APP.Bus.Repository.BLLs
             
 
             return respond;
+        }
+
+        public async Task<DTOResponse> ConfirmEmailAsync(string userId, string token)
+        {
+            var respond = new DTOResponse();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                respond.ErrorString = "Tài khoản không tồn tại trong hệ thống";
+                return respond;
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                // Email confirmed successfully
+                var customer = DB.Users.FirstOrDefault(u => u.IdUser == user.Id);
+                if (customer != null)
+                {
+                    customer.EmailConfirm = 1;
+                }
+                respond.ErrorString = "Thành công";
+                return respond;
+            }
+            else
+            {
+                respond.ErrorString = "Xác nhận thất bại";
+                return respond;
+            }
         }
 
         public async Task<DTOResponse> LogOut()
@@ -249,7 +302,7 @@ namespace APP.Bus.Repository.BLLs
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ImTestingSecretKeyToCheckIfItSecretOrNot"));
 
             var token = new JwtSecurityToken(
                 issuer: "https://hypersapi.onrender.com",
@@ -261,5 +314,7 @@ namespace APP.Bus.Repository.BLLs
 
             return token;
         }
+
+
     }
 }

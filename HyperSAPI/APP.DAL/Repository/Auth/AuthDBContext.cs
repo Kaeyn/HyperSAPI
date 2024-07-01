@@ -10,6 +10,7 @@ namespace APP.DAL.Repository.Auth
 {
     public class AuthDBContext : IdentityDbContext
     {
+        public AuthDBContext() { }
         public AuthDBContext(DbContextOptions<AuthDBContext> options) : base() { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

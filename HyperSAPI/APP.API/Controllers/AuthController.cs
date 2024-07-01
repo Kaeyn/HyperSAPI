@@ -4,6 +4,7 @@ using APP.Bus.Repository.DTOs.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -11,9 +12,9 @@ namespace APP.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController(SignInManager<IdentityUser> sm, UserManager<IdentityUser> um, RoleManager<IdentityRole> rm) : ControllerBase
+    public class AuthController(SignInManager<IdentityUser> sm, UserManager<IdentityUser> um, RoleManager<IdentityRole> rm, IEmailSender emailSender) : ControllerBase
     {
-        private UserBLL _BLL = new UserBLL(sm, um, rm);
+        private UserBLL _BLL = new UserBLL(sm, um, rm, emailSender);
 
         [HttpPost]
         public async Task<ActionResult> ResgisterUser(dynamic request)
@@ -50,5 +51,22 @@ namespace APP.API.Controllers
             return Ok("ADMIN");
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return BadRequest("User ID and token must be provided");
+            }
+
+            var result = await _BLL.ConfirmEmailAsync(userId, token);
+            if (result.ErrorString == "Thành công")
+            {
+                Redirect("");
+            }
+            return Ok(result);
+            
+        }
     }
 }
