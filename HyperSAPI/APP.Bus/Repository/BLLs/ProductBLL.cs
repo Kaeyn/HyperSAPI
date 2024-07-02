@@ -331,7 +331,7 @@ namespace APP.Bus.Repository.BLLs
                         };
 
                         await DB.ProductImages.AddAsync(newImg);
-                        
+                        DB.SaveChanges();
                     }
                     var reqListOfSize = reqProd.ListOfSize;
 
@@ -346,6 +346,7 @@ namespace APP.Bus.Repository.BLLs
                         };
 
                         await DB.ProductSizes.AddAsync(newSize);
+                        DB.SaveChanges();
                     }
 
                     DB.SaveChanges();
