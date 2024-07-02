@@ -14,19 +14,17 @@ namespace APP.Bus.Repository.Services
     public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
-
+        private MailjetClient _mailjetClient;
         public EmailSender(IConfiguration configuration)
         {
-
+            var mailjetApiKey = "208dd27fca54f61709d9472bcac83c4c";
+            var mailjetApiSecret = "1341aee10ba5ae102a7fbfa3dba9caf9";
+            _mailjetClient = new MailjetClient(mailjetApiKey, mailjetApiSecret);
             _configuration = configuration;
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
-        {
-            var mailjetApiKey = "208dd27fca54f61709d9472bcac83c4c";
-            var mailjetApiSecret = "1341aee10ba5ae102a7fbfa3dba9caf9";
-            var mailjetClient = new MailjetClient(mailjetApiKey, mailjetApiSecret);
-
+        {           
             var request = new TransactionalEmailBuilder()
                 .WithFrom(new SendContact("cakhosolo2003@gmail.com", "HyperS"))
                 .WithTo(new SendContact(email))
@@ -34,9 +32,7 @@ namespace APP.Bus.Repository.Services
                 .WithHtmlPart(htmlMessage)
                 .Build();
 
-            var response = await mailjetClient.SendTransactionalEmailAsync(request);
-
-            Console.WriteLine(response);
+            var response = await _mailjetClient.SendTransactionalEmailAsync(request);
         }
     }
 }

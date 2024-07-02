@@ -167,6 +167,7 @@ namespace APP.Bus.Repository.BLLs
                           
 
                             respond.ObjectReturn = new { ResultLogin = result, ResultToken = token, ResultRedirect = redirect, ResultCus = objectRes };
+
                         }
                         else respond.ObjectReturn = new { ResultLogin = result, ResultToken = string.Empty, ResultRedirect = string.Empty, ResultCus = -1 };
                     }

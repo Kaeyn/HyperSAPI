@@ -55,7 +55,8 @@ namespace APP.Bus.Repository.BLLs
                         Voucher = "",
                         Discount = 0,
                         TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
-                        Status = b.Status
+                        Status = b.Status,
+                        Note = b.Note
                     }).ToList();
 
                 respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult(dataSourceRequest);
@@ -101,7 +102,9 @@ namespace APP.Bus.Repository.BLLs
                         Voucher = "",
                         Discount = 0,
                         TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
-                        Status = b.Status
+                        Status = b.Status,
+                        Note = b.Note
+
                     }).ToList();
 
                 respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult(dataSourceRequest);
@@ -148,7 +151,9 @@ namespace APP.Bus.Repository.BLLs
                         Voucher = "",
                         Discount = 0,
                         TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
-                        Status = b.Status
+                        Status = b.Status,
+                        Note = b.Note
+
                     }).ToList();
 
                 respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult((DataSourceRequest)param);
@@ -161,7 +166,6 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
-
         public DTOResponse UpdateBill(dynamic requestParam)
         {
             var respond = new DTOResponse();
