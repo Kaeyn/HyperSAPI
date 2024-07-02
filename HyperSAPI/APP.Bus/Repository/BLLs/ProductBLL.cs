@@ -367,12 +367,14 @@ namespace APP.Bus.Repository.BLLs
                             var prodProperty = typeof(DTOProduct).GetProperty(property);
                             if (prodProperty != null)
                             {
-                                var newValue = prodProperty.GetValue(reqProd);
+                                var newValue = prodProperty.GetValue(reqProd);  
                                 var existingProdProperty = typeof(Product).GetProperty(property);
                                 if (existingProdProperty != null)
                                 {
                                     existingProdProperty.SetValue(existingProd, Convert.ChangeType(newValue, existingProdProperty.PropertyType), null);
-                                }                             
+                                    DB.SaveChanges();
+
+                                }
                             }
                         }
 
