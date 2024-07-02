@@ -200,11 +200,11 @@ public partial class AppDBContext : DbContext
 
             entity.ToTable("Product");
 
-            entity.HasIndex(e => e.ProductType, "FkProduct_ProductType_CodeProductType_idx");
+            entity.HasIndex(e => e.CodeBrand, "FkProduct_Brand_CodeBrand_idx");
+
+            entity.HasIndex(e => e.CodeProductType, "FkProduct_ProductType_Code_idx");
 
             entity.HasIndex(e => e.IdProduct, "IdProduct_UNIQUE").IsUnique();
-
-            entity.HasIndex(e => e.Brand, "brand_idx");
 
             entity.Property(e => e.Color).HasMaxLength(45);
             entity.Property(e => e.Description).HasMaxLength(1000);
@@ -213,17 +213,17 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.IsNew)
                 .HasDefaultValueSql("'1'")
                 .HasComment("0: Normal\n1: New");
-            entity.Property(e => e.ProductName).HasMaxLength(45);
+            entity.Property(e => e.Name).HasMaxLength(45);
 
-            entity.HasOne(d => d.BrandNavigation).WithMany(p => p.Products)
-                .HasForeignKey(d => d.Brand)
+            entity.HasOne(d => d.CodeBrandNavigation).WithMany(p => p.Products)
+                .HasForeignKey(d => d.CodeBrand)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FkProduct_Brand_CodeBrand");
 
-            entity.HasOne(d => d.ProductTypeNavigation).WithMany(p => p.Products)
-                .HasForeignKey(d => d.ProductType)
+            entity.HasOne(d => d.CodeProductTypeNavigation).WithMany(p => p.Products)
+                .HasForeignKey(d => d.CodeProductType)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FkProduct_ProductType_CodeProductType");
+                .HasConstraintName("FkProduct_ProductType_Code");
         });
 
         modelBuilder.Entity<ProductImage>(entity =>
@@ -308,6 +308,8 @@ public partial class AppDBContext : DbContext
             entity.ToTable("Size");
 
             entity.HasIndex(e => e.Code, "Code_UNIQUE").IsUnique();
+
+            entity.HasIndex(e => e.Size1, "Size_UNIQUE").IsUnique();
 
             entity.Property(e => e.IdSize).HasMaxLength(10);
             entity.Property(e => e.Size1).HasColumnName("Size");
