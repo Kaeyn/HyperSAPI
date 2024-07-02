@@ -371,13 +371,13 @@ namespace APP.Bus.Repository.BLLs
                                 var existingProdProperty = typeof(Product).GetProperty(property);
                                 if (existingProdProperty != null)
                                 {
-                                    existingProdProperty.SetValue(existingProd, Convert.ChangeType(newValue, existingProdProperty.PropertyType), null);
+                                    existingProdProperty.SetValue(existingProd, newValue, null);
                                     DB.SaveChanges();
 
                                 }
                             }
                         }
-
+                         
                         DB.ProductImages.RemoveRange(existingProd.ProductImages);
                         foreach(var image in reqProd.ListOfImage)
                         {
