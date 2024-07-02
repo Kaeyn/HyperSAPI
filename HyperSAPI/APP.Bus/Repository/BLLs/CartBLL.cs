@@ -56,7 +56,7 @@ namespace APP.Bus.Repository.BLLs
                         var stock = DB.ProductSizes.Include(ps => ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == product.SizeSelected.Code && p.CodeProduct == product.Product.Code);
                         if(stock.Stock < product.Quantity)
                         {
-                            var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                            var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
                             errorList.Add(errorString);
                         }
                     }
@@ -172,8 +172,8 @@ namespace APP.Bus.Repository.BLLs
 
                     var productCodes = productCodeQuantities.Select(pc => pc.Code).ToList();
 
-                    productsQuery = DB.Products.Include(p => p.ProductTypeNavigation)
-                                                .Include(p => p.BrandNavigation)
+                    productsQuery = DB.Products.Include(p => p.CodeProductTypeNavigation)
+                                                .Include(p => p.CodeBrandNavigation)
                                                 .Where(p => productCodes.Contains(p.Code))
                                                 .ToList();
 
@@ -223,12 +223,12 @@ namespace APP.Bus.Repository.BLLs
 
         private DTOProduct MapToDTOProduct(Product product)
         {
-            DTOProduct result = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation).Where(p => p.Code == product.Code)
+            DTOProduct result = DB.Products.AsQueryable().Include(p => p.CodeProductTypeNavigation).Include(p => p.CodeBrandNavigation).Where(p => p.Code == product.Code)
             .Select(p => new DTOProduct
             {
                 Code = p.Code,
                 IdProduct = p.IdProduct,
-                Name = p.ProductName,
+                Name = p.Name,
                 Price = p.Price,
                 Description = p.Description,
                 ListOfSize = DB.ProductSizes.AsQueryable().Where(i => i.CodeProduct == p.Code).Select(s => new DTOProductSize
@@ -244,10 +244,10 @@ namespace APP.Bus.Repository.BLLs
                 }).ToList(),
                 Discount = p.Discount,
                 PriceAfterDiscount = CalculatePriceAfterDiscount(p.Price, p.Discount),
-                CodeProductType = p.ProductType,
-                ProductType = p.ProductTypeNavigation.Name,
-                CodeBrand = p.Brand,
-                BrandName = p.BrandNavigation.BrandName ?? "",
+                CodeProductType = p.CodeProductType,
+                ProductType = p.CodeProductTypeNavigation.Name,
+                CodeBrand = p.CodeBrand,
+                BrandName = p.CodeBrandNavigation.BrandName ?? "",
                 Gender = p.Gender,
                 Color = p.Color,
                 Stock = p.ProductSizes.Sum(p => p.Stock),

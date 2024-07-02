@@ -9,11 +9,11 @@ public partial class Product
 
     public string IdProduct { get; set; } = null!;
 
-    public string ProductName { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-    public int ProductType { get; set; }
+    public int CodeProductType { get; set; }
 
-    public int Brand { get; set; }
+    public int CodeBrand { get; set; }
 
     public int Price { get; set; }
 
@@ -37,13 +37,13 @@ public partial class Product
 
     public virtual ICollection<BillInfo> BillInfos { get; set; } = new List<BillInfo>();
 
-    public virtual Brand BrandNavigation { get; set; } = null!;
-
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
+    public virtual Brand CodeBrandNavigation { get; set; } = null!;
+
+    public virtual ProductType CodeProductTypeNavigation { get; set; } = null!;
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 
     public virtual ICollection<ProductSize> ProductSizes { get; set; } = new List<ProductSize>();
-
-    public virtual ProductType ProductTypeNavigation { get; set; } = null!;
 }

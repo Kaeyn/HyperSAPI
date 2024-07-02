@@ -35,13 +35,13 @@ namespace APP.Bus.Repository.BLLs
             {
 
                 var products = DB.Products.AsQueryable()
-                    .Include(p => p.ProductTypeNavigation)
-                    .Include(p => p.BrandNavigation).Where(p => p.Code == dtoRequest.Code)
+                    .Include(p => p.CodeProductTypeNavigation)
+                    .Include(p => p.CodeBrandNavigation).Where(p => p.Code == dtoRequest.Code)
                     .Select(p => new
                     {
                         Code = p.Code,
                         IdProduct = p.IdProduct,
-                        Name = p.ProductName,
+                        Name = p.Name,
                         Price = p.Price,
                         Description = p.Description,
                         ListOfSize = DB.ProductSizes.AsQueryable().Where(i => i.CodeProduct == p.Code).Select(s => new DTOProductSize
@@ -59,10 +59,10 @@ namespace APP.Bus.Repository.BLLs
                         }).ToList(),
                         Discount = p.Discount,
                         PriceAfterDiscount = CalculatePriceAfterDiscount(p.Price, p.Discount),
-                        CodeProductType = p.ProductType,
-                        ProductType = p.ProductTypeNavigation.Name,
-                        CodeBrand = p.Brand,
-                        BrandName = p.BrandNavigation.BrandName ?? "",
+                        CodeProductType = p.CodeProductType,
+                        ProductType = p.CodeProductTypeNavigation.Name,
+                        CodeBrand = p.CodeBrand,
+                        BrandName = p.CodeBrandNavigation.BrandName ?? "",
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
@@ -90,12 +90,12 @@ namespace APP.Bus.Repository.BLLs
                 var param = JsonConvert.DeserializeObject<DataSourceRequest>(options.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
                 
-                var products = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation)
+                var products = DB.Products.AsQueryable().Include(p => p.CodeProductTypeNavigation).Include(p => p.CodeBrandNavigation)
                     .Select(p => new 
                     {
                         Code = p.Code,
                         IdProduct = p.IdProduct,
-                        Name = p.ProductName,
+                        Name = p.Name,
                         Price = p.Price,
                         Description = p.Description,
                         ListOfSize = DB.ProductSizes.AsQueryable().Where(i => i.CodeProduct == p.Code).Select(s => new DTOProductSize
@@ -114,10 +114,10 @@ namespace APP.Bus.Repository.BLLs
                         }).ToList(),
                         Discount = p.Discount,
                         PriceAfterDiscount = CalculatePriceAfterDiscount(p.Price, p.Discount),
-                        CodeProductType = p.ProductType,
-                        ProductType = p.ProductTypeNavigation.Name,
-                        CodeBrand = p.Brand,
-                        BrandName = p.BrandNavigation.BrandName ?? "",
+                        CodeProductType = p.CodeProductType,
+                        ProductType = p.CodeProductTypeNavigation.Name,
+                        CodeBrand = p.CodeBrand,
+                        BrandName = p.CodeBrandNavigation.BrandName ?? "",
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
@@ -145,12 +145,12 @@ namespace APP.Bus.Repository.BLLs
                 var param = JsonConvert.DeserializeObject<DataSourceRequest>(options.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
 
-                var products = DB.Products.AsQueryable().Include(p => p.ProductTypeNavigation).Include(p => p.BrandNavigation).Where(p => p.Discount.HasValue)
+                var products = DB.Products.AsQueryable().Include(p => p.CodeProductTypeNavigation).Include(p => p.CodeBrandNavigation).Where(p => p.Discount.HasValue)
                     .Select(p => new 
                     {
                         Code = p.Code,
                         IdProduct = p.IdProduct,
-                        Name = p.ProductName,
+                        Name = p.Name,
                         Price = p.Price,
                         Description = p.Description,
                         ListOfSize = DB.ProductSizes.AsQueryable().Where(i => i.CodeProduct == p.Code).Select(s => new DTOProductSize
@@ -168,10 +168,10 @@ namespace APP.Bus.Repository.BLLs
                         }).ToList(),
                         Discount = p.Discount,
                         PriceAfterDiscount = CalculatePriceAfterDiscount(p.Price, p.Discount),
-                        CodeProductType = p.ProductType,
-                        ProductType = p.ProductTypeNavigation.Name,
-                        CodeBrand = p.Brand,
-                        BrandName = p.BrandNavigation.BrandName ?? "",
+                        CodeProductType = p.CodeProductType,
+                        ProductType = p.CodeProductTypeNavigation.Name,
+                        CodeBrand = p.CodeBrand,
+                        BrandName = p.CodeBrandNavigation.BrandName ?? "",
                         Gender = p.Gender,
                         Color = p.Color,
                         Stock = p.ProductSizes.Sum(p => p.Stock),
@@ -242,7 +242,7 @@ namespace APP.Bus.Repository.BLLs
                                 }
                                 else
                                 {
-                                    var errorString = "Sản phẩm: " + stock.CodeProductNavigation.ProductName + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                                    var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
                                     respond.ErrorString = errorString;
                                 }
                             }
@@ -302,9 +302,9 @@ namespace APP.Bus.Repository.BLLs
                     var newProd = new Product
                     {
                         IdProduct = reqProd.IdProduct,
-                        ProductName = reqProd.Name,
-                        ProductType = reqProd.CodeProductType,
-                        Brand = reqProd.CodeBrand,
+                        Name = reqProd.Name,
+                        CodeProductType = reqProd.CodeProductType,
+                        CodeBrand = reqProd.CodeBrand,
                         Price = reqProd.Price,
                         Description = reqProd.Description,
                         Color = reqProd.Color,
@@ -355,8 +355,8 @@ namespace APP.Bus.Repository.BLLs
                 }
                 else
                 {
-                    var existingProd = DB.Products.Include(p => p.BrandNavigation)
-                                                  .Include(p => p.ProductTypeNavigation)
+                    var existingProd = DB.Products.Include(p => p.CodeBrandNavigation)
+                                                  .Include(p => p.CodeProductTypeNavigation)
                                                   .Include(p => p.ProductSizes)
                                                   .Include(p => p.ProductImages)
                                                   .FirstOrDefault(p => p.Code == reqProd.Code);

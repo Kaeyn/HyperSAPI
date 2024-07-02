@@ -44,7 +44,7 @@ namespace APP.Bus.Repository.BLLs
                         {
                             Code = bi.Code,
                             IDProduct = bi.CodeProductNavigation.IdProduct,
-                            Name = bi.CodeProductNavigation.ProductName,
+                            Name = bi.CodeProductNavigation.Name,
                             ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                             Size = bi.SelectedSize,
                             Price = bi.Price,
@@ -90,7 +90,7 @@ namespace APP.Bus.Repository.BLLs
                         {
                             Code = bi.Code,
                             IDProduct = bi.CodeProductNavigation.IdProduct,
-                            Name = bi.CodeProductNavigation.ProductName,
+                            Name = bi.CodeProductNavigation.Name,
                             ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                             Size = bi.SelectedSize,
                             Price = bi.Price,
@@ -139,7 +139,7 @@ namespace APP.Bus.Repository.BLLs
                         {
                             Code = bi.Code,
                             IDProduct = bi.CodeProductNavigation.IdProduct,
-                            Name = bi.CodeProductNavigation.ProductName,
+                            Name = bi.CodeProductNavigation.Name,
                             ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                             Size = bi.SelectedSize,
                             Price = bi.Price,
