@@ -63,7 +63,7 @@ namespace APP.Bus.Repository.BLLs
                         CreateAt = DateTime.Now,
                         PaymentMethod = reqPaymentMethod,
                         TotalBill = reqTotalBill,
-                        Status = 0
+                        Status = 2
                     };
 
                     DB.Bills.Add(newBill);
@@ -82,7 +82,7 @@ namespace APP.Bus.Repository.BLLs
                                 Quantity = product.Quantity,
                                 Price = productInDB.Price,
                                 TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity),
-                                Status = 0
+                                Status = 2
                             };
                             DB.BillInfos.Add(newBI);
                             stockOfProduct.Stock -= product.Quantity;
