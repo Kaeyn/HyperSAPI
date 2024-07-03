@@ -31,7 +31,6 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
-
                 var result = DB.Customers.AsQueryable()
                            .Include(c => c.CodeUserNavigation).Where(c => c.CodeUserNavigation.PhoneNumber == reqPhoneNumber)
                            .Select(c => new DTOCustomer

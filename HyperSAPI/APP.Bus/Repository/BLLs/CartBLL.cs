@@ -87,7 +87,7 @@ namespace APP.Bus.Repository.BLLs
                             DB.BillInfos.Add(newBI);
                             stockOfProduct.Stock -= product.Quantity;
                             stockOfProduct.Sold += product.Quantity;
-                            if (reqIsGuess)
+                            if (!reqIsGuess)
                             {
                                 var cartItem = DB.Carts.Include(c=> c.CodeCustomerNavigation).ThenInclude(c => c.CodeUserNavigation).FirstOrDefault(c =>
                                 c.CodeCustomerNavigation.CodeUserNavigation.PhoneNumber == reqPhoneNumber
