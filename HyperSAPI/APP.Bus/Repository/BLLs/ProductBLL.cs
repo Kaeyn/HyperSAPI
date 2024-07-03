@@ -221,64 +221,72 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
+                var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
                 if (request.CodeCustomer == -1)
                 {
-
-                }
-                var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
-                var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
-
-                if (request.Type.Equals("Add"))
-                {
-                    if (existedCartItem != null)
+                    if(stock.Stock < request.Quantity)
                     {
-                        if (request.Quantity == 1 && request.SelectedSize == existedCartItem?.SelectedSize)
+                        var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                        respond.ErrorString = errorString;
+                    }
+                }
+                else
+                {
+                    var existedCartItem = DB.Carts.FirstOrDefault(ci => ci.CodeCustomer == request.CodeCustomer && ci.CodeProduct == request.CodeProduct && request.SelectedSize == ci.SelectedSize);
+
+                    if (request.Type.Equals("Add"))
+                    {
+                        if (existedCartItem != null)
                         {
-                            if (existedCartItem.Quantity < 10)
+                            if (request.Quantity == 1 && request.SelectedSize == existedCartItem?.SelectedSize)
                             {
-                                if(stock.Stock < existedCartItem.Quantity)
+                                if (existedCartItem.Quantity < 10)
                                 {
-                                    existedCartItem.Quantity += 1;
-                                }
-                                else
-                                {
-                                    var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
-                                    respond.ErrorString = errorString;
+                                    if (stock.Stock > existedCartItem.Quantity)
+                                    {
+                                        existedCartItem.Quantity += 1;
+                                    }
+                                    else
+                                    {
+                                        var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
+                                        respond.ErrorString = errorString;
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        var newCartItem = new Cart
+                        else
                         {
-                            CodeProduct = request.CodeProduct,
-                            CodeCustomer = request.CodeCustomer,
-                            SelectedSize = request.SelectedSize,
-                            Quantity = request.Quantity
-                        };
-                        DB.Carts.Add(newCartItem);
-                    }
+                            var newCartItem = new Cart
+                            {
+                                CodeProduct = request.CodeProduct,
+                                CodeCustomer = request.CodeCustomer,
+                                SelectedSize = request.SelectedSize,
+                                Quantity = request.Quantity
+                            };
+                            DB.Carts.Add(newCartItem);
+                        }
 
-                }
-                else if (request.Type.Equals("Update"))
-                {
+                    }
+                    else if (request.Type.Equals("Update"))
+                    {
 
-                    if (existedCartItem != null)
-                    {
-                        Console.WriteLine("Update");
-                        existedCartItem.Quantity = request.Quantity;
+                        if (existedCartItem != null)
+                        {
+                            Console.WriteLine("Update");
+                            existedCartItem.Quantity = request.Quantity;
+                        }
                     }
-                }
-                else if (request.Type.Equals("Delete"))
-                {
-                    if (existedCartItem != null)
+                    else if (request.Type.Equals("Delete"))
                     {
-                        DB.Carts.Remove(existedCartItem);
+                        if (existedCartItem != null)
+                        {
+                            DB.Carts.Remove(existedCartItem);
+                        }
                     }
+                    DB.SaveChanges();
+                    respond.ObjectReturn = new { };
                 }
-                DB.SaveChanges();
-                respond.ObjectReturn = new { };
+                
             }
             catch (Exception ex)
             {
@@ -293,125 +301,132 @@ namespace APP.Bus.Repository.BLLs
         {
             DTOResponse respond = new DTOResponse();
             try
-            {
+            {   
                 var param = JsonConvert.DeserializeObject<DTOUpdateProductRequest>(requestParam.ToString());
                 DTOProduct reqProd = param.Product;
                 var changedProperties = param.Properties;
-                if (reqProd.Code == 0)
+                var existedCheck = DB.Products.Any(p=> p.IdProduct == reqProd.IdProduct);
+                if (existedCheck)
                 {
-                    var newProd = new Product
-                    {
-                        IdProduct = reqProd.IdProduct,
-                        Name = reqProd.Name,
-                        CodeProductType = reqProd.CodeProductType,
-                        CodeBrand = reqProd.CodeBrand,
-                        Price = reqProd.Price,
-                        Description = reqProd.Description,
-                        Color = reqProd.Color,
-                        Gender = reqProd.Gender,
-                        Discount = reqProd.Discount,
-                        DiscountDescription = reqProd.DiscountDescription,
-                        IsNew = reqProd.Status,
-                        Status = reqProd.Status
-                    };
-
-                    await DB.Products.AddAsync(newProd);
-                    DB.SaveChanges();
-
-                    var reqListOfImage = reqProd.ListOfImage;
-
-                    foreach ( var img in reqListOfImage)
-                    {
-                        var newImg = new ProductImage
-                        {
-                            IdImage = img.IdImage,
-                            Img = img.ImgUrl,
-                            ProductCode = newProd.Code,
-                            IsThumbnail =img.IsThumbnail == true ? (sbyte) 1 : (sbyte) 0,
-                        };
-
-                        await DB.ProductImages.AddAsync(newImg);
-                        DB.SaveChanges();
-                    }
-                    var reqListOfSize = reqProd.ListOfSize;
-
-                    foreach (var size in reqListOfSize)
-                    {
-                        var newSize = new ProductSize
-                        {
-                            CodeProduct = newProd.Code,
-                            CodeSize = size.Code,
-                            Stock = size.Stock,
-                            Sold = size.Sold
-                        };
-
-                        await DB.ProductSizes.AddAsync(newSize);
-                        DB.SaveChanges();
-                    }
-
-                    DB.SaveChanges();
-
-                    respond.ObjectReturn = new {};
+                    respond.ErrorString = "Trùng mã sản phẩm trong hệ thống!";
                 }
                 else
                 {
-                    var existingProd = DB.Products.Include(p => p.CodeBrandNavigation)
-                                                  .Include(p => p.CodeProductTypeNavigation)
-                                                  .Include(p => p.ProductSizes)
-                                                  .Include(p => p.ProductImages)
-                                                  .FirstOrDefault(p => p.Code == reqProd.Code);
-                    if (existingProd != null)
+                    if (reqProd.Code == 0)
                     {
-                        foreach (var property in changedProperties)
+                        var newProd = new Product
                         {
-                            var prodProperty = typeof(DTOProduct).GetProperty(property);
-                            if (prodProperty != null)
-                            {
-                                var newValue = prodProperty.GetValue(reqProd);  
-                                var existingProdProperty = typeof(Product).GetProperty(property);
-                                if (existingProdProperty != null)
-                                {
-                                    existingProdProperty.SetValue(existingProd, newValue, null);
-                                    DB.SaveChanges();
+                            IdProduct = reqProd.IdProduct,
+                            Name = reqProd.Name,
+                            CodeProductType = reqProd.CodeProductType,
+                            CodeBrand = reqProd.CodeBrand,
+                            Price = reqProd.Price,
+                            Description = reqProd.Description,
+                            Color = reqProd.Color,
+                            Gender = reqProd.Gender,
+                            Discount = reqProd.Discount,
+                            DiscountDescription = reqProd.DiscountDescription,
+                            IsNew = reqProd.Status,
+                            Status = reqProd.Status
+                        };
 
-                                }
-                            }
-                        }
-                         
-                        DB.ProductImages.RemoveRange(existingProd.ProductImages);
-                        foreach(var image in reqProd.ListOfImage)
-                        {
-                            existingProd.ProductImages.Add(new ProductImage
-                            {
-                                Img = image.ImgUrl,
-                                ProductCode = existingProd.Code,
-                                IsThumbnail = image.IsThumbnail ? (sbyte)1 : (sbyte)0
-                            });
-                        }
+                        await DB.Products.AddAsync(newProd);
+                        DB.SaveChanges();
 
-                        DB.ProductSizes.RemoveRange(existingProd.ProductSizes);
-                        foreach (var size in reqProd.ListOfSize)
+                        var reqListOfImage = reqProd.ListOfImage;
+
+                        foreach (var img in reqListOfImage)
                         {
-                            existingProd.ProductSizes.Add(new ProductSize
+                            var newImg = new ProductImage
                             {
+                                IdImage = img.IdImage,
+                                Img = img.ImgUrl,
+                                ProductCode = newProd.Code,
+                                IsThumbnail = img.IsThumbnail == true ? (sbyte)1 : (sbyte)0,
+                            };
+
+                            await DB.ProductImages.AddAsync(newImg);
+                            DB.SaveChanges();
+                        }
+                        var reqListOfSize = reqProd.ListOfSize;
+
+                        foreach (var size in reqListOfSize)
+                        {
+                            var newSize = new ProductSize
+                            {
+                                CodeProduct = newProd.Code,
                                 CodeSize = size.Code,
-                                CodeProduct = existingProd.Code,
                                 Stock = size.Stock,
                                 Sold = size.Sold
-                            });
+                            };
+
+                            await DB.ProductSizes.AddAsync(newSize);
+                            DB.SaveChanges();
                         }
 
-                        
-                        
                         DB.SaveChanges();
+
+                        respond.ObjectReturn = new { };
                     }
                     else
                     {
-                        respond.StatusCode = 404;
-                        respond.ErrorString = "Product not found.";
+                        var existingProd = DB.Products.Include(p => p.CodeBrandNavigation)
+                                                      .Include(p => p.CodeProductTypeNavigation)
+                                                      .Include(p => p.ProductSizes)
+                                                      .Include(p => p.ProductImages)
+                                                      .FirstOrDefault(p => p.Code == reqProd.Code);
+                        if (existingProd != null)
+                        {
+                            foreach (var property in changedProperties)
+                            {
+                                var prodProperty = typeof(DTOProduct).GetProperty(property);
+                                if (prodProperty != null)
+                                {
+                                    var newValue = prodProperty.GetValue(reqProd);
+                                    var existingProdProperty = typeof(Product).GetProperty(property);
+                                    if (existingProdProperty != null)
+                                    {
+                                        existingProdProperty.SetValue(existingProd, newValue, null);
+                                        DB.SaveChanges();
+
+                                    }
+                                }
+                            }
+
+                            DB.ProductImages.RemoveRange(existingProd.ProductImages);
+                            foreach (var image in reqProd.ListOfImage)
+                            {
+                                existingProd.ProductImages.Add(new ProductImage
+                                {
+                                    Img = image.ImgUrl,
+                                    ProductCode = existingProd.Code,
+                                    IsThumbnail = image.IsThumbnail ? (sbyte)1 : (sbyte)0
+                                });
+                            }
+
+                            DB.ProductSizes.RemoveRange(existingProd.ProductSizes);
+                            foreach (var size in reqProd.ListOfSize)
+                            {
+                                existingProd.ProductSizes.Add(new ProductSize
+                                {
+                                    CodeSize = size.Code,
+                                    CodeProduct = existingProd.Code,
+                                    Stock = size.Stock,
+                                    Sold = size.Sold
+                                });
+                            }
+
+
+
+                            DB.SaveChanges();
+                        }
+                        else
+                        {
+                            respond.StatusCode = 404;
+                            respond.ErrorString = "Product not found.";
+                        }
                     }
-                }
-                respond.ObjectReturn = new { };
+                }             
             }
             catch (Exception ex)
             {

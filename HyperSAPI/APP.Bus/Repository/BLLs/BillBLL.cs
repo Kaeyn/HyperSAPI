@@ -24,42 +24,42 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetBill(int reqCode)
+        public DTOResponse GetBill(int reqCode, string reqPhoneNumber)
         {
             var respond = new DTOResponse();
             try
             {
                 DataSourceRequest dataSourceRequest = new DataSourceRequest();
                 dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
-                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.Code == reqCode)
-                    .Select(b => new
+                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.Code == reqCode && b.PhoneNumber == reqPhoneNumber)
+                .Select(b => new
+                {
+                    Code = b.Code,
+                    CustomerName = b.CustomerName,
+                    PhoneNumber = b.PhoneNumber,
+                    ShippingAddress = b.ShippingAddress,
+                    CreateAt = b.CreateAt,
+                    PaymentMethod = b.PaymentMethod,
+                    ListBillInfo = b.BillInfos.Select(bi => new
                     {
-                        Code = b.Code,
-                        CustomerName = b.CustomerName,
-                        PhoneNumber = b.PhoneNumber,
-                        ShippingAddress = b.ShippingAddress,
-                        CreateAt = b.CreateAt,
-                        PaymentMethod = b.PaymentMethod,
-                        ListBillInfo = b.BillInfos.Select(bi => new
-                        {
-                            Code = bi.Code,
-                            IDProduct = bi.CodeProductNavigation.IdProduct,
-                            Name = bi.CodeProductNavigation.Name,
-                            ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
-                            Size = bi.SelectedSize,
-                            Price = bi.Price,
-                            Quantity = bi.Quantity,
-                            TotalPrice = bi.TotalPrice,
-                            Status = bi.Status,
-                        }),
-                        Voucher = "",
-                        Discount = 0,
-                        TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
-                        Status = b.Status,
-                        Note = b.Note
-                    }).ToList();
+                        Code = bi.Code,
+                        IDProduct = bi.CodeProductNavigation.IdProduct,
+                        Name = bi.CodeProductNavigation.Name,
+                        ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
+                        Size = bi.SelectedSize,
+                        Price = bi.Price,
+                        Quantity = bi.Quantity,
+                        TotalPrice = bi.TotalPrice,
+                        Status = bi.Status,
+                    }),
+                    Voucher = "",
+                    Discount = 0,
+                    TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
+                    Status = b.Status,
+                    Note = b.Note
+                }).ToList();
 
-                respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult(dataSourceRequest);
+                respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult(dataSourceRequest);                 
             }
             catch (Exception ex)
             {
@@ -78,36 +78,37 @@ namespace APP.Bus.Repository.BLLs
                 DataSourceRequest dataSourceRequest = new DataSourceRequest();
                 dataSourceRequest.Sort = GetSortDescriptor("CreateAt", "desc");
                 var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.PhoneNumber == reqPhoneNumber)
-                    .Select(b => new
+                .Select(b => new
+                {
+                    Code = b.Code,
+                    CustomerName = b.CustomerName,
+                    PhoneNumber = b.PhoneNumber,
+                    ShippingAddress = b.ShippingAddress,
+                    CreateAt = b.CreateAt,
+                    PaymentMethod = b.PaymentMethod,
+                    ListBillInfo = b.BillInfos.Select(bi => new
                     {
-                        Code = b.Code,
-                        CustomerName = b.CustomerName,
-                        PhoneNumber = b.PhoneNumber,
-                        ShippingAddress = b.ShippingAddress,
-                        CreateAt = b.CreateAt,
-                        PaymentMethod = b.PaymentMethod,
-                        ListBillInfo = b.BillInfos.Select(bi => new
-                        {
-                            Code = bi.Code,
-                            IDProduct = bi.CodeProductNavigation.IdProduct,
-                            Name = bi.CodeProductNavigation.Name,
-                            ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
-                            Size = bi.SelectedSize,
-                            Price = bi.Price,
-                            Quantity = bi.Quantity,
-                            TotalPrice = bi.TotalPrice,
-                            Status = bi.Status
+                        Code = bi.Code,
+                        IDProduct = bi.CodeProductNavigation.IdProduct,
+                        Name = bi.CodeProductNavigation.Name,
+                        ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
+                        Size = bi.SelectedSize,
+                        Price = bi.Price,
+                        Quantity = bi.Quantity,
+                        TotalPrice = bi.TotalPrice,
+                        Status = bi.Status
 
-                        }),
-                        Voucher = "",
-                        Discount = 0,
-                        TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
-                        Status = b.Status,
-                        Note = b.Note
+                    }),
+                    Voucher = "",
+                    Discount = 0,
+                    TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
+                    Status = b.Status,
+                    Note = b.Note
 
-                    }).ToList();
+                }).ToList();
 
                 respond.ObjectReturn = bills.AsQueryable().ToDataSourceResult(dataSourceRequest);
+                
             }
             catch (Exception ex)
             {

@@ -1,7 +1,11 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.DAL.Repository.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 
 namespace APP.API.Controllers
 {
@@ -26,27 +30,38 @@ namespace APP.API.Controllers
             }
             return Ok(brands);
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         public ActionResult GetBill(int CodeBill)
         {
-            var brands = _BLL.GetBill(CodeBill);
-            if (brands.ObjectReturn?.Data == null)
+            var userID = User.FindFirstValue(ClaimTypes.Name);                   
+            if (userID != null)
             {
-                return NotFound();
+                var brands = _BLL.GetBill(CodeBill, userID);
+                if (brands.ObjectReturn?.Data == null)
+                {
+                    return NotFound();
+                }
+                return Ok(brands);
             }
-            return Ok(brands);
+            return NotFound();
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost]
-        public ActionResult GetListCustomerBill(string PhoneNumber)
+        public ActionResult GetListCustomerBill()
         {
-            var brands = _BLL.GetListCustomerBill(PhoneNumber);
-            if (brands.ObjectReturn?.Data == null)
+            var userID = User.FindFirstValue(ClaimTypes.Name);
+            if (userID != null)
             {
-                return NotFound();
+                var brands = _BLL.GetListCustomerBill(userID);
+                if (brands.ObjectReturn?.Data == null)
+                {
+                    return NotFound();
+                }
+                return Ok(brands);
             }
-            return Ok(brands);
+            
+            return NotFound();
         }
 
         [HttpPost]
@@ -55,5 +70,7 @@ namespace APP.API.Controllers
             var brands = _BLL.UpdateBill(request);          
             return Ok(brands);
         }
+
+        
     }
 }

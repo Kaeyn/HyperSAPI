@@ -24,7 +24,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetCustomer(DTOCustomer dtoRequest)
+        public DTOResponse GetCustomer(string reqPhoneNumber)
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -33,7 +33,7 @@ namespace APP.Bus.Repository.BLLs
             {
 
                 var result = DB.Customers.AsQueryable()
-                           .Include(c => c.CodeUserNavigation).Where(c => c.Code == dtoRequest.Code)
+                           .Include(c => c.CodeUserNavigation).Where(c => c.CodeUserNavigation.PhoneNumber == reqPhoneNumber)
                            .Select(c => new DTOCustomer
                            {
                                Code = c.Code,

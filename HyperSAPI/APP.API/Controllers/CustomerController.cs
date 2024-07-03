@@ -1,8 +1,10 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace APP.API.Controllers
 {
@@ -17,10 +19,12 @@ namespace APP.API.Controllers
             _BLL = new CustomerBLL();
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpPost]
-        public ActionResult GetCustomer(DTOCustomer request)
+        public ActionResult GetMyInfo()
         {
-            var products = _BLL.GetCustomer(request);
+            var userID = User.FindFirstValue(ClaimTypes.Name);
+            var products = _BLL.GetCustomer(userID);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
