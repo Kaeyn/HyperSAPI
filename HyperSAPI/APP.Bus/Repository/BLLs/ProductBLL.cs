@@ -306,13 +306,14 @@ namespace APP.Bus.Repository.BLLs
                 DTOProduct reqProd = param.Product;
                 var changedProperties = param.Properties;
                 var existedCheck = DB.Products.Any(p=> p.IdProduct == reqProd.IdProduct);
-                if (existedCheck)
+
+                if (reqProd.Code == 0)
                 {
-                    respond.ErrorString = "Trùng mã sản phẩm trong hệ thống!";
-                }
-                else
-                {
-                    if (reqProd.Code == 0)
+                    if (existedCheck)
+                    {
+                        respond.ErrorString = "Trùng mã sản phẩm trong hệ thống!";
+                    }
+                    else
                     {
                         var newProd = new Product
                         {
@@ -368,65 +369,67 @@ namespace APP.Bus.Repository.BLLs
 
                         respond.ObjectReturn = new { };
                     }
-                    else
+                           
+                }
+                else
+                {
+                    var existingProd = DB.Products.Include(p => p.CodeBrandNavigation)
+                                                    .Include(p => p.CodeProductTypeNavigation)
+                                                    .Include(p => p.ProductSizes)
+                                                    .Include(p => p.ProductImages)
+                                                    .FirstOrDefault(p => p.Code == reqProd.Code);
+                    if (existingProd != null)
                     {
-                        var existingProd = DB.Products.Include(p => p.CodeBrandNavigation)
-                                                      .Include(p => p.CodeProductTypeNavigation)
-                                                      .Include(p => p.ProductSizes)
-                                                      .Include(p => p.ProductImages)
-                                                      .FirstOrDefault(p => p.Code == reqProd.Code);
-                        if (existingProd != null)
+                        foreach (var property in changedProperties)
                         {
-                            foreach (var property in changedProperties)
+                            var prodProperty = typeof(DTOProduct).GetProperty(property);
+                            if (prodProperty != null)
                             {
-                                var prodProperty = typeof(DTOProduct).GetProperty(property);
-                                if (prodProperty != null)
+                                var newValue = prodProperty.GetValue(reqProd);
+                                var existingProdProperty = typeof(Product).GetProperty(property);
+                                if (existingProdProperty != null)
                                 {
-                                    var newValue = prodProperty.GetValue(reqProd);
-                                    var existingProdProperty = typeof(Product).GetProperty(property);
-                                    if (existingProdProperty != null)
-                                    {
-                                        existingProdProperty.SetValue(existingProd, newValue, null);
-                                        DB.SaveChanges();
+                                    existingProdProperty.SetValue(existingProd, newValue, null);
+                                    DB.SaveChanges();
 
-                                    }
                                 }
                             }
-
-                            DB.ProductImages.RemoveRange(existingProd.ProductImages);
-                            foreach (var image in reqProd.ListOfImage)
-                            {
-                                existingProd.ProductImages.Add(new ProductImage
-                                {
-                                    Img = image.ImgUrl,
-                                    ProductCode = existingProd.Code,
-                                    IsThumbnail = image.IsThumbnail ? (sbyte)1 : (sbyte)0
-                                });
-                            }
-
-                            DB.ProductSizes.RemoveRange(existingProd.ProductSizes);
-                            foreach (var size in reqProd.ListOfSize)
-                            {
-                                existingProd.ProductSizes.Add(new ProductSize
-                                {
-                                    CodeSize = size.Code,
-                                    CodeProduct = existingProd.Code,
-                                    Stock = size.Stock,
-                                    Sold = size.Sold
-                                });
-                            }
-
-
-
-                            DB.SaveChanges();
                         }
-                        else
+
+                        DB.ProductImages.RemoveRange(existingProd.ProductImages);
+                        foreach (var image in reqProd.ListOfImage)
                         {
-                            respond.StatusCode = 404;
-                            respond.ErrorString = "Product not found.";
+                            existingProd.ProductImages.Add(new ProductImage
+                            {
+                                Img = image.ImgUrl,
+                                ProductCode = existingProd.Code,
+                                IsThumbnail = image.IsThumbnail ? (sbyte)1 : (sbyte)0
+                            });
                         }
+
+                        DB.ProductSizes.RemoveRange(existingProd.ProductSizes);
+                        foreach (var size in reqProd.ListOfSize)
+                        {
+                            existingProd.ProductSizes.Add(new ProductSize
+                            {
+                                CodeSize = size.Code,
+                                CodeProduct = existingProd.Code,
+                                Stock = size.Stock,
+                                Sold = size.Sold
+                            });
+                        }
+
+
+
+                        DB.SaveChanges();
                     }
-                }             
+                    else
+                    {
+                        respond.StatusCode = 404;
+                        respond.ErrorString = "Product not found.";
+                    }
+                }
+                           
             }
             catch (Exception ex)
             {
