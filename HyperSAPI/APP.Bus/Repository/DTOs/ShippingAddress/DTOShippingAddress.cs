@@ -14,8 +14,6 @@ namespace APP.Bus.Repository.DTOs.ShippingAddress
 
         public string? Address { get; set; }
 
-        public string? AddressNote { get; set; }
-
         public string? PhoneNumber { get; set; }
 
         public string? ReceiverName { get; set; }
@@ -24,6 +22,6 @@ namespace APP.Bus.Repository.DTOs.ShippingAddress
         /// 0: False
         /// 1: True
         /// </summary>
-        public int? IsDefaultAddress { get; set; }
+        public bool IsDefaultAddress { get; set; }
     }
 }

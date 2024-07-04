@@ -290,9 +290,8 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.CustomerCode, "FkShippingAddress_Customer_CustomerCode_idx");
 
             entity.Property(e => e.Address).HasMaxLength(200);
-            entity.Property(e => e.AddressNote).HasMaxLength(200);
-            entity.Property(e => e.IsDefaultAddress).HasComment("0: False\n1: True");
-            entity.Property(e => e.PhoneNumber).HasMaxLength(45);
+            entity.Property(e => e.IsDefaultAddress).HasComment("0: False\\n1: True");
+            entity.Property(e => e.PhoneNumber).HasMaxLength(15);
             entity.Property(e => e.ReceiverName).HasMaxLength(50);
 
             entity.HasOne(d => d.CustomerCodeNavigation).WithMany(p => p.ShippingAddresses)

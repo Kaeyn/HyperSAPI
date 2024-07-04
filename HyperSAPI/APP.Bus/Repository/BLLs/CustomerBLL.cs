@@ -1,6 +1,7 @@
 ﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Product;
+using APP.Bus.Repository.DTOs.ShippingAddress;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
 using Microsoft.EntityFrameworkCore;
@@ -123,27 +124,89 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse AddNewAddress(dynamic requestParam)
+        /*public DTOResponse GetListShippingAddress(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try
             {
-                var param = JsonConvert.DeserializeObject<DTOUpdateCustomerRequest>(requestParam.ToString());
-                int codeAccount = param.CodeAccount;
-                int status = param.CodeStatus;
-                var result = DB.Users.FirstOrDefault(c => c.Code == codeAccount);
-                if (result != null)
+                int CustomerCode = param.CustomerCode;
+                string Address = param.Address;
+                string PhoneNumber = param.PhoneNumber;
+                string ReceiverName = param.ReceiverName;
+                bool IsDefaultAddress = param.IsDefaultAddress;
+
+                if (Code == 0)
                 {
-                    result.Status = status;
+                    ShippingAddress newShippingAddress = new ShippingAddress
+                    {
+                        CustomerCode = CustomerCode,
+                        Address = Address,
+                        PhoneNumber = PhoneNumber,
+                        ReceiverName = ReceiverName,
+                        IsDefaultAddress = IsDefaultAddress == true ? (sbyte)1 : (sbyte)0,
+                    };
+                    DB.ShippingAddresses.Add(newShippingAddress);
                 }
                 else
                 {
-                    respond.StatusCode = 500;
-                    respond.ErrorString = "User not exists !";
+                    var existedAddress = DB.ShippingAddresses.FirstOrDefault(sa => sa.Code == Code && sa.CustomerCode == CustomerCode);
+                    if (existedAddress != null)
+                    {
+                        existedAddress.Address = Address;
+                        existedAddress.PhoneNumber = PhoneNumber;
+                        existedAddress.ReceiverName = ReceiverName;
+                        existedAddress.IsDefaultAddress = IsDefaultAddress == true ? (sbyte)1 : (sbyte)0;
+                    }
                 }
 
                 DB.SaveChanges();
-                respond.ObjectReturn = new { };
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+*/
+        public DTOResponse UpdateShippingAddress(dynamic requestParam)
+        {
+            DTOResponse respond = new DTOResponse();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOShippingAddress>(requestParam.ToString());
+                int Code = param.Code;
+                int CustomerCode = param.CustomerCode;
+                string Address = param.Address;
+                string PhoneNumber = param.PhoneNumber;
+                string ReceiverName = param.ReceiverName;
+                bool IsDefaultAddress = param.IsDefaultAddress;
+
+                if (Code == 0)
+                {
+                    ShippingAddress newShippingAddress = new ShippingAddress
+                    {
+                        CustomerCode = CustomerCode,
+                        Address = Address,
+                        PhoneNumber = PhoneNumber,
+                        ReceiverName = ReceiverName,
+                        IsDefaultAddress = IsDefaultAddress == true ? (sbyte)1 : (sbyte)0,
+                    };
+                    DB.ShippingAddresses.Add(newShippingAddress);
+                }
+                else
+                {
+                    var existedAddress = DB.ShippingAddresses.FirstOrDefault(sa => sa.Code == Code && sa.CustomerCode == CustomerCode);
+                    if (existedAddress != null)
+                    {
+                        existedAddress.Address = Address;
+                        existedAddress.PhoneNumber = PhoneNumber;
+                        existedAddress.ReceiverName = ReceiverName;
+                        existedAddress.IsDefaultAddress = IsDefaultAddress == true ? (sbyte)1 : (sbyte)0;
+                    }
+                }
+
+                DB.SaveChanges();
             }
             catch (Exception ex)
             {

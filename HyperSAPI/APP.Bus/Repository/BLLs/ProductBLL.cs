@@ -221,7 +221,7 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
-                var stock = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
+                var stock = DB.ProductSizes.Include(ps=> ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
                 if (request.CodeCustomer == -1)
                 {
                     if(stock.Stock < request.Quantity)

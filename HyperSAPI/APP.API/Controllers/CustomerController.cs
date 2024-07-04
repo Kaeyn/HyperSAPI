@@ -51,9 +51,11 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddNewAddress([FromBody] dynamic request)
+        public ActionResult UpdateShippingAddress([FromBody] dynamic request)
         {
-            return Ok("");
+            var result = _BLL.UpdateShippingAddress(request);
+
+            return Ok(result);
         }
     }
 }
