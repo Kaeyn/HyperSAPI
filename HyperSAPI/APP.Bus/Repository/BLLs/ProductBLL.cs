@@ -224,7 +224,7 @@ namespace APP.Bus.Repository.BLLs
                 var stock = DB.ProductSizes.Include(ps=> ps.CodeProductNavigation).FirstOrDefault(p => p.CodeSize == request.SelectedSize && p.CodeProduct == request.CodeProduct);
                 if (request.CodeCustomer == -1)
                 {
-                    if(stock.Stock < request.Quantity)
+                    if(stock.Stock <= request.Quantity)
                     {
                         var errorString = "Sản phẩm: " + stock.CodeProductNavigation.Name + " hiện tại còn " + stock.Stock + " sản phẩm trong kho.";
                         respond.ErrorString = errorString;
