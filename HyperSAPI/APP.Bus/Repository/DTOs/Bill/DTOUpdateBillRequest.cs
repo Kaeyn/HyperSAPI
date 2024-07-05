@@ -9,9 +9,7 @@ namespace APP.Bus.Repository.DTOs.Bill
 {
     public class DTOUpdateBillRequest
     {
-        public int CodeBill {  get; set; }
-        public int Status {  get; set; }
-        public List<DTOBillInfo> ListOfBillInfo{  get; set; } = new List<DTOBillInfo>();
-        public string Note { get; set; }
+        public DTOUpdateBill DTOUpdateBill { get; set; }
+        public DTOProccedToPayment DTOProccedToPayment { get; set; }
     }
 }

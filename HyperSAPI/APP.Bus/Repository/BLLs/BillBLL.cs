@@ -1,5 +1,6 @@
 ﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Bill;
+using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.DTOs.Product;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
@@ -18,6 +19,7 @@ namespace APP.Bus.Repository.BLLs
     public class BillBLL
     {
         private AppDBContext DB;
+        private CartBLL cartBLL;
 
         public BillBLL()
         {
@@ -174,29 +176,38 @@ namespace APP.Bus.Repository.BLLs
             {
                 var param = JsonConvert.DeserializeObject<DTOUpdateBillRequest>(requestParam.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
-                int reqCodeBill = param.CodeBill;
-                int reqStatus = param.Status;
-                List<DTOBillInfo> reqListOfBI = param.ListOfBillInfo;
-                string reqNote = param.Note ?? "";
-
-                var existedBill = DB.Bills.FirstOrDefault(b => b.Code == reqCodeBill);
-                if(existedBill != null)
-                {
-                    existedBill.Status = reqStatus;
-                    existedBill.Note = reqNote;
-                    foreach(var bill in reqListOfBI)
-                    {
-                        var billInfoInDB = DB.BillInfos.FirstOrDefault(bi => bi.Code == bill.Code);
-                        billInfoInDB.Status = bill.Status;
-                    }
-                    DB.SaveChanges();
+                DTOUpdateBill dTOUpdateBill = param.DTOUpdateBill;
+                DTOProccedToPayment dTOProccedToPayment = param.DTOProccedToPayment;
+                if (dTOProccedToPayment != null && dTOUpdateBill == null)
+                {                  
+                    var result = cartBLL.ProceedToPayment(param);
+                    respond = result;
                 }
                 else
                 {
-                    respond.ErrorString = "Bill not found";
+                    int reqCodeBill = param.CodeBill;
+                    int reqStatus = param.Status;
+                    List<DTOBillInfo> reqListOfBI = param.ListOfBillInfo;
+                    string reqNote = param.Note ?? "";
+
+                    var existedBill = DB.Bills.FirstOrDefault(b => b.Code == reqCodeBill);
+                    if (existedBill != null)
+                    {
+                        existedBill.Status = reqStatus;
+                        existedBill.Note = reqNote;
+                        foreach (var bill in reqListOfBI)
+                        {
+                            var billInfoInDB = DB.BillInfos.FirstOrDefault(bi => bi.Code == bill.Code);
+                            billInfoInDB.Status = bill.Status;
+                        }
+                        DB.SaveChanges();
+                    }
+                    else
+                    {
+                        respond.ErrorString = "Bill not found";
+                    }
                 }
                 
-                respond.ObjectReturn = new {};
             }
             catch (Exception ex)
             {

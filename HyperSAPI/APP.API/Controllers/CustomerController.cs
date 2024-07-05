@@ -1,6 +1,7 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Product;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace APP.API.Controllers
             _BLL = new CustomerBLL();
         }
 
-        [Authorize(Roles = "Customer")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public ActionResult GetMyInfo()
         {

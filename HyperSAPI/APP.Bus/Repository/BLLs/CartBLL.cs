@@ -55,12 +55,14 @@ namespace APP.Bus.Repository.BLLs
                 }
                 if (errorList.Count == 0)
                 {
+                    TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
                     Bill newBill = new Bill
                     {
                         CustomerName = reqCusName,
                         PhoneNumber = reqPhoneNumber,
                         ShippingAddress = reqShippingAddress,
-                        CreateAt = DateTime.Now,
+                        CreateAt = vietnamTime,
                         PaymentMethod = reqPaymentMethod,
                         TotalBill = reqTotalBill,
                         Status = 2

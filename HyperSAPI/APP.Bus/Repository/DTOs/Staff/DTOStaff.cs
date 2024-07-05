@@ -9,11 +9,11 @@ namespace APP.Bus.Repository.DTOs.Staff
     public class DTOStaff
     {
         public int Code { get; set; }
-        public string? IDStaff { get; set; }
+        public string? IdStaff { get; set; }
         public string Name { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
         public int? Gender { get; set; }
-        public DateOnly? Birth { get; set; }
+        public DateOnly? Birthday { get; set; }
         public string PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
@@ -25,7 +25,7 @@ namespace APP.Bus.Repository.DTOs.Staff
         public List<dynamic> ListShift { get; set; }
         public float TotalSalary { get; set; }
         public int CodeAccount { get; set; }
-        public int StatusAccount { get; set; }
+        public int Status { get; set; }
         public string StatusAccountStr { get; set; } = string.Empty;
         public string Permission { get; set; } = string.Empty;
     }

@@ -37,11 +37,11 @@ namespace APP.Bus.Repository.BLLs
                     .Select(s => new DTOStaff
                     {
                         Code = s.Code,
-                        IDStaff = s.Idstaff,
+                        IdStaff = s.Idstaff,
                         Name = s.Name,
-                        ImageURL = s.ImageUrl,
+                        ImageUrl = s.ImageUrl,
                         Gender = s.Gender,
-                        Birth = s.Birthday,
+                        Birthday = s.Birthday,
                         PhoneNumber = s.CodeUserNavigation.PhoneNumber,
                         Email = s.CodeUserNavigation.Email,
                         Address = s.Address,
@@ -51,7 +51,7 @@ namespace APP.Bus.Repository.BLLs
                         ListShift = new List<dynamic>(),
                         TotalSalary = 0,
                         CodeAccount = s.CodeUser,
-                        StatusAccount = s.CodeUserNavigation.Status,
+                        Status = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
                         Permission = s.CodeUserNavigation.Permission
                     }).ToList();
@@ -78,11 +78,11 @@ namespace APP.Bus.Repository.BLLs
                     .Select(s => new DTOStaff
                     {
                         Code = s.Code,
-                        IDStaff = s.Idstaff,
+                        IdStaff = s.Idstaff,
                         Name = s.Name,
-                        ImageURL = s.ImageUrl,
+                        ImageUrl = s.ImageUrl,
                         Gender = s.Gender,
-                        Birth = s.Birthday,
+                        Birthday = s.Birthday,
                         PhoneNumber = s.CodeUserNavigation.PhoneNumber,
                         Email = s.CodeUserNavigation.Email,
                         Address = s.Address,
@@ -92,7 +92,7 @@ namespace APP.Bus.Repository.BLLs
                         ListShift = new List<dynamic>(),
                         TotalSalary = 0,
                         CodeAccount = s.CodeUser,
-                        StatusAccount = s.CodeUserNavigation.Status,
+                        Status = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
                         Permission = s.CodeUserNavigation.Permission
                     }).ToList();

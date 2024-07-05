@@ -1,6 +1,7 @@
 ﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Login;
+using APP.Bus.Repository.DTOs.Staff;
 using APP.Bus.Repository.DTOs.User;
 using APP.DAL.Repository.Auth;
 using APP.DAL.Repository.Entities;
@@ -96,7 +97,7 @@ namespace APP.Bus.Repository.BLLs
                     string eventName = $"DeleteUnconfirmedUsers_{newUser.UserName}";
                     string sqlStatement = $@"
                     CREATE EVENT {eventName}
-                    ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 10 MINUTE
+                    ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 HOUR
                     DO
                     CALL DeleteUser('{newUser.Id}');";
                     AuthDB.Database.ExecuteSqlRaw(sqlStatement);
@@ -116,6 +117,108 @@ namespace APP.Bus.Repository.BLLs
                 respond.ErrorString = ex.Message;
             }
 
+            return respond;
+        }
+
+        public async Task<DTOResponse> UpdateStaff(dynamic requestParam)
+        {
+            DTOResponse respond = new DTOResponse();
+            IdentityResult result = new IdentityResult();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOUpdateStaffRequest>(requestParam.ToString());
+                DTOStaff staffData = param.Staff;
+                var changedProperties = param.Properties;
+                if (staffData.Code == 0)
+                {
+                    IdentityUser newUser = new IdentityUser
+                    {
+                        UserName = param.PhoneNumber,
+                        Email = param.Email,
+                        PhoneNumber = param.PhoneNumber,
+                        EmailConfirmed = true
+                    };
+                    result = await _userManager.CreateAsync(newUser, param.Password);
+                    if (!result.Succeeded)
+                    {
+                        respond.ErrorString = "Failed Register !";
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(newUser, "Admin");
+                        User newDBUser = new User
+                        {
+                            IdUser = newUser.Id,
+                            PhoneNumber = newUser.PhoneNumber,
+                            Email = newUser.Email,
+                            Status = 1,
+                            Permission = _userManager.GetRolesAsync(newUser).Result.First(),
+                            EmailConfirm = 1
+                        };
+                        DB.Users.Add(newDBUser);
+                        DB.SaveChanges();
+
+                        var newStaff = new Staff
+                        {
+                            Name = staffData.Name,
+                            Birthday = staffData.Birthday,
+                            Address = staffData.Address,
+                            Position = staffData.Position,
+                            CodeUser = newDBUser.Code,
+                            ImageUrl = staffData.ImageUrl,
+                            Gender = staffData.Gender,
+                            Identication = staffData.Identication,
+                            Idstaff = staffData.IdStaff
+                        };
+                        DB.Staff.Add(newStaff);
+                        DB.SaveChanges();
+                    }
+                }
+                else
+                {
+                    var existingStaff = DB.Staff.Include(s => s.CodeUserNavigation)
+                                                .Include(s => s.PositionNavigation)
+                                                .FirstOrDefault(s => s.Code == staffData.Code);
+                    if (existingStaff != null)
+                    {
+                        foreach (var property in changedProperties)
+                        {
+                            var staffProperty = typeof(DTOStaff).GetProperty(property);
+                            if (staffProperty != null)
+                            {
+                                var newValue = staffProperty.GetValue(staffData);
+                                var existingStaffProperty = typeof(Staff).GetProperty(property);
+                                if (existingStaffProperty != null)
+                                {
+                                    existingStaffProperty.SetValue(existingStaff, newValue, null);
+                                    DB.SaveChanges();
+
+                                }
+                                else
+                                {
+                                    var existingUserProperty = typeof(User).GetProperty(property);
+                                    if (existingUserProperty != null)
+                                    {
+                                        existingUserProperty.SetValue(existingStaff, newValue, null);
+                                        DB.SaveChanges();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        respond.StatusCode = 404;
+                        respond.ErrorString = "Staff not found.";
+                    }
+                }
+                DB.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
             return respond;
         }
 

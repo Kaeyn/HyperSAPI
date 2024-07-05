@@ -1,5 +1,6 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.DAL.Repository.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -30,7 +31,7 @@ namespace APP.API.Controllers
             }
             return Ok(brands);
         }
-        [Authorize(Roles = "Customer")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public ActionResult GetBill(int CodeBill)
         {
@@ -46,7 +47,7 @@ namespace APP.API.Controllers
             }
             return NotFound();
         }
-        [Authorize(Roles = "Customer")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public ActionResult GetListCustomerBill()
         {

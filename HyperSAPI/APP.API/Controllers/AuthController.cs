@@ -27,7 +27,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [HttpPost, Authorize]
+        [HttpPost]
         public async Task<ActionResult> LogOut()
         {
             var result = await _BLL.LogOut();
@@ -45,10 +45,17 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [HttpPost, Authorize(Roles = "Admin")]
+        [HttpPost]
         public async Task<ActionResult> TestAdmin()
         {    
             return Ok("ADMIN");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateStaff([FromBody] dynamic request)
+        {
+            var products = _BLL.UpdateStaff(request);
+            return Ok(products);
         }
 
 
