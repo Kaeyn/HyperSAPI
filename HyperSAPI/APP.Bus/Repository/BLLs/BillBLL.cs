@@ -180,15 +180,15 @@ namespace APP.Bus.Repository.BLLs
                 DTOProccedToPayment dTOProccedToPayment = param.DTOProccedToPayment;
                 if (dTOProccedToPayment != null && dTOUpdateBill == null)
                 {                  
-                    var result = cartBLL.ProceedToPayment(param);
+                    var result = cartBLL.ProceedToPayment(dTOProccedToPayment);
                     respond = result;
                 }
                 else
                 {
-                    int reqCodeBill = param.CodeBill;
-                    int reqStatus = param.Status;
-                    List<DTOBillInfo> reqListOfBI = param.ListOfBillInfo;
-                    string reqNote = param.Note ?? "";
+                    int reqCodeBill = dTOUpdateBill.CodeBill;
+                    int reqStatus = dTOUpdateBill.Status;
+                    List<DTOBillInfo> reqListOfBI = dTOUpdateBill.ListOfBillInfo;
+                    string reqNote = dTOUpdateBill.Note ?? "";
 
                     var existedBill = DB.Bills.FirstOrDefault(b => b.Code == reqCodeBill);
                     if (existedBill != null)

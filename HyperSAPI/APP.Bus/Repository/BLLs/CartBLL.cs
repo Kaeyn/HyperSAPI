@@ -35,6 +35,7 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
+                int codeCustomer = request.CodeCustomer;
                 string reqCusName = request.CustomerName;
                 string reqPhoneNumber = request.PhoneNumber;
                 string reqShippingAddress = request.ShippingAddress;
@@ -89,11 +90,10 @@ namespace APP.Bus.Repository.BLLs
                             DB.BillInfos.Add(newBI);
                             stockOfProduct.Stock -= product.Quantity;
                             stockOfProduct.Sold += product.Quantity;
-                            if (!reqIsGuess)
+                            if (!reqIsGuess && codeCustomer != 0)
                             {
                                 var cartItem = DB.Carts.Include(c=> c.CodeCustomerNavigation).ThenInclude(c => c.CodeUserNavigation).FirstOrDefault(c =>
-                                c.CodeCustomerNavigation.CodeUserNavigation.PhoneNumber == reqPhoneNumber
-                                && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Size);
+                                c.CodeCustomer == codeCustomer && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Code);
                                 if(cartItem != null)
                                 {
                                     DB.Carts.Remove(cartItem);
