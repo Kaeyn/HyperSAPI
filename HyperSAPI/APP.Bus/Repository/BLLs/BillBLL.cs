@@ -38,6 +38,7 @@ namespace APP.Bus.Repository.BLLs
                 {
                     Code = b.Code,
                     CustomerName = b.CustomerName,
+                    OrdererPhoneNumber = b.OrdererPhoneNumber,
                     PhoneNumber = b.PhoneNumber,
                     ShippingAddress = b.ShippingAddress,
                     CreateAt = b.CreateAt,
@@ -79,11 +80,12 @@ namespace APP.Bus.Repository.BLLs
             {
                 DataSourceRequest dataSourceRequest = new DataSourceRequest();
                 dataSourceRequest.Sort = GetSortDescriptor("CreateAt", "desc");
-                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.PhoneNumber == reqPhoneNumber)
+                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.OrdererPhoneNumber == reqPhoneNumber)
                 .Select(b => new
                 {
                     Code = b.Code,
                     CustomerName = b.CustomerName,
+                    OrdererPhoneNumber = b.OrdererPhoneNumber,
                     PhoneNumber = b.PhoneNumber,
                     ShippingAddress = b.ShippingAddress,
                     CreateAt = b.CreateAt,
@@ -134,6 +136,7 @@ namespace APP.Bus.Repository.BLLs
                     {
                         Code = b.Code,
                         CustomerName = b.CustomerName,
+                        OrdererPhoneNumber = b.OrdererPhoneNumber,
                         PhoneNumber = b.PhoneNumber,
                         ShippingAddress = b.ShippingAddress,
                         CreateAt = b.CreateAt,

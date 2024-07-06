@@ -11,6 +11,7 @@ namespace APP.Bus.Repository.DTOs.Bill
     {
         public int Code { get; set; }
         public string CustomerName { get; set; }
+        public string OrdererPhoneNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string ShippingAddress { get; set; }
         public DateTime CreateAt { get; set; }

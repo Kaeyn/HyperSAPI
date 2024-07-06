@@ -36,6 +36,7 @@ namespace APP.Bus.Repository.BLLs
             try
             {
                 int codeCustomer = request.CodeCustomer;
+                string ordererPhoneNumber = request.OrdererPhoneNumber;
                 string reqCusName = request.CustomerName;
                 string reqPhoneNumber = request.PhoneNumber;
                 string reqShippingAddress = request.ShippingAddress;
@@ -61,6 +62,7 @@ namespace APP.Bus.Repository.BLLs
                     Bill newBill = new Bill
                     {
                         CustomerName = reqCusName,
+                        OrdererPhoneNumber = ordererPhoneNumber,
                         PhoneNumber = reqPhoneNumber,
                         ShippingAddress = reqShippingAddress,
                         CreateAt = vietnamTime,

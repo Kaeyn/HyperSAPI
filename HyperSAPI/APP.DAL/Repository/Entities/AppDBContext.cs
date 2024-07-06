@@ -53,6 +53,10 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+        if (connectionString == null)
+        {
+            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
+        }
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,6 +74,7 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.CustomerName).HasMaxLength(45);
             entity.Property(e => e.Note).HasMaxLength(255);
+            entity.Property(e => e.OrdererPhoneNumber).HasMaxLength(13);
             entity.Property(e => e.PaymentMethod).HasComment("0: COD\n1: QR\n");
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.ShippingAddress).HasMaxLength(255);

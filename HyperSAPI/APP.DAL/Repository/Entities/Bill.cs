@@ -9,6 +9,8 @@ public partial class Bill
 
     public string CustomerName { get; set; } = null!;
 
+    public string? OrdererPhoneNumber { get; set; }
+
     public string PhoneNumber { get; set; } = null!;
 
     public string ShippingAddress { get; set; } = null!;

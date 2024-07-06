@@ -10,6 +10,7 @@ namespace APP.Bus.Repository.DTOs.Cart
     public class DTOProccedToPayment
     {
         public int CodeCustomer { get; set; } = 0;
+        public string OrdererPhoneNumber { get; set; }
         public string CustomerName { get; set; }
         public string PhoneNumber { get; set; }
         public string ShippingAddress { get; set; }
