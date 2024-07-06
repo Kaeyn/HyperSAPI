@@ -407,7 +407,7 @@ namespace APP.Bus.Repository.BLLs
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
             var token = new JwtSecurityToken(
                 issuer: "https://hypersapi.onrender.com",
