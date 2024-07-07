@@ -64,7 +64,7 @@ namespace APP.Bus.Repository.BLLs
             DTOResponse respond = new DTOResponse();
             try
             {
-                var param = JsonConvert.DeserializeObject<DTOUpdateProductRequest>(requestParam.ToString());
+                var param = JsonConvert.DeserializeObject<DTOUpdateCouponRequest>(requestParam.ToString());
                 DTOCoupon reqCoupon = param.Coupon;
                 var changedProperties = param.Properties;
                 var existedCheck = DB.Coupons.Any(p => p.IdCoupon == reqCoupon.IdCoupon);
