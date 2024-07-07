@@ -10,6 +10,11 @@ namespace APP.API.Controllers
     {
         private CouponBLL _BLL;
 
+        public CouponController()
+        {
+            _BLL = new CouponBLL();
+        }
+
         [HttpPost]
         public ActionResult GetListCoupon([FromBody] dynamic request)
         {
