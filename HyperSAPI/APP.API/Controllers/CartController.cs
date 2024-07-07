@@ -29,7 +29,7 @@ namespace APP.API.Controllers
         [HttpPost]
         public ActionResult ProceedToPayment([FromBody] dynamic options)
         {
-            var products = _BLL.ProceedToPayment(options);
+            var products = _BLL.ProceedToPayment(options, null);
             return Ok(products);
         }
 

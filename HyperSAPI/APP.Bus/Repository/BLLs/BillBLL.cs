@@ -24,6 +24,7 @@ namespace APP.Bus.Repository.BLLs
         public BillBLL()
         {
             DB = new AppDBContext();
+            cartBLL = new CartBLL();
         }
 
         public DTOResponse GetBill(int reqCode, string reqPhoneNumber)
@@ -180,13 +181,13 @@ namespace APP.Bus.Repository.BLLs
                 var param = JsonConvert.DeserializeObject<DTOUpdateBillRequest>(requestParam.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
                 DTOUpdateBill dTOUpdateBill = param.DTOUpdateBill;
-                DTOProccedToPayment dTOProccedToPayment = param.DTOProccedToPayment;
+                DTOProccedToPayment dTOProccedToPayment = param.DTOProceedToPayment;
                 if (dTOProccedToPayment != null && dTOUpdateBill == null)
                 {                  
-                    var result = cartBLL.ProceedToPayment(dTOProccedToPayment);
+                    var result = cartBLL.ProceedToPayment(null, param.DTOProceedToPayment);
                     respond = result;
                 }
-                else
+                else if(dTOProccedToPayment == null && dTOUpdateBill != null)
                 {
                     int reqCodeBill = dTOUpdateBill.CodeBill;
                     int reqStatus = dTOUpdateBill.Status;

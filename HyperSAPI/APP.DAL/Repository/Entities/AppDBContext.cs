@@ -55,6 +55,7 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");     
+
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

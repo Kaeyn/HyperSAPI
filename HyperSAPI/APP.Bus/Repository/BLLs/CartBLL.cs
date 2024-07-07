@@ -29,9 +29,17 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse ProceedToPayment(dynamic requestParam)
+        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProccedToPayment? dTOProccedToPayment)
         {
-            var request = JsonConvert.DeserializeObject<DTOProccedToPayment>(requestParam.ToString());
+            dynamic request = null;
+            if(dTOProccedToPayment != null)
+            {
+                request = dTOProccedToPayment;
+            }
+            else
+            {
+                request = JsonConvert.DeserializeObject<DTOProccedToPayment>(requestParam.ToString());
+            }
             var respond = new DTOResponse();
             try
             {

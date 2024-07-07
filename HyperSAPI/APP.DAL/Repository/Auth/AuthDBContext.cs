@@ -18,6 +18,7 @@ namespace APP.DAL.Repository.Auth
             base.OnConfiguring(optionsBuilder);
             {
                 var connectionString = Environment.GetEnvironmentVariable("MYSQLAUTH_CONNECTION_STRING");
+
                 optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
             }
         }

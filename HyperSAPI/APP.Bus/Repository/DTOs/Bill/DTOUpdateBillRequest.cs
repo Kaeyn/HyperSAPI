@@ -10,6 +10,6 @@ namespace APP.Bus.Repository.DTOs.Bill
     public class DTOUpdateBillRequest
     {
         public DTOUpdateBill DTOUpdateBill { get; set; }
-        public DTOProccedToPayment DTOProccedToPayment { get; set; }
+        public DTOProccedToPayment DTOProceedToPayment { get; set; }
     }
 }
