@@ -26,6 +26,8 @@ public partial class AppDBContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Coupon> Coupons { get; set; }
+
     public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<EfmigrationsHistory> EfmigrationsHistories { get; set; }
@@ -52,11 +54,7 @@ public partial class AppDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
-        if (connectionString == null)
-        {
-            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
-        }
+        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");     
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +69,7 @@ public partial class AppDBContext : DbContext
 
             entity.ToTable("Bill");
 
+            entity.Property(e => e.CouponApplied).HasMaxLength(45);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.CustomerName).HasMaxLength(45);
             entity.Property(e => e.Note).HasMaxLength(255);
@@ -145,6 +144,16 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.CategoryName).HasMaxLength(45);
             entity.Property(e => e.IdCategory).HasMaxLength(45);
             entity.Property(e => e.ParentId).HasMaxLength(45);
+        });
+
+        modelBuilder.Entity<Coupon>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
+
+            entity.ToTable("Coupon");
+
+            entity.Property(e => e.Description).HasMaxLength(155);
+            entity.Property(e => e.IdCoupon).HasMaxLength(45);
         });
 
         modelBuilder.Entity<Customer>(entity =>

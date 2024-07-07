@@ -26,6 +26,12 @@ public partial class Bill
 
     public string? Note { get; set; }
 
+    public string? CouponApplied { get; set; }
+
+    public int? CouponDiscount { get; set; }
+
+    public int? TotalBeforeDiscount { get; set; }
+
     public int TotalBill { get; set; }
 
     /// <summary>
