@@ -272,7 +272,6 @@ namespace APP.Bus.Repository.BLLs
 
                         if (existedCartItem != null)
                         {
-                            Console.WriteLine("Update");
                             existedCartItem.Quantity = request.Quantity;
                         }
                     }
