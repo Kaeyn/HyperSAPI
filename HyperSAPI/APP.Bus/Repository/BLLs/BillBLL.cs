@@ -221,5 +221,17 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
+
+        public void SuccessPaymentUpdate(int codeBill)
+        {
+            var bill = DB.Bills.FirstOrDefault(b => b.Code == codeBill);
+            bill.Status = 1;
+            DB.SaveChanges();
+            foreach (var item in bill.BillInfos)
+            {
+                item.Status = 1;
+                DB.SaveChanges();
+            }
+        }
     }
 }
