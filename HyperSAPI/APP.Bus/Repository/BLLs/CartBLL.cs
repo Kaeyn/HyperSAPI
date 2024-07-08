@@ -29,21 +29,20 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProccedToPayment? dTOProccedToPayment)
+        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment)
         {
             dynamic request = null;
-            if(dTOProccedToPayment != null)
+            if(dTOProceedToPayment != null)
             {
-                request = dTOProccedToPayment;
+                request = dTOProceedToPayment;
             }
             else
             {
-                request = JsonConvert.DeserializeObject<DTOProccedToPayment>(requestParam.ToString());
+                request = JsonConvert.DeserializeObject<DTOProceedToPayment>(requestParam.ToString());
             }
             var respond = new DTOResponse();
             try
             {
-                int codeCustomer = request.CodeCustomer;
                 string ordererPhoneNumber = request.OrdererPhoneNumber;
                 string reqCusName = request.CustomerName;
                 string reqPhoneNumber = request.PhoneNumber;
@@ -100,10 +99,12 @@ namespace APP.Bus.Repository.BLLs
                             DB.BillInfos.Add(newBI);
                             stockOfProduct.Stock -= product.Quantity;
                             stockOfProduct.Sold += product.Quantity;
-                            if (!reqIsGuess && codeCustomer != 0)
+                             
+                            int cusCode = DB.Customers.Include(c => c.CodeUserNavigation).FirstOrDefault(c => c.CodeUserNavigation.PhoneNumber == ordererPhoneNumber).Code;
+                            if (!reqIsGuess)
                             {
                                 var cartItem = DB.Carts.Include(c=> c.CodeCustomerNavigation).ThenInclude(c => c.CodeUserNavigation).FirstOrDefault(c =>
-                                c.CodeCustomer == codeCustomer && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Code);
+                                c.CodeCustomer == cusCode && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Code);
                                 if(cartItem != null)
                                 {
                                     DB.Carts.Remove(cartItem);

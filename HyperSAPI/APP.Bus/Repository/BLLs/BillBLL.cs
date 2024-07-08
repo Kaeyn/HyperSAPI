@@ -181,13 +181,13 @@ namespace APP.Bus.Repository.BLLs
                 var param = JsonConvert.DeserializeObject<DTOUpdateBillRequest>(requestParam.ToString());
                 /*options = StaticFunc.FormatFilter(options);*/
                 DTOUpdateBill dTOUpdateBill = param.DTOUpdateBill;
-                DTOProccedToPayment dTOProccedToPayment = param.DTOProceedToPayment;
-                if (dTOProccedToPayment != null && dTOUpdateBill == null)
+                DTOProceedToPayment dTOProceedToPayment = param.DTOProceedToPayment;
+                if (dTOProceedToPayment != null && dTOUpdateBill == null)
                 {                  
                     var result = cartBLL.ProceedToPayment(null, param.DTOProceedToPayment);
                     respond = result;
                 }
-                else if(dTOProccedToPayment == null && dTOUpdateBill != null)
+                else if(dTOProceedToPayment == null && dTOUpdateBill != null)
                 {
                     int reqCodeBill = dTOUpdateBill.CodeBill;
                     int reqStatus = dTOUpdateBill.Status;

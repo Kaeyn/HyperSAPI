@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace APP.Bus.Repository.DTOs.Cart
 {
-    public class DTOProccedToPayment
+    public class DTOProceedToPayment
     {
-        public int CodeCustomer { get; set; } = 0;
         public string OrdererPhoneNumber { get; set; }
         public string CustomerName { get; set; }
         public string PhoneNumber { get; set; }
