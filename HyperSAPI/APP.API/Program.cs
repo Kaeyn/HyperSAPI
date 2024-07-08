@@ -56,7 +56,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var connectionString = Environment.GetEnvironmentVariable("MYSQLAUTH_CONNECTION_STRING");
-
 builder.Services.AddDbContext<AuthDBContext>(options =>
 options.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql")));
 var keyStr = Environment.GetEnvironmentVariable("MYAPI_SECRET_KEY");
@@ -103,6 +102,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddScoped<RoleManager<IdentityRole>>();
+
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 /*builder.Services.ConfigureApplicationCookie(options =>
 {

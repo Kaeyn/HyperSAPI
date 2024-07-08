@@ -24,6 +24,8 @@ public partial class Bill
     /// </summary>
     public int PaymentMethod { get; set; }
 
+    public string? PaymentUrl { get; set; }
+
     public string? Note { get; set; }
 
     public string? CouponApplied { get; set; }

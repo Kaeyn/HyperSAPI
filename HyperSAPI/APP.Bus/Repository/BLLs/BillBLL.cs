@@ -50,7 +50,7 @@ namespace APP.Bus.Repository.BLLs
                         IDProduct = bi.CodeProductNavigation.IdProduct,
                         Name = bi.CodeProductNavigation.Name,
                         ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
-                        Size = bi.SelectedSize,
+                        Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
                         Price = bi.Price,
                         Quantity = bi.Quantity,
                         TotalPrice = bi.TotalPrice,
@@ -97,7 +97,7 @@ namespace APP.Bus.Repository.BLLs
                         IDProduct = bi.CodeProductNavigation.IdProduct,
                         Name = bi.CodeProductNavigation.Name,
                         ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
-                        Size = bi.SelectedSize,
+                        Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
                         Price = bi.Price,
                         Quantity = bi.Quantity,
                         TotalPrice = bi.TotalPrice,
@@ -148,7 +148,7 @@ namespace APP.Bus.Repository.BLLs
                             IDProduct = bi.CodeProductNavigation.IdProduct,
                             Name = bi.CodeProductNavigation.Name,
                             ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
-                            Size = bi.SelectedSize,
+                            Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
                             Price = bi.Price,
                             Quantity = bi.Quantity,
                             TotalPrice = bi.TotalPrice,
@@ -184,7 +184,7 @@ namespace APP.Bus.Repository.BLLs
                 DTOProceedToPayment dTOProceedToPayment = param.DTOProceedToPayment;
                 if (dTOProceedToPayment != null && dTOUpdateBill == null)
                 {                  
-                    var result = cartBLL.ProceedToPayment(null, param.DTOProceedToPayment);
+                    var result = cartBLL.ProceedToPayment(null, param.DTOProceedToPayment, false);
                     respond = result;
                 }
                 else if(dTOProceedToPayment == null && dTOUpdateBill != null)

@@ -54,8 +54,7 @@ public partial class AppDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");     
-
+        var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -76,6 +75,7 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.Note).HasMaxLength(255);
             entity.Property(e => e.OrdererPhoneNumber).HasMaxLength(13);
             entity.Property(e => e.PaymentMethod).HasComment("0: COD\n1: QR\n");
+            entity.Property(e => e.PaymentUrl).HasMaxLength(1500);
             entity.Property(e => e.PhoneNumber).HasMaxLength(13);
             entity.Property(e => e.ShippingAddress).HasMaxLength(255);
             entity.Property(e => e.Status).HasComment("0: Chờ xác nhận\n1: Đã xác nhận\n2: Đang đóng gói\n3: Đang vận chuyển\n4: Giao hàng thành công\n5: Giao hàng thất bại");

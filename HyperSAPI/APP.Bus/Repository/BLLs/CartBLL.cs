@@ -29,7 +29,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment)
+        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment, bool isCountDown)
         {
             dynamic request = null;
             if(dTOProceedToPayment != null)
@@ -64,59 +64,80 @@ namespace APP.Bus.Repository.BLLs
                 }
                 if (errorList.Count == 0)
                 {
-                    TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                    DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
-                    Bill newBill = new Bill
-                    {
-                        CustomerName = reqCusName,
-                        OrdererPhoneNumber = ordererPhoneNumber,
-                        PhoneNumber = reqPhoneNumber,
-                        ShippingAddress = reqShippingAddress,
-                        CreateAt = vietnamTime,
-                        PaymentMethod = reqPaymentMethod,
-                        TotalBill = reqTotalBill,
-                        Status = 2
-                    };
-
-                    DB.Bills.Add(newBill);
-                    DB.SaveChanges();
-                    foreach (var product in reqListProduct)
-                    {
-                        var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Product.Code);
-                        var stockOfProduct = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SizeSelected.Code && p.CodeProduct == product.Product.Code);
-                        if (productInDB != null)
+                    
+                        TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+                        Bill newBill = new Bill
                         {
-                            BillInfo newBI = new BillInfo
+                            CustomerName = reqCusName,
+                            OrdererPhoneNumber = ordererPhoneNumber,
+                            PhoneNumber = reqPhoneNumber,
+                            ShippingAddress = reqShippingAddress,
+                            CreateAt = vietnamTime,
+                            PaymentMethod = reqPaymentMethod,
+                            TotalBill = reqTotalBill,
+                            Status = reqPaymentMethod == 2 || reqPaymentMethod == 1 ? 17 : 1
+                        };
+
+                        DB.Bills.Add(newBill);
+                        DB.SaveChanges();
+                        foreach (var product in reqListProduct)
+                        {
+                            var productInDB = DB.Products.FirstOrDefault(p => p.Code == product.Product.Code);
+                            var stockOfProduct = DB.ProductSizes.FirstOrDefault(p => p.CodeSize == product.SizeSelected.Code && p.CodeProduct == product.Product.Code);
+                            if (productInDB != null)
                             {
-                                CodeBill = newBill.Code,
-                                CodeProduct = product.Product.Code,
-                                SelectedSize = product.SizeSelected.Size,
-                                Quantity = product.Quantity,
-                                Price = productInDB.Price,
-                                TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity),
-                                Status = 2
-                            };
-                            DB.BillInfos.Add(newBI);
-                            stockOfProduct.Stock -= product.Quantity;
-                            stockOfProduct.Sold += product.Quantity;
-                             
-                            int cusCode = DB.Customers.Include(c => c.CodeUserNavigation).FirstOrDefault(c => c.CodeUserNavigation.PhoneNumber == ordererPhoneNumber).Code;
-                            if (!reqIsGuess)
-                            {
-                                var cartItem = DB.Carts.Include(c=> c.CodeCustomerNavigation).ThenInclude(c => c.CodeUserNavigation).FirstOrDefault(c =>
-                                c.CodeCustomer == cusCode && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Code);
-                                if(cartItem != null)
+                                BillInfo newBI = new BillInfo
                                 {
-                                    DB.Carts.Remove(cartItem);
-                                    DB.SaveChanges();
+                                    CodeBill = newBill.Code,
+                                    CodeProduct = product.Product.Code,
+                                    SelectedSize = product.SizeSelected.Code,
+                                    Quantity = product.Quantity,
+                                    Price = productInDB.Price,
+                                    TotalPrice = (int)(CalculatePriceAfterDiscount(productInDB.Price, productInDB.Discount) * product.Quantity),
+                                    Status = reqPaymentMethod == 2 || reqPaymentMethod == 1 ? 17 : 1
+                                };
+                                DB.BillInfos.Add(newBI);
+                                stockOfProduct.Stock -= product.Quantity;
+                                stockOfProduct.Sold += product.Quantity;
+
+                                var cusCode = DB.Customers.Include(c => c.CodeUserNavigation).FirstOrDefault(c => c.CodeUserNavigation.PhoneNumber == ordererPhoneNumber);
+                                if (!reqIsGuess && cusCode != null)
+                                {
+                                    var cartItem = DB.Carts.Include(c => c.CodeCustomerNavigation).ThenInclude(c => c.CodeUserNavigation).FirstOrDefault(c =>
+                                    c.CodeCustomer == cusCode.Code && c.CodeProduct == product.Product.Code && c.SelectedSize == product.SizeSelected.Code);
+                                    if (cartItem != null)
+                                    {
+                                        DB.Carts.Remove(cartItem);
+                                        DB.SaveChanges();
+                                    }
                                 }
                             }
                         }
+                        DB.SaveChanges();
+
+                        if (isCountDown)
+                        {
+                            string eventName = $"DeleteUnconfirmedUsers_{newBill.Code}";
+                            string sqlStatement = $@"
+                            CREATE EVENT {eventName}
+                            ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 11 MINUTE
+                            DO
+                            CALL DeleteBill('{newBill.Code}');";
+
+                            DB.Database.ExecuteSqlRaw(sqlStatement);
+
+                            dynamic objReturn = new System.Dynamic.ExpandoObject();
+                            objReturn.Total = reqTotalBill;
+                            objReturn.Code = newBill.Code;
+                            objReturn.PaymentMethod = reqPaymentMethod;
+                            respond.ObjectReturn = objReturn;
+                        }
                     }
-                    DB.SaveChanges();
-                }
+                
                 else
                 {
+                    respond.ErrorString = "Error";
                     respond.ObjectReturn = new { ErrorList = errorList };
                 }
                 
