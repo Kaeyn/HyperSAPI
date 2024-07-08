@@ -19,11 +19,13 @@ namespace APP.API.Controllers
     public class CartController : ControllerBase
     { 
         private CartBLL _BLL;
+        private BillBLL _BillBLL;
         private IVnPayService VnPayService;
 
         public CartController(IVnPayService vnPayService)
         {
             _BLL = new CartBLL();
+            _BillBLL = new BillBLL();
             VnPayService = vnPayService;
         }
 
@@ -39,19 +41,19 @@ namespace APP.API.Controllers
         public ActionResult ProceedToPayment([FromBody] dynamic options)
         {
             var dbcheck = _BLL.ProceedToPayment(options, null, false);
-            /*if (dbcheck.ErrorString != "Error")
+            if (dbcheck.ErrorString == "Payment")
             {
                 var response = dbcheck.ObjectReturn;
-
+                int orderID = response.Code;
                 double total = response.Total;
                 int paymentMethod = response.PaymentMethod;
-                if(paymentMethod == 2)
+                if (paymentMethod == 2)
                 {
                     TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
                     VnPaymentRequestModel model = new VnPaymentRequestModel
                     {
-                        OrderId = 123,
+                        OrderId = orderID,
                         FullName = "TestFullName",
                         Description = "TestDescription",
                         Amount = total,
@@ -60,9 +62,9 @@ namespace APP.API.Controllers
                     string paymentUrl = VnPayService.CreatePaymentUrl(HttpContext, model);
                     return Redirect(paymentUrl);
                 }
-                
-            }*/
-            return Ok(dbcheck);
+
+            }
+            return Ok("");
         }
 
         [HttpGet]
@@ -73,7 +75,10 @@ namespace APP.API.Controllers
                 var paymentResponse = VnPayService.PaymentExecute(Request.Query);
                 if (paymentResponse.Success)
                 {
-                    return Ok(paymentResponse);
+                    /*_BillBLL.SuccessPaymentUpdate()*/
+                    int codeBill = ExtractOrderId(paymentResponse.OrderDescription);
+                    _BillBLL.SuccessPaymentUpdate(codeBill);
+                    return Redirect("http://localhost:4200/HyperS/ecom/home");
                 }
                 else
                 {
@@ -101,5 +106,25 @@ namespace APP.API.Controllers
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }*/
+
+        public static int ExtractOrderId(string orderDescription)
+        {
+            // Split the string by ':'
+            string[] parts = orderDescription.Split(':');
+
+            // Get the order ID part (assuming it's always the last part after ':')
+            string orderIdStr = parts[parts.Length - 1].Trim();
+
+            // Convert orderIdStr to an integer (if needed)
+            if (int.TryParse(orderIdStr, out int orderId))
+            {
+                return orderId;
+            }
+            else
+            {
+                // Handle parse failure if needed
+                throw new ArgumentException("Invalid order description format");
+            }
+        }
     }
 }

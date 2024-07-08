@@ -50,6 +50,7 @@ namespace APP.Bus.Repository.BLLs
                 int reqPaymentMethod = request.PaymentMethod;
                 int reqTotalBill = request.TotalBill;
                 bool reqIsGuess = request.IsGuess;
+                isCountDown = reqPaymentMethod == 2 || reqPaymentMethod == 1 ? true : false;
                 List<string> errorList= new List<string>();
                            
                 List<DTOProductInCart> reqListProduct = JsonConvert.DeserializeObject<List<DTOProductInCart>>(request.ListProduct.ToString());
@@ -118,10 +119,10 @@ namespace APP.Bus.Repository.BLLs
 
                         if (isCountDown)
                         {
-                            string eventName = $"DeleteUnconfirmedUsers_{newBill.Code}";
+                            string eventName = $"DeleteUnPaidBill_{newBill.Code}";
                             string sqlStatement = $@"
                             CREATE EVENT {eventName}
-                            ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 11 MINUTE
+                            ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 16 MINUTE
                             DO
                             CALL DeleteBill('{newBill.Code}');";
 
@@ -131,7 +132,9 @@ namespace APP.Bus.Repository.BLLs
                             objReturn.Total = reqTotalBill;
                             objReturn.Code = newBill.Code;
                             objReturn.PaymentMethod = reqPaymentMethod;
+                            respond.ErrorString = "Payment";
                             respond.ObjectReturn = objReturn;
+
                         }
                     }
                 
@@ -294,5 +297,7 @@ namespace APP.Bus.Repository.BLLs
             return result;
 
         }
+
+        
     }
 }
