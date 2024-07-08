@@ -16,7 +16,7 @@ namespace APP.Bus.Repository.Services
             string vnp_TmnCode = "YU83HEQ5";
             string vnp_HashSecret = "NJLC9GWQXIM8OBG7A9GU13TUFWE0L9SO";
             string vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-            string returnUrl = "http://localhost:5035/api/cart/vnpayreturn";
+            string returnUrl = "https://hypersapi.onrender.com/api/cart/vnpayreturn";
 
             var vnpay = new VnPayLibrary();
             vnpay.AddRequestData("vnp_Version", "2.1.0");

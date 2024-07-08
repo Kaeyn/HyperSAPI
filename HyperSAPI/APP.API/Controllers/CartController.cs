@@ -60,6 +60,7 @@ namespace APP.API.Controllers
                         CreatedDate = vietnamTime
                     };
                     string paymentUrl = VnPayService.CreatePaymentUrl(HttpContext, model);
+                    dbcheck.ErrorString = "";
                     dbcheck.ObjectReturn = new { RedirectUrl = paymentUrl };
                 }
 
