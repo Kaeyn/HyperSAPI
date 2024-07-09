@@ -1,6 +1,7 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.Bus.Repository.DTOs.Product;
 using APP.Bus.Repository.DTOs.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +46,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> UpdateStaff([FromBody] dynamic request)
         {

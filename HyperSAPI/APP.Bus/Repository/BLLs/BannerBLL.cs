@@ -57,9 +57,15 @@ namespace APP.Bus.Repository.BLLs
                 var param = JsonConvert.DeserializeObject<DTOUpdateBannerRequest>(requestParam.ToString());
                 DTOBanner reqBanner = param.Banner;
                 var changedProperties = param.Properties;
-
+                var existedBannerInPos = DB.Banners.Where(b => b.Page == reqBanner.Page && b.Position == reqBanner.Position && b.Status == 0).ToList();
                 if (reqBanner.Code == 0)
                 {
+                    foreach (var item in existedBannerInPos)
+                    {
+                        item.Status = 1;
+                        DB.SaveChanges();
+                    }
+
                     var newBanner = new Banner
                     {
                         Title = reqBanner.Title,
@@ -87,6 +93,14 @@ namespace APP.Bus.Repository.BLLs
                                 var existingBannerProperty = typeof(Banner).GetProperty(property);
                                 if (existingBannerProperty != null)
                                 {
+                                    if(property == "Status" && newValue == 0)
+                                    {
+                                        foreach (var item in existedBannerInPos)
+                                        {
+                                            item.Status = 1;
+                                            DB.SaveChanges();
+                                        }
+                                    }
                                     existingBannerProperty.SetValue(existingBanner, newValue, null);
                                     DB.SaveChanges();
                                 }

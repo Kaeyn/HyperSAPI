@@ -2,6 +2,8 @@
 using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.DTOs.Product;
 using KendoNET.DynamicLinq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -77,6 +79,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> UpdateProduct([FromBody] dynamic request)
         {
