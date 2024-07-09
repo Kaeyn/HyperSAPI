@@ -16,6 +16,8 @@ public partial class AppDBContext : DbContext
     {
     }
 
+    public virtual DbSet<Banner> Banners { get; set; }
+
     public virtual DbSet<Bill> Bills { get; set; }
 
     public virtual DbSet<BillInfo> BillInfos { get; set; }
@@ -62,6 +64,19 @@ public partial class AppDBContext : DbContext
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Banner>(entity =>
+        {
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
+
+            entity.ToTable("Banner");
+
+            entity.Property(e => e.BannerUrl)
+                .HasMaxLength(255)
+                .HasColumnName("BannerURL");
+            entity.Property(e => e.Page).HasMaxLength(255);
+            entity.Property(e => e.Title).HasMaxLength(45);
+        });
 
         modelBuilder.Entity<Bill>(entity =>
         {

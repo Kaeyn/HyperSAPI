@@ -51,6 +51,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public ActionResult UpdateShippingAddress([FromBody] dynamic request)
         {

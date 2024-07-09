@@ -21,6 +21,7 @@ namespace APP.API.Controllers
             _BLL = new BillBLL();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public ActionResult GetListBill([FromBody] dynamic request)
         {
@@ -65,6 +66,7 @@ namespace APP.API.Controllers
             return NotFound();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public ActionResult UpdateBill([FromBody] dynamic request)
         {

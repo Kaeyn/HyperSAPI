@@ -8,20 +8,20 @@ namespace APP.API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class CouponController : ControllerBase
+    public class BannerController : ControllerBase
     {
-        private CouponBLL _BLL;
+        private BannerBLL _BLL;
 
-        public CouponController()
+        public BannerController()
         {
-            _BLL = new CouponBLL();
+            _BLL = new BannerBLL();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetListCoupon([FromBody] dynamic request)
+        public ActionResult GetListBanner([FromBody] dynamic request)
         {
-            var products = _BLL.GetListCoupon(request);
+            var products = _BLL.GetListBanner(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -31,10 +31,12 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult UpdateCoupon([FromBody] dynamic request)
+        public ActionResult UpdateBanner([FromBody] dynamic request)
         {
-            var products = _BLL.UpdateCoupon(request);
+            var products = _BLL.UpdateBanner(request);
             return Ok(products);
         }
+
+
     }
 }

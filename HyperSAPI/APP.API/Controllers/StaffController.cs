@@ -1,5 +1,7 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.Bus.Repository.DTOs.Staff;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,7 @@ namespace APP.API.Controllers
             _BLL = new StaffBLL();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public ActionResult GetStaff(DTOStaff request)
         {
@@ -27,6 +30,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public ActionResult GetListStaff([FromBody] dynamic request)
         {

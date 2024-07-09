@@ -123,7 +123,7 @@ namespace APP.Bus.Repository.BLLs
                     else
                     {
                         respond.StatusCode = 404;
-                        respond.ErrorString = "Product not found.";
+                        respond.ErrorString = "Coupon not found.";
                     }
                 }
 
