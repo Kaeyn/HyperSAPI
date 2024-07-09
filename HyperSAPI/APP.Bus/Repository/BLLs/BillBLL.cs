@@ -51,14 +51,17 @@ namespace APP.Bus.Repository.BLLs
                         Name = bi.CodeProductNavigation.Name,
                         ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                         Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
-                        Price = bi.Price,
                         Quantity = bi.Quantity,
+                        Price = bi.Price,
+                        Discount = bi.Discount,
+                        PriceAfterDiscount = CalculatePriceAfterDiscount(bi.Price, bi.Discount),
+                        TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                         TotalPrice = bi.TotalPrice,
                         Status = bi.Status,
                     }),
                     Voucher = "",
                     Discount = 0,
-                    TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
+                    TotalBill = b.TotalBill,
                     Status = b.Status,
                     Note = b.Note
                 }).ToList();
@@ -98,15 +101,18 @@ namespace APP.Bus.Repository.BLLs
                         Name = bi.CodeProductNavigation.Name,
                         ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                         Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
-                        Price = bi.Price,
                         Quantity = bi.Quantity,
+                        Price = bi.Price,
+                        Discount = bi.Discount,
+                        PriceAfterDiscount = CalculatePriceAfterDiscount(bi.Price, bi.Discount),
+                        TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                         TotalPrice = bi.TotalPrice,
                         Status = bi.Status
 
                     }),
                     Voucher = "",
                     Discount = 0,
-                    TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
+                    TotalBill = b.TotalBill,
                     Status = b.Status,
                     Note = b.Note
 
@@ -149,15 +155,18 @@ namespace APP.Bus.Repository.BLLs
                             Name = bi.CodeProductNavigation.Name,
                             ImageURL = bi.CodeProductNavigation.ProductImages.FirstOrDefault(pi => pi.IsThumbnail == 1).Img,
                             Size = DB.Sizes.FirstOrDefault(s => s.Code == bi.SelectedSize).Size1,
-                            Price = bi.Price,
                             Quantity = bi.Quantity,
+                            Price = bi.Price,
+                            Discount = bi.Discount,
+                            PriceAfterDiscount = CalculatePriceAfterDiscount(bi.Price, bi.Discount),
+                            TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                             TotalPrice = bi.TotalPrice,
                             Status = bi.Status
 
                         }),
                         Voucher = "",
                         Discount = 0,
-                        TotalBill = b.BillInfos.Sum(bi => bi.TotalPrice),
+                        TotalBill = b.TotalBill,
                         Status = b.Status,
                         Note = b.Note
 

@@ -17,6 +17,10 @@ public partial class BillInfo
 
     public int Price { get; set; }
 
+    public int? Discount { get; set; }
+
+    public int? TotalPriceBeforeDiscount { get; set; }
+
     public int TotalPrice { get; set; }
 
     public int Status { get; set; }
