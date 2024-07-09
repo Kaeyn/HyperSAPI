@@ -224,7 +224,7 @@ namespace APP.Bus.Repository.BLLs
 
         public void SuccessPaymentUpdate(int codeBill)
         {
-            var bill = DB.Bills.FirstOrDefault(b => b.Code == codeBill);
+            var bill = DB.Bills.Include(b => b.BillInfos).FirstOrDefault(b => b.Code == codeBill);
             bill.Status = 1;
             DB.SaveChanges();
             foreach (var item in bill.BillInfos)

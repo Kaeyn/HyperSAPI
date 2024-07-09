@@ -133,12 +133,12 @@ namespace APP.Bus.Repository.BLLs
                 {
                     IdentityUser newUser = new IdentityUser
                     {
-                        UserName = param.PhoneNumber,
-                        Email = param.Email,
-                        PhoneNumber = param.PhoneNumber,
+                        UserName = staffData.PhoneNumber,
+                        Email = staffData.Email,
+                        PhoneNumber = staffData.PhoneNumber,
                         EmailConfirmed = true
                     };
-                    result = await _userManager.CreateAsync(newUser, param.Password);
+                    result = await _userManager.CreateAsync(newUser, "0123456789a");
                     if (!result.Succeeded)
                     {
                         respond.ErrorString = "Failed Register !";
@@ -151,7 +151,7 @@ namespace APP.Bus.Repository.BLLs
                             IdUser = newUser.Id,
                             PhoneNumber = newUser.PhoneNumber,
                             Email = newUser.Email,
-                            Status = 1,
+                            Status = 0,
                             Permission = _userManager.GetRolesAsync(newUser).Result.First(),
                             EmailConfirm = 1
                         };
@@ -350,16 +350,16 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public async Task<DTOResponse> ForgotPassword(string phoneNumber)
+        public async Task<DTOResponse> ForgotPassword(string email)
         {
             DTOResponse respond = new DTOResponse();
             try
             {
-                IdentityUser user = await _userManager.FindByNameAsync(phoneNumber);
+                IdentityUser user = await _userManager.FindByEmailAsync(email);
                 if(user != null)
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(phoneNumber)}&token={HttpUtility.UrlEncode(resetToken)}";
+                    var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     await _emailSender.SendEmailAsync(user.Email, "Reset your password",
                     $"To reset your password please clicking this link: <button href='{resetLink}'>Confirm</button> <br/> Or this: <a href='{resetLink}'>Confirm</a>");
                 }

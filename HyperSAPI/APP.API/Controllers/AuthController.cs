@@ -46,18 +46,11 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> TestAdmin()
-        {    
-            return Ok("ADMIN");
-        }
-
-        [HttpPost]
-        public ActionResult UpdateStaff([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateStaff([FromBody] dynamic request)
         {
-            var products = _BLL.UpdateStaff(request);
+            var products = await _BLL.UpdateStaff(request);
             return Ok(products);
         }
-
 
         [HttpGet]
         public async Task<ActionResult> ConfirmEmail(string userId, string token)
