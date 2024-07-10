@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace APP.API.Controllers
 {
@@ -35,6 +36,19 @@ namespace APP.API.Controllers
         public ActionResult GetListStaff([FromBody] dynamic request)
         {
             var products = _BLL.GetListStaff(request);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
+            return Ok(products);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
+        [HttpPost]
+        public ActionResult GetCurrentStaffInfo()
+        {
+            var userID = User.FindFirstValue(ClaimTypes.Name);
+            var products = _BLL.GetCurrentStaffInfo(userID);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
