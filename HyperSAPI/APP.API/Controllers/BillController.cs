@@ -66,7 +66,7 @@ namespace APP.API.Controllers
             return NotFound();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Customer")]
         [HttpPost]
         public ActionResult UpdateBill([FromBody] dynamic request)
         {
