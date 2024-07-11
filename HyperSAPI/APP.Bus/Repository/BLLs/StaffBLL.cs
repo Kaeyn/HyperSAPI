@@ -32,7 +32,7 @@ namespace APP.Bus.Repository.BLLs
             {
                 var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
                     .Include(s => s.CodeUserNavigation).Where(s => s.CodeUserNavigation.PhoneNumber == phoneNumber)
-                    .Select(s => new DTOStaff
+                    .Select(s => new
                     {
                         Code = s.Code,
                         IdStaff = s.Idstaff,
@@ -44,8 +44,6 @@ namespace APP.Bus.Repository.BLLs
                         Email = s.CodeUserNavigation.Email,
                         Address = s.Address,
                         Identication = s.Identication,
-                        ListShift = new List<dynamic>(),
-                        TotalSalary = 0,
                         CodeAccount = s.CodeUser,
                         Status = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
@@ -71,7 +69,7 @@ namespace APP.Bus.Repository.BLLs
             {
                 var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
                     .Include(s => s.CodeUserNavigation).Where(s => s.Code == requestStaff.Code)
-                    .Select(s => new DTOStaff
+                    .Select(s => new
                     {
                         Code = s.Code,
                         IdStaff = s.Idstaff,
@@ -83,8 +81,6 @@ namespace APP.Bus.Repository.BLLs
                         Email = s.CodeUserNavigation.Email,
                         Address = s.Address,
                         Identication = s.Identication,
-                        ListShift = new List<dynamic>(),
-                        TotalSalary = 0,
                         CodeAccount = s.CodeUser,
                         Status = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
@@ -110,7 +106,7 @@ namespace APP.Bus.Repository.BLLs
 
                 var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
                     .Include(s => s.CodeUserNavigation)
-                    .Select(s => new DTOStaff
+                    .Select(s => new
                     {
                         Code = s.Code,
                         IdStaff = s.Idstaff,
@@ -122,8 +118,6 @@ namespace APP.Bus.Repository.BLLs
                         Email = s.CodeUserNavigation.Email,
                         Address = s.Address,
                         Identication = s.Identication,
-                        ListShift = new List<dynamic>(),
-                        TotalSalary = 0,
                         CodeAccount = s.CodeUser,
                         Status = s.CodeUserNavigation.Status,
                         StatusAccountStr = ConvertStatusToStr(s.CodeUserNavigation.Status),
