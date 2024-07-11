@@ -39,6 +39,10 @@ namespace APP.API.Controllers
         public ActionResult GetListProduct([FromBody] dynamic options)
         {
             var products = _BLL.GetListProduct(options);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 
@@ -46,6 +50,10 @@ namespace APP.API.Controllers
         public ActionResult GetListProductSale([FromBody] dynamic options)
         {
             var products = _BLL.GetListProductSale(options);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 
@@ -53,6 +61,10 @@ namespace APP.API.Controllers
         public ActionResult GetListProductType()
         {
             var products = _BLL.GetListProductType();
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 

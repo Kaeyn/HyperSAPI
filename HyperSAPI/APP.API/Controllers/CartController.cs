@@ -2,6 +2,7 @@
 using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.Services;
+using APP.DAL.Repository.Entities;
 using Mailjet.Client.Resources.SMS;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,10 @@ namespace APP.API.Controllers
         public ActionResult GetListCartProduct([FromBody] dynamic options)
         {
             var products = _BLL.GetListCartProduct(options);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 

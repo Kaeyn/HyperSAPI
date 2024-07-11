@@ -27,6 +27,10 @@ namespace APP.API.Controllers
         public ActionResult GetListBill([FromBody] dynamic request)
         {
             var brands = _BLL.GetListBill(request);
+            if (brands.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(brands);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]

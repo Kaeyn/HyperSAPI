@@ -22,6 +22,10 @@ namespace APP.API.Controllers
         public ActionResult GetListCoupon([FromBody] dynamic request)
         {
             var products = _BLL.GetListCoupon(request);
+            if (products.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(products);
         }
 

@@ -21,6 +21,10 @@ namespace APP.API.Controllers
         public ActionResult GetAllBrands()
         {
             var brands = _BLL.GetListBrand();
+            if (brands.ObjectReturn?.Data == null)
+            {
+                return NotFound();
+            }
             return Ok(brands);
         }
 
