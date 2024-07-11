@@ -44,6 +44,7 @@ namespace APP.Bus.Repository.BLLs
                     ShippingAddress = b.ShippingAddress,
                     CreateAt = b.CreateAt,
                     PaymentMethod = b.PaymentMethod,
+                    PaymentUrl = b.PaymentUrl,
                     ListBillInfo = b.BillInfos.Select(bi => new
                     {
                         Code = bi.Code,
@@ -59,9 +60,11 @@ namespace APP.Bus.Repository.BLLs
                         TotalPrice = bi.TotalPrice,
                         Status = bi.Status,
                         Note = bi.Note
+
                     }),
-                    Voucher = "",
-                    Discount = 0,
+                    CouponApplied = b.CouponApplied,
+                    CouponDiscount = b.CouponDiscount,
+                    TotalBeforeDiscount = b.TotalBeforeDiscount,
                     TotalBill = b.TotalBill,
                     Status = b.Status,
                     Note = b.Note
@@ -95,6 +98,7 @@ namespace APP.Bus.Repository.BLLs
                     ShippingAddress = b.ShippingAddress,
                     CreateAt = b.CreateAt,
                     PaymentMethod = b.PaymentMethod,
+                    PaymentUrl = b.PaymentUrl,
                     ListBillInfo = b.BillInfos.Select(bi => new
                     {
                         Code = bi.Code,
@@ -112,8 +116,9 @@ namespace APP.Bus.Repository.BLLs
                         Note = bi.Note
 
                     }),
-                    Voucher = "",
-                    Discount = 0,
+                    CouponApplied = b.CouponApplied,
+                    CouponDiscount = b.CouponDiscount,
+                    TotalBeforeDiscount = b.TotalBeforeDiscount,
                     TotalBill = b.TotalBill,
                     Status = b.Status,
                     Note = b.Note
@@ -150,6 +155,7 @@ namespace APP.Bus.Repository.BLLs
                         ShippingAddress = b.ShippingAddress,
                         CreateAt = b.CreateAt,
                         PaymentMethod = b.PaymentMethod,
+                        PaymentUrl = b.PaymentUrl,
                         ListBillInfo = b.BillInfos.Select(bi => new
                         {
                             Code = bi.Code,
@@ -167,8 +173,9 @@ namespace APP.Bus.Repository.BLLs
                             Note = bi.Note
 
                         }),
-                        Voucher = "",
-                        Discount = 0,
+                        CouponApplied = b.CouponApplied,
+                        CouponDiscount = b.CouponDiscount,
+                        TotalBeforeDiscount = b.TotalBeforeDiscount,
                         TotalBill = b.TotalBill,
                         Status = b.Status,
                         Note = b.Note
