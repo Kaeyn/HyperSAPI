@@ -19,12 +19,12 @@ namespace APP.Bus.Repository.BLLs
     public class BillBLL
     {
         private AppDBContext DB;
-        private CartBLL cartBLL;
+        private CartBillBLL cartBillBLL;
 
         public BillBLL()
         {
             DB = new AppDBContext();
-            cartBLL = new CartBLL();
+            cartBillBLL = new CartBillBLL();
         }
 
         public async Task<DTOResponse> GetBill(int reqCode, string reqPhoneNumber)
@@ -203,7 +203,7 @@ namespace APP.Bus.Repository.BLLs
                 DTOProceedToPayment dTOProceedToPayment = param.DTOProceedToPayment;
                 if (dTOProceedToPayment != null && dTOUpdateBill == null)
                 {                  
-                    var result = cartBLL.ProceedToPayment(null, param.DTOProceedToPayment, false);
+                    var result = await cartBillBLL.ProceedToPayment(null, param.DTOProceedToPayment, false);
                     respond = result;
                 }
                 else if(dTOProceedToPayment == null && dTOUpdateBill != null)
@@ -241,93 +241,6 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
-
-        public async Task<DTOResponse> ApplyCoupon(DTOApplyCouponRequest couponRequest, bool getDB)
-        {
-            var respond = new DTOResponse();
-            try
-            {
-
-                DataSourceRequest dataSourceRequest = new DataSourceRequest();
-                dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
-                var coupons = DB.Coupons.FirstOrDefault(b => b.IdCoupon == couponRequest.IdCoupon);
-                if (coupons != null)
-                {
-                    if (coupons.Stage == 2 && coupons.Status == 1)
-                    {
-                        int toIntGuessorCus = couponRequest.IsGuess ? 0 : 1;
-                        if (coupons.ApplyTo == toIntGuessorCus)
-                        {
-                            if (couponRequest.TotalBill >= coupons.MinBillPrice)
-                            {
-                                if (coupons.RemainingQuantity > 0)
-                                {
-                                    if (getDB == true)
-                                    {
-                                        var avaibleCoupons = DB.Coupons.AsQueryable().Where(b => b.IdCoupon == couponRequest.IdCoupon).Select(c => new
-                                        {
-                                            IdCoupon = c.IdCoupon,
-                                            MaxBillDiscount = c.MaxBillDiscount,
-                                            CouponType = c.CouponType,
-                                            DirectDiscount = c.DirectDiscount,
-                                            PercentDiscount = c.PercentDiscount
-                                        }).ToList();
-                                        respond.ObjectReturn = avaibleCoupons.AsQueryable().ToDataSourceResult(dataSourceRequest);
-                                    }
-                                }
-                                else
-                                {
-                                    respond.ErrorString = "Phiếu giảm giá đã hết lượt sử dụng !";
-                                }
-                            }
-                            else
-                            {
-                                respond.ErrorString = "Đơn hàng chưa đạt giá trị tối thiếu là: " + coupons.MinBillPrice;
-                            }
-                        }
-                        else
-                        {
-                            respond.ErrorString = "Bạn không đủ điều kiện dùng phiếu giảm giá này";
-                        }
-
-                    }
-                    else
-                    {
-                        respond.ErrorString = "Phiếu giảm giá không còn hiệu lực !";
-                    }
-                }
-                else
-                {
-                    respond.ErrorString = "Phiếu giảm giá không tồn tại !";
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                respond.StatusCode = 500;
-                respond.ErrorString = ex.Message;
-            }
-
-            return respond;
-        }
-
-        public void UpdatePaymentString(int codeBill, string url)
-        {
-            var bill = DB.Bills.Include(b => b.BillInfos).FirstOrDefault(b => b.Code == codeBill);
-            bill.PaymentUrl = url;
-            DB.SaveChanges();
-        }
-
-        public void SuccessPaymentUpdate(int codeBill)
-        {
-            var bill = DB.Bills.Include(b => b.BillInfos).FirstOrDefault(b => b.Code == codeBill);
-            bill.Status = 1;
-            DB.SaveChanges();
-            foreach (var item in bill.BillInfos)
-            {
-                item.Status = 1;
-                DB.SaveChanges();
-            }
-        }
+      
     }
 }

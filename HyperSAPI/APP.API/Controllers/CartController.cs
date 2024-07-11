@@ -20,14 +20,13 @@ namespace APP.API.Controllers
     public class CartController : ControllerBase
     { 
         private CartBLL _BLL;
-        private BillBLL _BillBLL;
+        private CartBillBLL cartBillBLL;
         private IVnPayService VnPayService;
 
         public CartController(IVnPayService vnPayService)
         {
-            _BLL = new CartBLL();
-            _BillBLL = new BillBLL();
             VnPayService = vnPayService;
+            cartBillBLL = new CartBillBLL();
         }
 
 
@@ -67,7 +66,7 @@ namespace APP.API.Controllers
                     string paymentUrl = VnPayService.CreatePaymentUrl(HttpContext, model);
                     dbcheck.ErrorString = "";
                     dbcheck.ObjectReturn = new { RedirectUrl = paymentUrl };
-                    _BillBLL.UpdatePaymentString(orderID, paymentUrl);
+                    cartBillBLL.UpdatePaymentString(orderID, paymentUrl);
                 }
 
             }
@@ -84,7 +83,7 @@ namespace APP.API.Controllers
                 {
                     /*_BillBLL.SuccessPaymentUpdate()*/
                     int codeBill = ExtractOrderId(paymentResponse.OrderDescription);
-                    _BillBLL.SuccessPaymentUpdate(codeBill);
+                    cartBillBLL.SuccessPaymentUpdate(codeBill);
                     return Redirect("http://localhost:4200/HyperS/ecom/home");
                 }
                 else

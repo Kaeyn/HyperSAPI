@@ -1,6 +1,7 @@
 ﻿using APP.Bus.Repository.BLLs;
 using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Bill;
+using APP.Bus.Repository.Services;
 using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,10 +18,11 @@ namespace APP.API.Controllers
     public class BillController : ControllerBase
     {
         private BillBLL _BLL;
-
+        private CartBillBLL cartBillBLL;
         public BillController()
         {
             _BLL = new BillBLL();
+            cartBillBLL = new CartBillBLL();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -71,7 +73,7 @@ namespace APP.API.Controllers
         [HttpPost]
         public async Task<ActionResult> ApplyCoupon(DTOApplyCouponRequest request)
         {
-            var result = await _BLL.ApplyCoupon(request, true);
+            var result = await cartBillBLL.ApplyCoupon(request, true);
             return Ok(result);
         }
         

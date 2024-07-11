@@ -26,12 +26,12 @@ namespace APP.Bus.Repository.BLLs
     public class CartBLL
     {
         private AppDBContext DB;
-        private BillBLL _billBLL;
+        private CartBillBLL cartBillBLL;
 
         public CartBLL()
         {
             DB = new AppDBContext();
-            _billBLL = new BillBLL();
+            cartBillBLL = new CartBillBLL();
         }
 
         public async Task<DTOResponse> ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment, bool isCountDown)
@@ -83,7 +83,7 @@ namespace APP.Bus.Repository.BLLs
                         IsGuess = reqIsGuess
                     };
 
-                    DTOResponse applyResult = await _billBLL.ApplyCoupon(requestApply, false);
+                    DTOResponse applyResult = await cartBillBLL.ApplyCoupon(requestApply, false);
                     if (applyResult.ErrorString != "")
                     {
                         errorList.Add(applyResult.ErrorString);
@@ -159,7 +159,7 @@ namespace APP.Bus.Repository.BLLs
 
                         if (avaiableCoupon != null)
                         {
-                            int discountValue = CalculateCouponDiscount(SumBill, avaiableCoupon);
+                            int discountValue = cartBillBLL.CalculateCouponDiscount(SumBill, avaiableCoupon);
                             newBill.TotalBeforeDiscount = SumBill;
                             newBill.CouponDiscount = discountValue;
                             newBill.TotalBill = SumBill - discountValue;
@@ -354,28 +354,6 @@ namespace APP.Bus.Repository.BLLs
 
         }
 
-
-        private int CalculateCouponDiscount(int TotalBill, Coupon coupon)
-        {
-            if(coupon.CouponType == 0)
-            {
-                int percentDiscount = (int)coupon.PercentDiscount;
-                int discountValue = (TotalBill * percentDiscount / 100);
-                if(discountValue > coupon.MaxBillDiscount)
-                {
-                    discountValue = (int)coupon.MaxBillDiscount;
-                }
-                coupon.RemainingQuantity -= 1;
-                DB.SaveChanges();
-                return discountValue;
-            }
-            else
-            {
-                int discountValue = (int)coupon.DirectDiscount;
-                coupon.RemainingQuantity -= 1;
-                DB.SaveChanges();
-                return discountValue;
-            }
-        }
+      
     }
 }
