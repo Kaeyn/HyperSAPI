@@ -32,10 +32,6 @@ namespace APP.API.Controllers
         public ActionResult GetProduct([FromBody] DTOProduct request)
         {
             var products = _BLL.GetProduct(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -43,10 +39,6 @@ namespace APP.API.Controllers
         public ActionResult GetListProduct([FromBody] dynamic options)
         {
             var products = _BLL.GetListProduct(options);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -54,10 +46,6 @@ namespace APP.API.Controllers
         public ActionResult GetListProductSale([FromBody] dynamic options)
         {
             var products = _BLL.GetListProductSale(options);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -65,10 +53,6 @@ namespace APP.API.Controllers
         public ActionResult GetListProductType()
         {
             var products = _BLL.GetListProductType();
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -84,6 +68,14 @@ namespace APP.API.Controllers
         public async Task<ActionResult> UpdateProduct([FromBody] dynamic request)
         {
             var products = await _BLL.UpdateProduct(request);
+            return Ok(products);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult> UpdateProductType([FromBody] dynamic request)
+        {
+            var products = await _BLL.UpdateProductType(request);
             return Ok(products);
         }
     }

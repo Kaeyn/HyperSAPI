@@ -71,9 +71,7 @@ public partial class AppDBContext : DbContext
 
             entity.ToTable("Banner");
 
-            entity.Property(e => e.BannerUrl)
-                .HasMaxLength(255)
-                .HasColumnName("BannerURL");
+            entity.Property(e => e.BannerUrl).HasMaxLength(255);
             entity.Property(e => e.Page).HasMaxLength(255);
             entity.Property(e => e.Title).HasMaxLength(45);
         });
@@ -105,6 +103,8 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.CodeBill, "FkBillInfo_Bill_CodeBill_idx");
 
             entity.HasIndex(e => e.CodeProduct, "FkBillInfo_Product_CodeProduct_idx");
+
+            entity.Property(e => e.Note).HasMaxLength(1500);
 
             entity.HasOne(d => d.CodeBillNavigation).WithMany(p => p.BillInfos)
                 .HasForeignKey(d => d.CodeBill)

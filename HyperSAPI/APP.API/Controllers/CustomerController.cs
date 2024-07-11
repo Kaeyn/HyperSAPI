@@ -26,10 +26,6 @@ namespace APP.API.Controllers
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);
             var products = _BLL.GetCustomer(userID);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -37,10 +33,6 @@ namespace APP.API.Controllers
         public ActionResult GetListCustomer([FromBody] dynamic request)
         {
             var products = _BLL.GetListCustomer(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 

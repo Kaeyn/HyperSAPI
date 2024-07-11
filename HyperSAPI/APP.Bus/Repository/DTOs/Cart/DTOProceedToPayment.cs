@@ -15,6 +15,7 @@ namespace APP.Bus.Repository.DTOs.Cart
         public string ShippingAddress { get; set; }
         public int PaymentMethod { get; set; }
         public dynamic ListProduct {  get; set; }
+        public string CouponApplied {  get; set; } = string.Empty;
         public int TotalBill { get; set; }
         public bool IsGuess { get; set; } = true;
     }

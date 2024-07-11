@@ -58,6 +58,7 @@ namespace APP.Bus.Repository.BLLs
                         TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                         TotalPrice = bi.TotalPrice,
                         Status = bi.Status,
+                        Note = bi.Note
                     }),
                     Voucher = "",
                     Discount = 0,
@@ -107,7 +108,8 @@ namespace APP.Bus.Repository.BLLs
                         PriceAfterDiscount = CalculatePriceAfterDiscount(bi.Price, bi.Discount),
                         TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                         TotalPrice = bi.TotalPrice,
-                        Status = bi.Status
+                        Status = bi.Status,
+                        Note = bi.Note
 
                     }),
                     Voucher = "",
@@ -161,7 +163,8 @@ namespace APP.Bus.Repository.BLLs
                             PriceAfterDiscount = CalculatePriceAfterDiscount(bi.Price, bi.Discount),
                             TotalPriceBeforeDiscount = bi.TotalPriceBeforeDiscount,
                             TotalPrice = bi.TotalPrice,
-                            Status = bi.Status
+                            Status = bi.Status,
+                            Note = bi.Note
 
                         }),
                         Voucher = "",
@@ -212,6 +215,7 @@ namespace APP.Bus.Repository.BLLs
                         {
                             var billInfoInDB = DB.BillInfos.FirstOrDefault(bi => bi.Code == bill.Code);
                             billInfoInDB.Status = bill.Status;
+                            billInfoInDB.Note = bill.Note;
                         }
                         DB.SaveChanges();
                     }
@@ -229,6 +233,82 @@ namespace APP.Bus.Repository.BLLs
             }
 
             return respond;
+        }
+
+        public DTOResponse ApplyCoupon(DTOApplyCouponRequest couponRequest, bool getDB)
+        {
+            var respond = new DTOResponse();
+            try
+            {
+
+                DataSourceRequest dataSourceRequest = new DataSourceRequest();
+                dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+                var coupons = DB.Coupons.FirstOrDefault(b => b.IdCoupon == couponRequest.IdCoupon);
+                if (coupons != null)
+                {
+                    if (coupons.Stage == 2 && coupons.Status == 1)
+                    {
+                        int toIntGuessorCus = couponRequest.IsGuess ? 0 : 1;
+                        if (coupons.ApplyTo == toIntGuessorCus)
+                        {
+                            if (couponRequest.TotalBill >= coupons.MinBillPrice)
+                            {
+                                if (coupons.RemainingQuantity > 0)
+                                {
+                                    if (getDB == true)
+                                    {
+                                        var avaibleCoupons = DB.Coupons.AsQueryable().Where(b => b.IdCoupon == couponRequest.IdCoupon).Select(c => new
+                                        {
+                                            IdCoupon = c.IdCoupon,
+                                            MaxBillDiscount = c.MaxBillDiscount,
+                                            CouponType = c.CouponType,
+                                            DirectDiscount = c.DirectDiscount,
+                                            PercentDiscount = c.PercentDiscount
+                                        }).ToList();
+                                        respond.ObjectReturn = avaibleCoupons.AsQueryable().ToDataSourceResult(dataSourceRequest);
+                                    }
+                                }
+                                else
+                                {
+                                    respond.ErrorString = "Phiếu giảm giá đã hết lượt sử dụng !";
+                                }
+                            }
+                            else
+                            {
+                                respond.ErrorString = "Đơn hàng chưa đạt giá trị tối thiếu là: " + coupons.MinBillPrice;
+                            }
+                        }
+                        else
+                        {
+                            respond.ErrorString = "Bạn không đủ điều kiện dùng phiếu giảm giá này";
+                        }
+
+                    }
+                    else
+                    {
+                        respond.ErrorString = "Phiếu giảm giá không còn hiệu lực !";
+                    }
+                }
+                else
+                {
+                    respond.ErrorString = "Phiếu giảm giá không tồn tại !";
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
+
+        public void UpdatePaymentString(int codeBill, string url)
+        {
+            var bill = DB.Bills.Include(b => b.BillInfos).FirstOrDefault(b => b.Code == codeBill);
+            bill.PaymentUrl = url;
+            DB.SaveChanges();
         }
 
         public void SuccessPaymentUpdate(int codeBill)

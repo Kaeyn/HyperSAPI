@@ -25,6 +25,8 @@ public partial class BillInfo
 
     public int Status { get; set; }
 
+    public string? Note { get; set; }
+
     public virtual Bill CodeBillNavigation { get; set; } = null!;
 
     public virtual Product CodeProductNavigation { get; set; } = null!;

@@ -17,11 +17,7 @@ namespace APP.Bus.Repository.DTOs.Staff
         public string PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
-
         public string? Identication { get; set; }
-
-        public int Position { get; set; }
-        public string PositionStr { get; set; }
         public List<dynamic> ListShift { get; set; }
         public float TotalSalary { get; set; }
         public int CodeAccount { get; set; }

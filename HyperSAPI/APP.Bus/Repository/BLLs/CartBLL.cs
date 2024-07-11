@@ -1,10 +1,13 @@
 ﻿using APP.Bus.Repository.DTOs;
+using APP.Bus.Repository.DTOs.Bill;
 using APP.Bus.Repository.DTOs.Cart;
+using APP.Bus.Repository.DTOs.Coupon;
 using APP.Bus.Repository.DTOs.Product;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -23,10 +26,12 @@ namespace APP.Bus.Repository.BLLs
     public class CartBLL
     {
         private AppDBContext DB;
+        private BillBLL _billBLL;
 
         public CartBLL()
         {
             DB = new AppDBContext();
+            _billBLL = new BillBLL();
         }
 
         public DTOResponse ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment, bool isCountDown)
@@ -49,6 +54,7 @@ namespace APP.Bus.Repository.BLLs
                 string reqShippingAddress = request.ShippingAddress;
                 int reqPaymentMethod = request.PaymentMethod;
                 int reqTotalBill = request.TotalBill;
+                string reqCouponApplied = request.CouponApplied;
                 bool reqIsGuess = request.IsGuess;
                 isCountDown = reqPaymentMethod == 2 || reqPaymentMethod == 1 ? true : false;
                 List<string> errorList= new List<string>();
@@ -65,9 +71,32 @@ namespace APP.Bus.Repository.BLLs
                     }
                     totalBeforeDiscount += stock.CodeProductNavigation.Price;
                 }
+
+                Coupon avaiableCoupon = null;
+
+                if (reqCouponApplied == "" || reqCouponApplied == null)
+                {
+                    DTOApplyCouponRequest requestApply = new DTOApplyCouponRequest
+                    {
+                        IdCoupon = reqCouponApplied,
+                        TotalBill = reqTotalBill,
+                        IsGuess = reqIsGuess
+                    };
+
+                    DTOResponse applyResult = _billBLL.ApplyCoupon(requestApply, false);
+                    if (applyResult.ErrorString != "")
+                    {
+                        errorList.Add(applyResult.ErrorString);
+                    }
+                    else
+                    {
+                        avaiableCoupon = DB.Coupons.FirstOrDefault(c => c.IdCoupon == reqCouponApplied);
+                    }
+                }
+                
+
                 if (errorList.Count == 0)
                 {
-                    
                         TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
                         Bill newBill = new Bill
@@ -80,6 +109,7 @@ namespace APP.Bus.Repository.BLLs
                             PaymentMethod = reqPaymentMethod,
                             TotalBeforeDiscount = totalBeforeDiscount,
                             TotalBill = reqTotalBill,
+                            CouponApplied = reqCouponApplied ?? null,
                             Status = reqPaymentMethod == 2 || reqPaymentMethod == 1 ? 17 : 1
                         };
 
@@ -124,17 +154,33 @@ namespace APP.Bus.Repository.BLLs
                                 }
                             }
                         }
+
                         newBill.TotalBill = SumBill;
+
+                        if (avaiableCoupon != null)
+                        {
+                            int discountValue = CalculateCouponDiscount(SumBill, avaiableCoupon);
+                            newBill.TotalBeforeDiscount = SumBill;
+                            newBill.CouponDiscount = discountValue;
+                            newBill.TotalBill = SumBill - discountValue;
+                            
+                        }
+                        
                         DB.SaveChanges();
 
                         if (isCountDown)
                         {
+                            int codeCoupon = 0;
+                            if(avaiableCoupon != null)
+                            {
+                                codeCoupon = avaiableCoupon.Code;
+                            }   
                             string eventName = $"DeleteUnPaidBill_{newBill.Code}";
                             string sqlStatement = $@"
                             CREATE EVENT {eventName}
                             ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 16 MINUTE
                             DO
-                            CALL DeleteBill('{newBill.Code}');";
+                            CALL DeleteBill('{newBill.Code}','{codeCoupon}');";
 
                             DB.Database.ExecuteSqlRaw(sqlStatement);
 
@@ -308,6 +354,28 @@ namespace APP.Bus.Repository.BLLs
 
         }
 
-        
+
+        private int CalculateCouponDiscount(int TotalBill, Coupon coupon)
+        {
+            if(coupon.CouponType == 0)
+            {
+                int percentDiscount = (int)coupon.PercentDiscount;
+                int discountValue = (TotalBill * percentDiscount / 100);
+                if(discountValue > coupon.MaxBillDiscount)
+                {
+                    discountValue = (int)coupon.MaxBillDiscount;
+                }
+                coupon.RemainingQuantity -= 1;
+                DB.SaveChanges();
+                return discountValue;
+            }
+            else
+            {
+                int discountValue = (int)coupon.DirectDiscount;
+                coupon.RemainingQuantity -= 1;
+                DB.SaveChanges();
+                return discountValue;
+            }
+        }
     }
 }

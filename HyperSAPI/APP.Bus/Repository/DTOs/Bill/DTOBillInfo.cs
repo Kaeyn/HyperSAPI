@@ -14,9 +14,14 @@ namespace APP.Bus.Repository.DTOs.Bill
         public string Name { get; set; }
         public string ImageURL { get; set; }
         public int Size { get; set; }
-        public int Price { get; set; }
         public int Quantity { get; set; }
+        public int Price { get; set; }
+        public int Discount { get; set; }
+        public int PriceAfterDiscount { get; set; }
+        public int TotalPriceBeforeDiscount { get; set; }
         public int TotalPrice { get; set; }
         public int Status { get; set; }
+
+        public string Note { get; set; }
     }
 }

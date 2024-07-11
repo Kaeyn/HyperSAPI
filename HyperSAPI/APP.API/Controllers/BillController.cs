@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs.Bill;
 using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,10 +27,6 @@ namespace APP.API.Controllers
         public ActionResult GetListBill([FromBody] dynamic request)
         {
             var brands = _BLL.GetListBill(request);
-            if (brands.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(brands);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
@@ -40,10 +37,6 @@ namespace APP.API.Controllers
             if (userID != null)
             {
                 var brands = _BLL.GetBill(CodeBill, userID);
-                if (brands.ObjectReturn?.Data == null)
-                {
-                    return NotFound();
-                }
                 return Ok(brands);
             }
             return NotFound();
@@ -56,10 +49,6 @@ namespace APP.API.Controllers
             if (userID != null)
             {
                 var brands = _BLL.GetListCustomerBill(userID);
-                if (brands.ObjectReturn?.Data == null)
-                {
-                    return NotFound();
-                }
                 return Ok(brands);
             }
             
@@ -74,6 +63,12 @@ namespace APP.API.Controllers
             return Ok(brands);
         }
 
+        [HttpPost]
+        public ActionResult ApplyCoupon(DTOApplyCouponRequest request)
+        {
+            var result = _BLL.ApplyCoupon(request, true);
+            return Ok(result);
+        }
         
     }
 }

@@ -163,7 +163,6 @@ namespace APP.Bus.Repository.BLLs
                             Name = staffData.Name,
                             Birthday = staffData.Birthday,
                             Address = staffData.Address,
-                            Position = staffData.Position,
                             CodeUser = newDBUser.Code,
                             ImageUrl = staffData.ImageUrl,
                             Gender = staffData.Gender,

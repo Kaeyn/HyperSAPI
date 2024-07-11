@@ -200,7 +200,8 @@ namespace APP.Bus.Repository.BLLs
                 var products = DB.ProductTypes.AsQueryable()
                     .Select(p => new
                     {
-                        Code = p.Code,             
+                        Code = p.Code,
+                        IdProductType = p.IdProductType,
                         Name = p.Name                   
                     }).ToList();
 
@@ -217,7 +218,7 @@ namespace APP.Bus.Repository.BLLs
 
         public DTOResponse AddProductToCart(DTOAddToCart request)
         {
-            
+                
             var respond = new DTOResponse();
             try
             {
@@ -429,6 +430,70 @@ namespace APP.Bus.Repository.BLLs
                     }
                 }
                            
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+
+        public DTOResponse UpdateProductType(dynamic requestParam)
+        {
+            DTOResponse respond = new DTOResponse();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOUpdateProductType>(requestParam.ToString());
+                DTOProductType reqProductType = param.ProductType;
+                var changedProperties = param.Properties;
+                bool existedProductType = DB.ProductTypes.Any(pt => pt.IdProductType == reqProductType.IdProductType);
+                if (reqProductType.Code == 0)
+                {
+                    if (existedProductType)
+                    {
+                        respond.ErrorString = "Trùng mã loại sản phẩm trong hệ thống !";
+                    }
+                    else
+                    {
+                        var newProductType = new ProductType
+                        {
+                            IdProductType = reqProductType.IdProductType,
+                            Name = reqProductType.Name,
+                        };
+
+                        DB.ProductTypes.Add(newProductType);
+                        DB.SaveChanges();
+                    }
+                    
+                }
+                else
+                {
+                    var existingProductType = DB.ProductTypes.FirstOrDefault(b => b.Code == reqProductType.Code);
+                    if (existingProductType != null)
+                    {
+                        foreach (var property in changedProperties)
+                        {
+                            var productTypeProperty = typeof(DTOProductType).GetProperty(property);
+                            if (productTypeProperty != null)
+                            {
+                                var newValue = productTypeProperty.GetValue(reqProductType);
+                                var existingProductTypeProperty = typeof(ProductType).GetProperty(property);
+                                if (existingProductTypeProperty != null)
+                                {                                   
+                                    existingProductTypeProperty.SetValue(existingProductType, newValue, null);
+                                    DB.SaveChanges();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        respond.StatusCode = 404;
+                        respond.ErrorString = "ProductType not found.";
+                    }
+                }
+
             }
             catch (Exception ex)
             {

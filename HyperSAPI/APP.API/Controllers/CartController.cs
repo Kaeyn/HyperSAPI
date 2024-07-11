@@ -62,6 +62,7 @@ namespace APP.API.Controllers
                     string paymentUrl = VnPayService.CreatePaymentUrl(HttpContext, model);
                     dbcheck.ErrorString = "";
                     dbcheck.ObjectReturn = new { RedirectUrl = paymentUrl };
+                    _BillBLL.UpdatePaymentString(orderID, paymentUrl);
                 }
 
             }

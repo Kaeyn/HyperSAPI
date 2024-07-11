@@ -24,10 +24,6 @@ namespace APP.API.Controllers
         public ActionResult GetStaff(DTOStaff request)
         {
             var products = _BLL.GetStaff(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -36,10 +32,6 @@ namespace APP.API.Controllers
         public ActionResult GetListStaff([FromBody] dynamic request)
         {
             var products = _BLL.GetListStaff(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -49,10 +41,6 @@ namespace APP.API.Controllers
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);
             var products = _BLL.GetCurrentStaffInfo(userID);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
