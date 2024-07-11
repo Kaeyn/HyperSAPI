@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Bill;
 using APP.DAL.Repository.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,9 +25,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetListBill([FromBody] dynamic request)
+        public async Task<ActionResult> GetListBill([FromBody] dynamic request)
         {
-            var brands = _BLL.GetListBill(request);
+            var brands = await _BLL.GetListBill(request);
             if (brands.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -35,24 +36,24 @@ namespace APP.API.Controllers
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
-        public ActionResult GetBill(int CodeBill)
+        public async Task<ActionResult> GetBill(int CodeBill)
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);                   
             if (userID != null)
             {
-                var brands = _BLL.GetBill(CodeBill, userID);
+                var brands = await _BLL.GetBill(CodeBill, userID);
                 return Ok(brands);
             }
             return NotFound();
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
-        public ActionResult GetListCustomerBill()
+        public async Task<ActionResult> GetListCustomerBill()
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);
             if (userID != null)
             {
-                var brands = _BLL.GetListCustomerBill(userID);
+                var brands = await _BLL.GetListCustomerBill(userID);
                 return Ok(brands);
             }
             
@@ -61,16 +62,16 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Customer")]
         [HttpPost]
-        public ActionResult UpdateBill([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateBill([FromBody] dynamic request)
         {
-            var brands = _BLL.UpdateBill(request);          
+            var brands = await _BLL.UpdateBill(request);          
             return Ok(brands);
         }
 
         [HttpPost]
-        public ActionResult ApplyCoupon(DTOApplyCouponRequest request)
+        public async Task<ActionResult> ApplyCoupon(DTOApplyCouponRequest request)
         {
-            var result = _BLL.ApplyCoupon(request, true);
+            var result = await _BLL.ApplyCoupon(request, true);
             return Ok(result);
         }
         

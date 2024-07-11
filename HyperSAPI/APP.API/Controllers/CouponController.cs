@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,9 +20,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetListCoupon([FromBody] dynamic request)
+        public async Task<ActionResult> GetListCoupon([FromBody] dynamic request)
         {
-            var products = _BLL.GetListCoupon(request);
+            var products = await _BLL.GetListCoupon(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -31,9 +32,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult UpdateCoupon([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateCoupon([FromBody] dynamic request)
         {
-            var products = _BLL.UpdateCoupon(request);
+            var products = await _BLL.UpdateCoupon(request);
             return Ok(products);
         }
     }

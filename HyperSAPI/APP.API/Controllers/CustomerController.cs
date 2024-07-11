@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Product;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,17 +23,17 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
-        public ActionResult GetMyInfo()
+        public async Task<ActionResult> GetMyInfo()
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);
-            var products = _BLL.GetCustomer(userID);
+            var products = await _BLL.GetCustomer(userID);
             return Ok(products);
         }
 
         [HttpPost]
-        public ActionResult GetListCustomer([FromBody] dynamic request)
+        public async Task<ActionResult> GetListCustomer([FromBody] dynamic request)
         {
-            var products = _BLL.GetListCustomer(request);
+            var products = await _BLL.GetListCustomer(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -41,17 +42,17 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateCustomer([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateCustomer([FromBody] dynamic request)
         {
-            var products = _BLL.UpdateCustomer(request);          
+            var products = await _BLL.UpdateCustomer(request);          
             return Ok(products);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
-        public ActionResult UpdateShippingAddress([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateShippingAddress([FromBody] dynamic request)
         {
-            var result = _BLL.UpdateShippingAddress(request);
+            var result = await _BLL.UpdateShippingAddress(request);
 
             return Ok(result);
         }

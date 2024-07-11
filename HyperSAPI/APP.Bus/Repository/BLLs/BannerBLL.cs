@@ -2,6 +2,7 @@
 using APP.Bus.Repository.DTOs.Coupon;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetListBanner(dynamic request)
+        public async Task<DTOResponse> GetListBanner(dynamic request)
         {
             var response = new DTOResponse();
             try
@@ -49,7 +50,7 @@ namespace APP.Bus.Repository.BLLs
             return response;
         }
 
-        public DTOResponse UpdateBanner(dynamic requestParam)
+        public async Task<DTOResponse> UpdateBanner(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try

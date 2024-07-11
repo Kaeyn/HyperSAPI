@@ -22,23 +22,18 @@ namespace APP.API.Controllers
         }
 
         // POST api/<ProductController>
-        [HttpGet]
-        public ActionResult HealthCheck()
-        {
-            return Ok("OK");
-        }
 
         [HttpPost]
-        public ActionResult GetProduct([FromBody] DTOProduct request)
+        public async Task<ActionResult> GetProduct([FromBody] DTOProduct request)
         {
-            var products = _BLL.GetProduct(request);
+            var products = await _BLL.GetProduct(request);
             return Ok(products);
         }
 
         [HttpPost]
-        public ActionResult GetListProduct([FromBody] dynamic options)
+        public async Task<ActionResult> GetListProduct([FromBody] dynamic options)
         {
-            var products = _BLL.GetListProduct(options);
+            var products = await _BLL.GetListProduct(options);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -47,9 +42,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetListProductSale([FromBody] dynamic options)
+        public async Task<ActionResult> GetListProductSale([FromBody] dynamic options)
         {
-            var products = _BLL.GetListProductSale(options);
+            var products = await _BLL.GetListProductSale(options);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -58,9 +53,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetListProductType()
+        public async Task<ActionResult> GetListProductType()
         {
-            var products = _BLL.GetListProductType();
+            var products = await _BLL.GetListProductType();
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -69,9 +64,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddProductToCart(DTOAddToCart request)
+        public async Task<ActionResult> AddProductToCart(DTOAddToCart request)
         {
-            var products = _BLL.AddProductToCart(request);
+            var products = await _BLL.AddProductToCart(request);
             return Ok(products);
         }
 

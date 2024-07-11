@@ -34,7 +34,7 @@ namespace APP.Bus.Repository.BLLs
             _billBLL = new BillBLL();
         }
 
-        public DTOResponse ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment, bool isCountDown)
+        public async Task<DTOResponse> ProceedToPayment(dynamic requestParam, DTOProceedToPayment? dTOProceedToPayment, bool isCountDown)
         {
             dynamic request = null;
             if(dTOProceedToPayment != null)
@@ -83,7 +83,7 @@ namespace APP.Bus.Repository.BLLs
                         IsGuess = reqIsGuess
                     };
 
-                    DTOResponse applyResult = _billBLL.ApplyCoupon(requestApply, false);
+                    DTOResponse applyResult = await _billBLL.ApplyCoupon(requestApply, false);
                     if (applyResult.ErrorString != "")
                     {
                         errorList.Add(applyResult.ErrorString);
@@ -209,7 +209,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListCartProduct(dynamic requestParam)
+        public async Task<DTOResponse> GetListCartProduct(dynamic requestParam)
         {
             var request = JsonConvert.DeserializeObject<DTOGetListCartRequest>(requestParam.ToString());
             var respond = new DTOResponse();
@@ -304,7 +304,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetCountInCart(dynamic requestParam)
+        public async Task<DTOResponse> GetCountInCart(dynamic requestParam)
         {
             var request = JsonConvert.DeserializeObject<DTOGetListCartRequest>(requestParam.ToString());
             int codeCustomer = request.CodeCustomer;

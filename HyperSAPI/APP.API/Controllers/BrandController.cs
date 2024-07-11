@@ -1,4 +1,5 @@
 ﻿using APP.Bus.Repository.BLLs;
+using APP.Bus.Repository.DTOs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetAllBrands()
+        public async Task<ActionResult> GetAllBrands()
         {
-            var brands = _BLL.GetListBrand();
+            var brands = await _BLL.GetListBrand();
             if (brands.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -30,9 +31,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult UpdateBrand([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateBrand([FromBody] dynamic request)
         {
-            var brands = _BLL.UpdateBrand(request);
+            var brands = await _BLL.UpdateBrand(request);
             return Ok(brands);
         }
     }

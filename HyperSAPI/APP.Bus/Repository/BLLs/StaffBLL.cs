@@ -23,7 +23,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetCurrentStaffInfo(string phoneNumber)
+        public async Task<DTOResponse> GetCurrentStaffInfo(string phoneNumber)
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -60,7 +60,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetStaff(DTOStaff requestStaff)
+        public async Task<DTOResponse> GetStaff(DTOStaff requestStaff)
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -97,7 +97,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListStaff(dynamic requestParam)
+        public async Task<DTOResponse> GetListStaff(dynamic requestParam)
         {
             var respond = new DTOResponse();
             try

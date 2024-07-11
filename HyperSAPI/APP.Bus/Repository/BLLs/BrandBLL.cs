@@ -24,7 +24,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetListBrand()
+        public async Task<DTOResponse> GetListBrand()
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -49,7 +49,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse UpdateBrand(dynamic requestParam)
+        public async Task<DTOResponse> UpdateBrand(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try

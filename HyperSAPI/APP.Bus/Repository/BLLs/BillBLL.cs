@@ -27,7 +27,7 @@ namespace APP.Bus.Repository.BLLs
             cartBLL = new CartBLL();
         }
 
-        public DTOResponse GetBill(int reqCode, string reqPhoneNumber)
+        public async Task<DTOResponse> GetBill(int reqCode, string reqPhoneNumber)
         {
             var respond = new DTOResponse();
             try
@@ -81,7 +81,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListCustomerBill(string reqPhoneNumber)
+        public async Task<DTOResponse> GetListCustomerBill(string reqPhoneNumber)
         {
             var respond = new DTOResponse();
             try
@@ -137,7 +137,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListBill(dynamic requestParam)
+        public async Task<DTOResponse> GetListBill(dynamic requestParam)
         {
             var respond = new DTOResponse();
             try
@@ -192,7 +192,7 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
-        public DTOResponse UpdateBill(dynamic requestParam)
+        public async Task<DTOResponse> UpdateBill(dynamic requestParam)
         {
             var respond = new DTOResponse();
             try
@@ -242,7 +242,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse ApplyCoupon(DTOApplyCouponRequest couponRequest, bool getDB)
+        public async Task<DTOResponse> ApplyCoupon(DTOApplyCouponRequest couponRequest, bool getDB)
         {
             var respond = new DTOResponse();
             try

@@ -32,9 +32,9 @@ namespace APP.API.Controllers
 
 
         [HttpPost]
-        public ActionResult GetListCartProduct([FromBody] dynamic options)
+        public async Task<ActionResult> GetListCartProduct([FromBody] dynamic options)
         {
-            var products = _BLL.GetListCartProduct(options);
+            var products = await _BLL.GetListCartProduct(options);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -43,9 +43,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult ProceedToPayment([FromBody] dynamic options)
+        public async Task<ActionResult> ProceedToPayment([FromBody] dynamic options)
         {
-            var dbcheck = _BLL.ProceedToPayment(options, null, false);
+            var dbcheck = await _BLL.ProceedToPayment(options, null, false);
             if (dbcheck.ErrorString == "Payment")
             {
                 var response = dbcheck.ObjectReturn;
@@ -75,7 +75,7 @@ namespace APP.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult VnPayReturn([FromQuery] Dictionary<string, string> vnp_Params)
+        public async Task<ActionResult> VnPayReturn([FromQuery] Dictionary<string, string> vnp_Params)
         {
             try
             {
@@ -99,9 +99,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetCountInCart([FromBody] dynamic options)
+        public async Task<ActionResult> GetCountInCart([FromBody] dynamic options)
         {
-            var products = _BLL.GetCountInCart(options);
+            var products = await _BLL.GetCountInCart(options);
             return Ok(products);
         }
 

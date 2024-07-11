@@ -19,9 +19,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetListBanner([FromBody] dynamic request)
+        public async Task<ActionResult> GetListBanner([FromBody] dynamic request)
         {
-            var products = _BLL.GetListBanner(request);
+            var products = await _BLL.GetListBanner(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -31,9 +31,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult UpdateBanner([FromBody] dynamic request)
+        public async Task<ActionResult> UpdateBanner([FromBody] dynamic request)
         {
-            var products = _BLL.UpdateBanner(request);
+            var products = await _BLL.UpdateBanner(request);
             return Ok(products);
         }
 

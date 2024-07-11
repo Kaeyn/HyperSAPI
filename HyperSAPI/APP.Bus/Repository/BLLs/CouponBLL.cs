@@ -21,7 +21,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetListCoupon(dynamic requestParam)
+        public async Task<DTOResponse> GetListCoupon(dynamic requestParam)
         {
             var respond = new DTOResponse();
             try
@@ -59,7 +59,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse UpdateCoupon(dynamic requestParam)
+        public async Task<DTOResponse> UpdateCoupon(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try

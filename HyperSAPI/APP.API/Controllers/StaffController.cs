@@ -21,9 +21,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetStaff(DTOStaff request)
+        public async Task<ActionResult> GetStaff(DTOStaff request)
         {
-            var products = _BLL.GetStaff(request);
+            var products = await _BLL.GetStaff(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -33,9 +33,9 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        public ActionResult GetListStaff([FromBody] dynamic request)
+        public async Task<ActionResult> GetListStaff([FromBody] dynamic request)
         {
-            var products = _BLL.GetListStaff(request);
+            var products = await _BLL.GetListStaff(request);
             if (products.ObjectReturn?.Data == null)
             {
                 return NotFound();
@@ -45,10 +45,10 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
         [HttpPost]
-        public ActionResult GetCurrentStaffInfo()
+        public async Task<ActionResult> GetCurrentStaffInfo()
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);
-            var products = _BLL.GetCurrentStaffInfo(userID);
+            var products = await _BLL.GetCurrentStaffInfo(userID);
             return Ok(products);
         }
 

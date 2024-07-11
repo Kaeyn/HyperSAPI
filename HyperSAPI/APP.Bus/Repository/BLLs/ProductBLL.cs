@@ -26,7 +26,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetProduct(DTOProduct dtoRequest)
+        public async Task<DTOResponse> GetProduct(DTOProduct dtoRequest)
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -82,7 +82,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListProduct(dynamic options)
+        public async Task<DTOResponse> GetListProduct(dynamic options)
         {
             var respond = new DTOResponse();           
             try
@@ -137,7 +137,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListProductSale(dynamic options)
+        public async Task<DTOResponse> GetListProductSale(dynamic options)
         {
             var respond = new DTOResponse();
             try
@@ -190,7 +190,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListProductType()
+        public async Task<DTOResponse> GetListProductType()
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "asc");
@@ -216,7 +216,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse AddProductToCart(DTOAddToCart request)
+        public async Task<DTOResponse> AddProductToCart(DTOAddToCart request)
         {
                 
             var respond = new DTOResponse();
@@ -439,7 +439,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse UpdateProductType(dynamic requestParam)
+        public async Task<DTOResponse> UpdateProductType(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try

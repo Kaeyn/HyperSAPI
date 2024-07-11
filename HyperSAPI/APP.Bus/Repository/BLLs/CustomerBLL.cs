@@ -25,7 +25,7 @@ namespace APP.Bus.Repository.BLLs
             DB = new AppDBContext();
         }
 
-        public DTOResponse GetCustomer(string reqPhoneNumber)
+        public async Task<DTOResponse> GetCustomer(string reqPhoneNumber)
         {
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
@@ -61,7 +61,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse GetListCustomer(dynamic requestParam)
+        public async Task<DTOResponse> GetListCustomer(dynamic requestParam)
         {
             var respond = new DTOResponse();
             try
@@ -95,7 +95,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public DTOResponse UpdateCustomer(dynamic requestParam)
+        public async Task<DTOResponse> UpdateCustomer(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try
@@ -169,7 +169,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 */
-        public DTOResponse UpdateShippingAddress(dynamic requestParam)
+        public async Task<DTOResponse> UpdateShippingAddress(dynamic requestParam)
         {
             DTOResponse respond = new DTOResponse();
             try
