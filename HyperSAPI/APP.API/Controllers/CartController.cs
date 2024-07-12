@@ -35,17 +35,13 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListCartProduct([FromBody] dynamic options)
         {
             var products = await _BLL.GetListCartProduct(options);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
         [HttpPost]
         public async Task<ActionResult> ProceedToPayment([FromBody] dynamic options)
         {
-            var dbcheck = await _BLL.ProceedToPayment(options, null, false);
+            var dbcheck = await cartBillBLL.ProceedToPayment(options, null, false);
             if (dbcheck.ErrorString == "Payment")
             {
                 var response = dbcheck.ObjectReturn;
