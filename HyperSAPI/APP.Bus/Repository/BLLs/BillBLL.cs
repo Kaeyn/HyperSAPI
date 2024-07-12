@@ -34,7 +34,7 @@ namespace APP.Bus.Repository.BLLs
             {
                 DataSourceRequest dataSourceRequest = new DataSourceRequest();
                 dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
-                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.Code == reqCode && b.PhoneNumber == reqPhoneNumber)
+                var bills = DB.Bills.AsQueryable().Include(b => b.BillInfos).Where(b => b.Code == reqCode && b.OrdererPhoneNumber == reqPhoneNumber)
                 .Select(b => new
                 {
                     Code = b.Code,

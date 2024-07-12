@@ -35,7 +35,7 @@ namespace APP.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
-        public async Task<ActionResult> GetBill(int CodeBill)
+        public async Task<ActionResult> GetBill([FromBody] int CodeBill)
         {
             var userID = User.FindFirstValue(ClaimTypes.Name);                   
             if (userID != null)
