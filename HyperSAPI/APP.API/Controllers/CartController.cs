@@ -26,6 +26,7 @@ namespace APP.API.Controllers
         public CartController(IVnPayService vnPayService)
         {
             VnPayService = vnPayService;
+            _BLL = new CartBLL();
             cartBillBLL = new CartBillBLL();
         }
 
