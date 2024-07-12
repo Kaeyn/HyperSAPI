@@ -64,7 +64,7 @@ namespace APP.Bus.Repository.BLLs
 
                 Coupon avaiableCoupon = null;
 
-                if (reqCouponApplied == "" || reqCouponApplied == null)
+                if (reqCouponApplied != "" || reqCouponApplied != null)
                 {
                     DTOApplyCouponRequest requestApply = new DTOApplyCouponRequest
                     {
