@@ -23,10 +23,18 @@ namespace APP.API.Controllers
 
         // POST api/<ProductController>
 
+
         [HttpPost]
         public async Task<ActionResult> GetProduct([FromBody] DTOProduct request)
         {
             var products = await _BLL.GetProduct(request);
+            return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetProductByID(string ID)
+        {
+            var products = await _BLL.GetProductByID(ID);
             return Ok(products);
         }
 

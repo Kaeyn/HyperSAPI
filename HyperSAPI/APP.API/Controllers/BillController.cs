@@ -32,6 +32,7 @@ namespace APP.API.Controllers
             var brands = await _BLL.GetListBill(request);
             return Ok(brands);
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]
         [HttpPost]
         public async Task<ActionResult> GetBill(int CodeBill)

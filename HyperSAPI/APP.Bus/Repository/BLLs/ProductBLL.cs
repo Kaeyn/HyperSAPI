@@ -81,6 +81,61 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
+        public async Task<DTOResponse> GetProductByID(string ID)
+        {
+            DataSourceRequest dataSourceRequest = new DataSourceRequest();
+            dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+            var respond = new DTOResponse();
+            try
+            {
+
+                var products = DB.Products.AsQueryable()
+                    .Include(p => p.CodeProductTypeNavigation)
+                    .Include(p => p.CodeBrandNavigation).Where(p => p.IdProduct == ID)
+                    .Select(p => new
+                    {
+                        Code = p.Code,
+                        IdProduct = p.IdProduct,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        ListOfSize = DB.ProductSizes.AsQueryable().Where(i => i.CodeProduct == p.Code).Select(s => new DTOProductSize
+                        {
+                            Code = s.CodeSize,
+                            Size = s.CodeSizeNavigation.Size1,
+                            Stock = s.Stock ?? 0,
+                            Sold = s.Sold ?? 0,
+                        }).ToList(),
+                        ListOfImage = p.ProductImages.Select(i => new DTOImage
+                        {
+                            Code = i.Code,
+                            ImgUrl = i.Img,
+                            IsThumbnail = i.IsThumbnail == 1 ? true : false,
+                        }).ToList(),
+                        Discount = p.Discount,
+                        PriceAfterDiscount = CalculatePriceAfterDiscount(p.Price, p.Discount),
+                        CodeProductType = p.CodeProductType,
+                        ProductType = p.CodeProductTypeNavigation.Name,
+                        CodeBrand = p.CodeBrand,
+                        BrandName = p.CodeBrandNavigation.BrandName ?? "",
+                        Gender = p.Gender,
+                        Color = p.Color,
+                        Stock = p.ProductSizes.Sum(p => p.Stock),
+                        Sold = p.ProductSizes.Sum(p => p.Sold),
+                        ThumbnailImg = p.ProductImages.FirstOrDefault(i => i.IsThumbnail == 1).Img,
+                        Status = p.Status
+                    }).ToList();
+
+                respond.ObjectReturn = products.AsQueryable().ToDataSourceResult(dataSourceRequest);
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
 
         public async Task<DTOResponse> GetListProduct(dynamic options)
         {
