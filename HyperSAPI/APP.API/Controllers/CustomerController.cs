@@ -34,10 +34,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListCustomer([FromBody] dynamic request)
         {
             var products = await _BLL.GetListCustomer(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 

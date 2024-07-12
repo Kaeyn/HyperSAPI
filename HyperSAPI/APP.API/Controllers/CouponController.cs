@@ -23,10 +23,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListCoupon([FromBody] dynamic request)
         {
             var products = await _BLL.GetListCoupon(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 

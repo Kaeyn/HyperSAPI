@@ -34,10 +34,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListProduct([FromBody] dynamic options)
         {
             var products = await _BLL.GetListProduct(options);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -45,10 +41,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListProductSale([FromBody] dynamic options)
         {
             var products = await _BLL.GetListProductSale(options);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -56,10 +48,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListProductType()
         {
             var products = await _BLL.GetListProductType();
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 

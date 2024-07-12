@@ -22,10 +22,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetAllBrands()
         {
             var brands = await _BLL.GetListBrand();
-            if (brands.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(brands);
         }
 

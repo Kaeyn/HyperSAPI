@@ -30,10 +30,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListBill([FromBody] dynamic request)
         {
             var brands = await _BLL.GetListBill(request);
-            if (brands.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(brands);
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Customer")]

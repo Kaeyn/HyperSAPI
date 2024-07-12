@@ -24,10 +24,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetStaff(DTOStaff request)
         {
             var products = await _BLL.GetStaff(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
@@ -36,10 +32,6 @@ namespace APP.API.Controllers
         public async Task<ActionResult> GetListStaff([FromBody] dynamic request)
         {
             var products = await _BLL.GetListStaff(request);
-            if (products.ObjectReturn?.Data == null)
-            {
-                return NotFound();
-            }
             return Ok(products);
         }
 
