@@ -46,6 +46,12 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> ForgotPassword([FromBody] dynamic request)
+        {
+            var result = await _BLL.ForgotPassword(request);
+            return result;
+        }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> UpdateStaff([FromBody] dynamic request)
