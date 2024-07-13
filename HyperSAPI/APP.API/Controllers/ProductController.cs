@@ -32,9 +32,9 @@ namespace APP.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetProductByID([FromBody] string ID)
+        public async Task<ActionResult> GetProductByID([FromBody] DTOProductID product)
         {
-            var products = await _BLL.GetProductByID(ID);
+            var products = await _BLL.GetProductByID(product.ID);
             return Ok(products);
         }
 
