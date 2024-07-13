@@ -210,7 +210,7 @@ namespace APP.Bus.Repository.BLLs
                 var coupons = DB.Coupons.FirstOrDefault(b => b.IdCoupon == couponRequest.IdCoupon);
                 if (coupons != null)
                 {
-                    if (coupons.Stage == 2 && coupons.Status == 1)
+                    if (coupons.Status == 2 && coupons.Stage == 1)
                     {
                         int toIntGuessorCus = couponRequest.IsGuess ? 0 : 1;
                         if (coupons.ApplyTo == toIntGuessorCus)
