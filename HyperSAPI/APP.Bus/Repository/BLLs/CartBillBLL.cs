@@ -213,7 +213,7 @@ namespace APP.Bus.Repository.BLLs
                     if (coupons.Status == 2 && coupons.Stage == 1)
                     {
                         int toIntGuessorCus = couponRequest.IsGuess ? 0 : 1;
-                        if (coupons.ApplyTo == toIntGuessorCus)
+                        if (coupons.ApplyTo == toIntGuessorCus || (couponRequest.IsGuess == false && coupons.ApplyTo == 0))
                         {
                             if (couponRequest.TotalBill >= coupons.MinBillPrice)
                             {
