@@ -360,7 +360,7 @@ namespace APP.Bus.Repository.BLLs
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     await _emailSender.SendEmailAsync(user.Email, "Reset your password",
-                    $"<p>To reset your password, please click the button below:</p>\r\n    <a href='{{resetLink}}' style='display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #007BFF; text-decoration: none; border-radius: 5px;'>Confirm</a>\r\n    <br/><br/>\r\n    <p>If the button doesn't work, you can also reset your password by clicking this link:</p>\r\n    <a href='{{resetLink}}'>Confirm</a>");
+                    $"To reset your password please clicking this link: <button href='{resetLink}'>Confirm</button> <br/> Or this: <a href='{resetLink}'>Confirm</a>");
                 }
                 else
                 {
