@@ -206,7 +206,7 @@ namespace APP.Bus.Repository.BLLs
             {
 
                 DataSourceRequest dataSourceRequest = new DataSourceRequest();
-                dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+                dataSourceRequest.Sort = GetSortDescriptor("IdCoupon", "desc");
                 var coupons = DB.Coupons.FirstOrDefault(b => b.IdCoupon == couponRequest.IdCoupon);
                 if (coupons != null)
                 {
