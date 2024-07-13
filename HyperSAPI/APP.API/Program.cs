@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins",
-        builder => builder.WithOrigins("http://localhost:4200", "https://hypers-32a8f.web.app/HyperS/ecom/home")
+        builder => builder.WithOrigins("http://localhost:4200", "https://hypers-32a8f.web.app")
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
