@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins",
-        builder => builder.WithOrigins("http://localhost:4200", "https://hypers-32a8f.web.app")
+        builder => builder.WithOrigins("http://localhost:4200", "https://hypers-32a8f.web.app", "https://hypers-fe.onrender.com")
         .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 
