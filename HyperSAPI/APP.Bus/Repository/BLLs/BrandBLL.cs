@@ -1,4 +1,4 @@
-﻿using APP.Bus.Repository.DTOs;
+2﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Brands;
 using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.DTOs.Product;
@@ -81,7 +81,7 @@ namespace APP.Bus.Repository.BLLs
                 }
                 else
                 {
-                    var existingBrand = DB.ProductTypes.FirstOrDefault(b => b.Code == reqBrand.Code);
+                    var existingBrand = DB.Brands.FirstOrDefault(b => b.Code == reqBrand.Code);
                     if (existingBrand != null)
                     {
                         foreach (var property in changedProperties)
