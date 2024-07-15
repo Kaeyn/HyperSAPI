@@ -417,7 +417,7 @@ namespace APP.Bus.Repository.BLLs
                 string oldPassword = param.OldPassword;
                 string newPassword = param.NewPassword;
                 string token = param.Token;
-                var user = await FindUserAsync(oldPassword);
+                var user = await FindUserAsync(email);
                 if (user != null)
                 {   if(oldPassword != null)
                     {
