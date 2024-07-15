@@ -79,8 +79,8 @@ namespace APP.Bus.Repository.BLLs
                     PhoneNumber = param.PhoneNumber,
                 };
                 result = await _userManager.CreateAsync(newUser, param.Password);
-                
 
+                var confirmTokenStr = "";
                 if (!result.Succeeded)
                 {
                     respond.ErrorString = "Failed Register !";
@@ -119,12 +119,12 @@ namespace APP.Bus.Repository.BLLs
                     AuthDB.Database.ExecuteSqlRaw(sqlStatement);
                     DB.Database.ExecuteSqlRaw(sqlStatement);
                     // Send the confirmation email with a link including the token
-                    var confirmTokenStr = $"https://hypersapi.onrender.com/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
+                    confirmTokenStr = $"https://hypersapi.onrender.com/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
                     await _emailSender.SendEmailAsync(newUser.Email, "Confirm your email",
                     $"Please confirm your account by clicking this link: <button href='{confirmTokenStr}'>Confirm</button> <br/> Or this: <a href='{confirmTokenStr}'>Confirm</a>");
                 }
 
-                respond.ObjectReturn = result;
+                respond.ObjectReturn = new { Result = result, Path = confirmTokenStr };
 
             }
             catch (Exception ex)
@@ -374,10 +374,11 @@ namespace APP.Bus.Repository.BLLs
             {
                 string username = param.Username;
                 IdentityUser user = await FindUserAsync(username);
+                var resetLink = "";
                 if(user != null)
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
+                    resetLink = $"http://localhost:4200/HyperS/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     await _emailSender.SendEmailAsync(user.Email, "Reset your password",
                     $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>");
                 }
@@ -385,6 +386,7 @@ namespace APP.Bus.Repository.BLLs
                 {
                     respond.ErrorString = "Không tồn tại tài khoản trong hệ thống!";
                 }
+                respond.ObjectReturn = new { Path = resetLink};
                 /* string[] roleNames = { "Admin", "Customer", "Staff"};
                  foreach (var roleName in roleNames)
                  {
