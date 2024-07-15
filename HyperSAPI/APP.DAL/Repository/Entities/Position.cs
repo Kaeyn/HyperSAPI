@@ -10,6 +10,4 @@ public partial class Position
     public string IdPosition { get; set; } = null!;
 
     public string PositionName { get; set; } = null!;
-
-    public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 }

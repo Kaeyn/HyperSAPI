@@ -30,7 +30,7 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
-                var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
+                var result = DB.Staff.AsQueryable()
                     .Include(s => s.CodeUserNavigation).Where(s => s.CodeUserNavigation.PhoneNumber == phoneNumber)
                     .Select(s => new
                     {
@@ -67,7 +67,7 @@ namespace APP.Bus.Repository.BLLs
             var respond = new DTOResponse();
             try
             {
-                var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
+                var result = DB.Staff.AsQueryable()
                     .Include(s => s.CodeUserNavigation).Where(s => s.Code == requestStaff.Code)
                     .Select(s => new
                     {
@@ -104,7 +104,7 @@ namespace APP.Bus.Repository.BLLs
             {
                 var param = JsonConvert.DeserializeObject<DataSourceRequest>(requestParam.ToString());
 
-                var result = DB.Staff.AsQueryable().Include(s => s.PositionNavigation)
+                var result = DB.Staff.AsQueryable()
                     .Include(s => s.CodeUserNavigation)
                     .Select(s => new
                     {

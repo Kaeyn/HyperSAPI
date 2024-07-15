@@ -23,9 +23,5 @@ public partial class Staff
 
     public string? ImageUrl { get; set; }
 
-    public int Position { get; set; }
-
     public virtual User CodeUserNavigation { get; set; } = null!;
-
-    public virtual Position PositionNavigation { get; set; } = null!;
 }

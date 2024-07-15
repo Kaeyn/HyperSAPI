@@ -57,6 +57,10 @@ public partial class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
+        if (connectionString == null)
+        {
+            connectionString = "Server=hyperssql-cakhosolo2003-325a.e.aivencloud.com;Port=17997;Database=defaultdb;User=avnadmin;Password=AVNS_EBxOtAQ6lHdDe2fbQEh;SslMode=Required;";
+        }
         optionsBuilder.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -126,7 +130,7 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.BrandName).HasMaxLength(45);
             entity.Property(e => e.IdBrand).HasMaxLength(45);
             entity.Property(e => e.ImageUrl)
-                .HasMaxLength(100)
+                .HasMaxLength(300)
                 .HasColumnName("ImageURL");
         });
 
@@ -348,8 +352,6 @@ public partial class AppDBContext : DbContext
         {
             entity.HasKey(e => e.Code).HasName("PRIMARY");
 
-            entity.HasIndex(e => e.Position, "FkStaff_Position_CodePosition_idx");
-
             entity.HasIndex(e => e.CodeUser, "FkStaff_User_CodeUser_idx");
 
             entity.Property(e => e.Address).HasMaxLength(255);
@@ -366,11 +368,6 @@ public partial class AppDBContext : DbContext
                 .HasForeignKey(d => d.CodeUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FkStaff_User_CodeUser");
-
-            entity.HasOne(d => d.PositionNavigation).WithMany(p => p.Staff)
-                .HasForeignKey(d => d.Position)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FkStaff_Position_CodePosition");
         });
 
         modelBuilder.Entity<User>(entity =>

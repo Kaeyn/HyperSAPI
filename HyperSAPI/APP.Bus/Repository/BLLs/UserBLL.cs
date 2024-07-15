@@ -194,7 +194,6 @@ namespace APP.Bus.Repository.BLLs
                 else
                 {
                     var existingStaff = DB.Staff.Include(s => s.CodeUserNavigation)
-                                                .Include(s => s.PositionNavigation)
                                                 .FirstOrDefault(s => s.Code == staffData.Code);
                     if (existingStaff != null)
                     {
