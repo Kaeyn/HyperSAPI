@@ -195,6 +195,7 @@ namespace APP.Bus.Repository.BLLs
                 {
                     var existingStaff = DB.Staff.Include(s => s.CodeUserNavigation)
                                                 .FirstOrDefault(s => s.Code == staffData.Code);
+                    var existingUser = DB.Users.FirstOrDefault(u => u.Code == existingStaff.CodeUser);
                     if (existingStaff != null)
                     {
                         foreach (var property in changedProperties)
@@ -215,7 +216,7 @@ namespace APP.Bus.Repository.BLLs
                                     var existingUserProperty = typeof(User).GetProperty(property);
                                     if (existingUserProperty != null)
                                     {
-                                        existingUserProperty.SetValue(existingStaff, newValue, null);
+                                        existingUserProperty.SetValue(existingUser, newValue, null);
                                         DB.SaveChanges();
                                     }
                                 }

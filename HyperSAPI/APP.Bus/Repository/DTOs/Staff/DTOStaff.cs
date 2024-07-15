@@ -18,8 +18,6 @@ namespace APP.Bus.Repository.DTOs.Staff
         public string? Email { get; set; }
         public string? Address { get; set; }
         public string? Identication { get; set; }
-        public List<dynamic> ListShift { get; set; }
-        public float TotalSalary { get; set; }
         public int CodeAccount { get; set; }
         public int Status { get; set; }
         public string StatusAccountStr { get; set; } = string.Empty;
