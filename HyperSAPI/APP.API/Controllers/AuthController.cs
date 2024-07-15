@@ -50,7 +50,7 @@ namespace APP.API.Controllers
         public async Task<ActionResult> ForgotPassword([FromBody] dynamic request)
         {
             var result = await _BLL.ForgotPassword(request);
-            return result;
+            return Ok(result);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -73,7 +73,7 @@ namespace APP.API.Controllers
         public async Task<ActionResult> ChangePassword([FromBody]dynamic request)
         {
             var result = await _BLL.ChangePassword(request);
-            return result;
+            return Ok(result);
         }
 
         [HttpGet]

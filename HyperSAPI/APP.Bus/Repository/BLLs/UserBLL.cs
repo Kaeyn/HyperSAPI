@@ -366,7 +366,7 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public async Task<DTOResponse> ForgotPassword(string request)
+        public async Task<DTOResponse> ForgotPassword(dynamic request)
         {
             DTOResponse respond = new DTOResponse();
             var param = JsonConvert.DeserializeObject<DTOForgotPasswordRequest>(request.ToString());
