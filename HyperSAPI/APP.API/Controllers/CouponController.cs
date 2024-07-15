@@ -18,7 +18,7 @@ namespace APP.API.Controllers
             _BLL = new CouponBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,EventManager")]
         [HttpPost]
         public async Task<ActionResult> GetListCoupon([FromBody] dynamic request)
         {
@@ -26,7 +26,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,EventManager")]
         [HttpPost]
         public async Task<ActionResult> UpdateCoupon([FromBody] dynamic request)
         {

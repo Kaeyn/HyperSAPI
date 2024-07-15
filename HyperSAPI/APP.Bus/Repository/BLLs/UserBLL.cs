@@ -5,6 +5,7 @@ using APP.Bus.Repository.DTOs.Staff;
 using APP.Bus.Repository.DTOs.User;
 using APP.DAL.Repository.Auth;
 using APP.DAL.Repository.Entities;
+using KendoNET.DynamicLinq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using static APP.Bus.Repository.Mathmathics.StaticFunc;
 
 namespace APP.Bus.Repository.BLLs
 {
@@ -46,7 +48,21 @@ namespace APP.Bus.Repository.BLLs
             secretKey = Environment.GetEnvironmentVariable("MYAPI_SECRET_KEY");
             _emailSender = emailSender;
         }
+        public async Task<DTOResponse> GetListRoles()
+        {
+            DTOResponse respond = new DTOResponse();
+            DataSourceRequest dataSourceRequest = new DataSourceRequest();
+            dataSourceRequest.Sort = GetSortDescriptor("Name", "asc");
+            var roles =  await _roleManager.Roles.Where(r => r.Name != "Staff").Select(r => new
+            {
+                Name = r.Name,
+                NormalizedName = r.NormalizedName
+            }).ToListAsync();
 
+            respond.ObjectReturn = roles.AsQueryable().ToDataSourceResult(dataSourceRequest);
+
+            return respond;
+        }
         public async Task<DTOResponse> RegisterUserAsync(dynamic requestParam)
         {
             string message = string.Empty;
@@ -136,7 +152,8 @@ namespace APP.Bus.Repository.BLLs
                         UserName = staffData.PhoneNumber,
                         Email = staffData.Email,
                         PhoneNumber = staffData.PhoneNumber,
-                        EmailConfirmed = true
+                        EmailConfirmed = true,
+                        
                     };
                     result = await _userManager.CreateAsync(newUser, "0123456789a");
                     if (!result.Succeeded)
@@ -145,14 +162,15 @@ namespace APP.Bus.Repository.BLLs
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(newUser, "Admin");
+                        await _userManager.AddToRoleAsync(newUser, "Staff");
+                        await _userManager.AddToRoleAsync(newUser, staffData.Permission);
                         User newDBUser = new User
                         {
                             IdUser = newUser.Id,
                             PhoneNumber = newUser.PhoneNumber,
                             Email = newUser.Email,
                             Status = 0,
-                            Permission = _userManager.GetRolesAsync(newUser).Result.First(),
+                            Permission = _userManager.GetRolesAsync(newUser).Result.Last(),
                             EmailConfirm = 1
                         };
                         DB.Users.Add(newDBUser);
@@ -349,18 +367,20 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
 
-        public async Task<DTOResponse> ForgotPassword(string email)
+        public async Task<DTOResponse> ForgotPassword(string request)
         {
             DTOResponse respond = new DTOResponse();
+            var param = JsonConvert.DeserializeObject<DTOForgotPasswordRequest>(request.ToString());
             try
             {
-                IdentityUser user = await FindUserAsync(email);
+                string username = param.Username;
+                IdentityUser user = await FindUserAsync(username);
                 if(user != null)
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     var resetLink = $"https://hypersapi.onrender.com/api/auth/confirmemail?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     await _emailSender.SendEmailAsync(user.Email, "Reset your password",
-                    $"To reset your password please clicking this link: <button href='{resetLink}'>Confirm</button> <br/> Or this: <a href='{resetLink}'>Confirm</a>");
+                    $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>");
                 }
                 else
                 {
@@ -376,6 +396,61 @@ namespace APP.Bus.Repository.BLLs
                      }
                  }*/
                 
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+
+        public async Task<DTOResponse> ChangePassword(dynamic request)
+        {
+            DTOResponse respond = new DTOResponse();
+            var param = JsonConvert.DeserializeObject<DTOChangePassword>(request.ToString());
+            try
+            {
+                string email = param.Email;
+                string oldPassword = param.OldPassword;
+                string newPassword = param.NewPassword;
+                string token = param.Token;
+                var user = await FindUserAsync(oldPassword);
+                if (user != null)
+                {   if(oldPassword != null)
+                    {
+                        var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+                        respond.ObjectReturn = result;
+                    }
+                    else if(token != null)
+                    {
+                        var result = await _userManager.ResetPasswordAsync(user, newPassword, token);
+                        respond.ObjectReturn = result;
+                    }                 
+                }
+                else
+                {
+                    respond.ErrorString = "Tài khoản không tồn tại";
+                }
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+            return respond;
+        }
+
+        public async Task<DTOResponse> AddNewRole(dynamic request)
+        {
+            DTOResponse respond = new DTOResponse();
+            var param = JsonConvert.DeserializeObject<DTOAddNewRole>(request.ToString());
+            try
+            {
+                var roleName = param.RoleName;
+                IdentityRole identityRole = new IdentityRole(roleName);
+                var result = await _roleManager.CreateAsync(identityRole);
+                respond.ObjectReturn = result;
             }
             catch (Exception ex)
             {

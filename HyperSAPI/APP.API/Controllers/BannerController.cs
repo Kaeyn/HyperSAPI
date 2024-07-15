@@ -17,7 +17,7 @@ namespace APP.API.Controllers
             _BLL = new BannerBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,EventManager")]
         [HttpPost]
         public async Task<ActionResult> GetListBanner([FromBody] dynamic request)
         {
@@ -29,7 +29,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,EventManager")]
         [HttpPost]
         public async Task<ActionResult> UpdateBanner([FromBody] dynamic request)
         {

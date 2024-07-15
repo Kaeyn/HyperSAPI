@@ -25,7 +25,7 @@ namespace APP.API.Controllers
             cartBillBLL = new CartBillBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,BillManager")]
         [HttpPost]
         public async Task<ActionResult> GetListBill([FromBody] dynamic request)
         {

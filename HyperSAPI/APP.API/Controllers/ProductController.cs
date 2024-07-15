@@ -66,7 +66,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,ProductManager")]
         [HttpPost]
         public async Task<ActionResult> UpdateProduct([FromBody] dynamic request)
         {
@@ -74,12 +74,13 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,ProductManager")]
         [HttpPost]
         public async Task<ActionResult> UpdateProductType([FromBody] dynamic request)
         {
             var products = await _BLL.UpdateProductType(request);
             return Ok(products);
         }
+        
     }
 }

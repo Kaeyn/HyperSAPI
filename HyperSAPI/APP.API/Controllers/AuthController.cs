@@ -52,12 +52,28 @@ namespace APP.API.Controllers
             var result = await _BLL.ForgotPassword(request);
             return result;
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> UpdateStaff([FromBody] dynamic request)
         {
             var products = await _BLL.UpdateStaff(request);
             return Ok(products);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult> GetListRoles()
+        {
+            var result = await _BLL.GetListRoles();
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword([FromBody]dynamic request)
+        {
+            var result = await _BLL.ChangePassword(request);
+            return result;
         }
 
         [HttpGet]
@@ -75,6 +91,14 @@ namespace APP.API.Controllers
             }
             return Ok(result);
             
-        }   
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult> AddNewRole([FromBody] dynamic request)
+        {
+            var result = await _BLL.AddNewRole(request);
+            return Ok(result);
+        }
     }
 }
