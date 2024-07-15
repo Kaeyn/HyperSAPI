@@ -17,7 +17,6 @@ namespace APP.API.Controllers
             _BLL = new BannerBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,EventManager")]
         [HttpPost]
         public async Task<ActionResult> GetListBanner([FromBody] dynamic request)
         {
