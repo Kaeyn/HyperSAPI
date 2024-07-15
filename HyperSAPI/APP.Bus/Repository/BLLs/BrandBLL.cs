@@ -1,4 +1,4 @@
-2﻿using APP.Bus.Repository.DTOs;
+﻿using APP.Bus.Repository.DTOs;
 using APP.Bus.Repository.DTOs.Brands;
 using APP.Bus.Repository.DTOs.Cart;
 using APP.Bus.Repository.DTOs.Product;
