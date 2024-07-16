@@ -67,6 +67,23 @@ namespace APP.API.Controllers
             return Ok(brands);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPost]
+        public async Task<ActionResult> GetBillAnalystic([FromBody] dynamic request)
+        {
+            var result = await _BLL.GetBillAnalystic();
+            return Ok(result);
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        [HttpPost]
+        public async Task<ActionResult> GetMonthYearAnalystic([FromBody] dynamic request)
+        {
+            var result = await _BLL.GetMonthYearAnalystic(request);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<ActionResult> ApplyCoupon(DTOApplyCouponRequest request)
         {

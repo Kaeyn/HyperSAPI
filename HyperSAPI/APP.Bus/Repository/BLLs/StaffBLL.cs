@@ -35,7 +35,7 @@ namespace APP.Bus.Repository.BLLs
                     .Select(s => new
                     {
                         Code = s.Code,
-                        IdStaff = s.Idstaff,
+                        IdStaff = s.IdStaff,
                         Name = s.Name,
                         ImageUrl = s.ImageUrl,
                         Gender = s.Gender,
@@ -72,7 +72,7 @@ namespace APP.Bus.Repository.BLLs
                     .Select(s => new
                     {
                         Code = s.Code,
-                        IdStaff = s.Idstaff,
+                        IdStaff = s.IdStaff,
                         Name = s.Name,
                         ImageUrl = s.ImageUrl,
                         Gender = s.Gender,
@@ -109,7 +109,7 @@ namespace APP.Bus.Repository.BLLs
                     .Select(s => new
                     {
                         Code = s.Code,
-                        IdStaff = s.Idstaff,
+                        IdStaff = s.IdStaff,
                         Name = s.Name,
                         ImageUrl = s.ImageUrl,
                         Gender = s.Gender,

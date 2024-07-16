@@ -5,6 +5,7 @@ using APP.Bus.Repository.DTOs.Product;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
@@ -242,5 +243,96 @@ namespace APP.Bus.Repository.BLLs
             return respond;
         }
       
+        public async Task<DTOResponse> GetBillAnalystic()
+        {
+            var respond = new DTOResponse();
+            try
+            {
+                /*options = StaticFunc.FormatFilter(options);*/
+
+                int totalBill = DB.Bills.Count();
+                int totalCompleteBill = DB.Bills.Where(b => b.Status == 22).Count();
+                int totalInCompleteBill = DB.Bills.Where(b => b.Status >= 4 && b.Status < 22).Count();
+                int totalPendingBill = DB.Bills.Where(b => b.Status == 4).Count();
+
+                respond.ObjectReturn = new {TotalBill = totalBill, TotalCompleteBill = totalCompleteBill, TotalInCompleteBill = totalInCompleteBill, TotalPendingBill = totalPendingBill };
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
+        public async Task<DTOResponse> GetMonthYearAnalystic(dynamic requestParam)
+        {
+            var respond = new DTOResponse();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOGetAnalysticRequest>(requestParam.ToString());
+                /*options = StaticFunc.FormatFilter(options);*/
+                int year = param.Year;
+                int month = param.Month;
+                bool isMonthSort = param.IsMonthSort;
+                if (!isMonthSort)
+                {
+                    var bills = DB.Bills.AsQueryable()
+                           .Where(b => b.CreateAt.Year == year).ToList()
+                           .GroupBy(b => b.CreateAt.Month)
+                           .Select(b => new
+                           {
+                               Month = b.Key,
+                               TotalBill = b.Where(b => b.Status == 22).Count(),
+                               TotalIncome = b.Where(b => b.Status == 22).Sum(b => b.TotalBill)
+                           }).ToList();
+
+                    var result = Enumerable.Range(1, 12).Select(month =>
+                    {
+                        var monthData = bills.FirstOrDefault(b => b.Month == month);
+                        return new
+                        {
+                            Month = month,
+                            TotalBill = monthData?.TotalBill ?? 0,
+                            TotalIncome = monthData?.TotalIncome ?? 0
+                        };
+                    }).ToList();
+
+                    respond.ObjectReturn = result;
+                }
+                else
+                {
+                    var bills = DB.Bills.AsQueryable()
+                           .Where(b => b.CreateAt.Year == year && b.CreateAt.Month == month).ToList()
+                           .GroupBy(b => (b.CreateAt.Day - 1) / 7 + 1)
+                           .Select(b => new
+                           {
+                               Week = b.Key,
+                               TotalBill = b.Where(b => b.Status == 22).Count(),
+                               TotalIncome = b.Where(b => b.Status == 22).Sum(b => b.TotalBill)
+                           }).ToList();
+
+                    var result = Enumerable.Range(1, 4).Select(week =>
+                    {
+                        var weekData = bills.FirstOrDefault(b => b.Week == week);
+                        return new
+                        {
+                            Week = week,
+                            TotalBill = weekData?.TotalBill ?? 0,
+                            TotalIncome = weekData?.TotalIncome ?? 0
+                        };
+                    }).ToList();
+
+                    respond.ObjectReturn = result;
+                }
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
     }
 }

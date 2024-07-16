@@ -351,10 +351,8 @@ public partial class AppDBContext : DbContext
             entity.HasIndex(e => e.CodeUser, "FkStaff_User_CodeUser_idx");
 
             entity.Property(e => e.Address).HasMaxLength(255);
+            entity.Property(e => e.IdStaff).HasMaxLength(100);
             entity.Property(e => e.Identication).HasMaxLength(45);
-            entity.Property(e => e.Idstaff)
-                .HasMaxLength(100)
-                .HasColumnName("IDStaff");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(100)
                 .HasColumnName("ImageURL");

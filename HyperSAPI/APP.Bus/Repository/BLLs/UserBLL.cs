@@ -185,7 +185,7 @@ namespace APP.Bus.Repository.BLLs
                             ImageUrl = staffData.ImageUrl,
                             Gender = staffData.Gender,
                             Identication = staffData.Identication,
-                            Idstaff = staffData.IdStaff
+                            IdStaff = staffData.IdStaff
                         };
                         DB.Staff.Add(newStaff);
                         DB.SaveChanges();
@@ -195,7 +195,7 @@ namespace APP.Bus.Repository.BLLs
                 {
                     var existingStaff = DB.Staff.Include(s => s.CodeUserNavigation)
                                                 .FirstOrDefault(s => s.Code == staffData.Code);
-                    var existingUser = DB.Users.FirstOrDefault(u => u.Code == existingStaff.CodeUser);
+                    var existingUser = DB.Users.FirstOrDefault(u => u.Code == existingStaff.CodeUser); 
                     if (existingStaff != null)
                     {
                         foreach (var property in changedProperties)

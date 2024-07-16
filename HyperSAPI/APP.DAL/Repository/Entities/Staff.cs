@@ -9,7 +9,7 @@ public partial class Staff
 
     public int CodeUser { get; set; }
 
-    public string? Idstaff { get; set; }
+    public string? IdStaff { get; set; }
 
     public string? Name { get; set; }
 
