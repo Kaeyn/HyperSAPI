@@ -166,6 +166,26 @@ namespace APP.Bus.Repository.BLLs
                 var changedProperties = param.Properties;
                 if (staffData.Code == 0)
                 {
+
+                    string phonenumber = staffData.PhoneNumber;
+                    string email = staffData.Email;
+
+                    var existedEmail = await _userManager.FindByEmailAsync(email);
+                    var existedPhone = await _userManager.FindByNameAsync(phonenumber);
+
+                    if (existedEmail != null || existedPhone != null)
+                    {
+                        if (existedPhone != null)
+                        {
+                            respond.ErrorString = "Số điện thoại đã tồn tại";
+                        }
+                        else if (existedEmail != null)
+                        {
+                            respond.ErrorString = "Email đã tồn tại";
+                        }
+                        return respond;
+                    }
+
                     IdentityUser newUser = new IdentityUser
                     {
                         UserName = staffData.PhoneNumber,

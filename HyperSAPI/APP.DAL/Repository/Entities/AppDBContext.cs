@@ -85,7 +85,7 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.CouponApplied).HasMaxLength(45);
             entity.Property(e => e.CreateAt).HasColumnType("datetime");
             entity.Property(e => e.CustomerName).HasMaxLength(45);
-            entity.Property(e => e.Note).HasMaxLength(255);
+            entity.Property(e => e.Note).HasMaxLength(1000);
             entity.Property(e => e.OrdererPhoneNumber).HasMaxLength(13);
             entity.Property(e => e.PaymentMethod).HasComment("0: COD\n1: QR\n");
             entity.Property(e => e.PaymentUrl).HasMaxLength(1500);
@@ -184,7 +184,7 @@ public partial class AppDBContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("IDCustomer");
             entity.Property(e => e.ImageUrl)
-                .HasMaxLength(100)
+                .HasMaxLength(1000)
                 .HasColumnName("ImageURL");
             entity.Property(e => e.Name).HasMaxLength(100);
 
@@ -354,7 +354,7 @@ public partial class AppDBContext : DbContext
             entity.Property(e => e.IdStaff).HasMaxLength(100);
             entity.Property(e => e.Identication).HasMaxLength(45);
             entity.Property(e => e.ImageUrl)
-                .HasMaxLength(100)
+                .HasMaxLength(1000)
                 .HasColumnName("ImageURL");
             entity.Property(e => e.Name).HasMaxLength(100);
 
