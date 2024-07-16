@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 
 namespace APP.API.Controllers
 {
@@ -87,7 +88,8 @@ namespace APP.API.Controllers
             var result = await _BLL.ConfirmEmailAsync(userId, token);
             if (result.ErrorString == "Thành công")
             {
-                return Redirect("http://localhost:4200/HyperS/ecom/home");
+                result.ErrorString = "";
+                return Redirect(result.RedirectUrl);
             }
             return Ok(result);
             

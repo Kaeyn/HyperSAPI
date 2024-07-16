@@ -11,6 +11,8 @@ namespace APP.Bus.Repository.DTOs
     {
         public int StatusCode {  get; set; }
 
+        public string? RedirectUrl { get; set; } = string.Empty;
+
         public string ErrorString { get; set; } = string.Empty;
 
         public dynamic ObjectReturn { get; set; } = new {};

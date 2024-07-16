@@ -254,8 +254,9 @@ namespace APP.Bus.Repository.BLLs
                 int totalCompleteBill = DB.Bills.Where(b => b.Status == 22).Count();
                 int totalInCompleteBill = DB.Bills.Where(b => b.Status >= 4 && b.Status < 22).Count();
                 int totalPendingBill = DB.Bills.Where(b => b.Status == 4).Count();
+                int totalFailedBill = DB.Bills.Where(b => b.Status == 9).Count();
 
-                respond.ObjectReturn = new {TotalBill = totalBill, TotalCompleteBill = totalCompleteBill, TotalInCompleteBill = totalInCompleteBill, TotalPendingBill = totalPendingBill };
+                respond.ObjectReturn = new {TotalBill = totalBill, TotalCompleteBill = totalCompleteBill, TotalInCompleteBill = totalInCompleteBill, TotalPendingBill = totalPendingBill, TotalFailedBill = totalFailedBill };
             }
             catch (Exception ex)
             {

@@ -72,6 +72,25 @@ namespace APP.Bus.Repository.BLLs
             {
                 var param = JsonConvert.DeserializeObject<DTORegister>(requestParam.ToString());
 
+                string phonenumber = param.PhoneNumber;
+                string email = param.Email;
+
+                var existedEmail = await _userManager.FindByEmailAsync(email);
+                var existedPhone =  await _userManager.FindByNameAsync(phonenumber);
+
+                if (existedEmail != null|| existedPhone != null)
+                {
+                    if (existedPhone != null)
+                    {
+                        respond.ErrorString = "Số điện thoại đã tồn tại";
+                    }
+                    else if (existedEmail != null)
+                    {
+                        respond.ErrorString = "Email đã tồn tại";
+                    }
+                    return respond;
+                }
+                
                 IdentityUser newUser = new IdentityUser
                 {
                     UserName = param.PhoneNumber,
@@ -332,8 +351,41 @@ namespace APP.Bus.Repository.BLLs
                 {
                     customer.EmailConfirm = 1;
                 }
-                respond.ErrorString = "Thành công";
                 DB.SaveChanges();
+
+                var redirect = "";
+                int objectRes = -1;
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains("Customer"))
+                {
+                    redirect = "jkwt";
+                    objectRes = DB.Customers.FirstOrDefault(c => c.CodeUser == customer.Code).Code;
+                }
+                else
+                {
+                    redirect = "uije";
+                }
+
+
+
+                var authClaims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, user.UserName),
+                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                            };
+
+                authClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+                var authToken = GetToken(authClaims);
+
+                var resulttoken = new
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(authToken),
+                    Expires = authToken.ValidTo,
+                };
+
+                respond.ErrorString = "Thành công";
+                respond.RedirectUrl = $"http://localhost:4200/HyperS/ecom/home?codeCustomer={HttpUtility.UrlEncode(objectRes.ToString())}&token={HttpUtility.UrlEncode(resulttoken.Token)}";
                 return respond;
             }
             else
