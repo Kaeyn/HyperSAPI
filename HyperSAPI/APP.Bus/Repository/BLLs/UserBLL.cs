@@ -209,7 +209,7 @@ namespace APP.Bus.Repository.BLLs
                             PhoneNumber = newUser.PhoneNumber,
                             Email = newUser.Email,
                             Status = 0,
-                            Permission = _userManager.GetRolesAsync(newUser).Result.Last(),
+                            Permission = _userManager.GetRolesAsync(newUser).Result.First(),
                             EmailConfirm = 1
                         };
                         DB.Users.Add(newDBUser);
