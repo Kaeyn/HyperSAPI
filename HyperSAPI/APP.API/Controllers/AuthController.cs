@@ -62,7 +62,7 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
         [HttpPost]
         public async Task<ActionResult> GetListRoles()
         {
