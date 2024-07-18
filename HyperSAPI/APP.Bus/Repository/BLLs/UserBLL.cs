@@ -498,7 +498,7 @@ namespace APP.Bus.Repository.BLLs
                     }
                     else if(token != null)
                     {
-                        var result = await _userManager.ResetPasswordAsync(user, newPassword, token);
+                        var result = await _userManager.ResetPasswordAsync(user, token ,newPassword);
                         respond.ObjectReturn = result;
                     }                 
                 }
