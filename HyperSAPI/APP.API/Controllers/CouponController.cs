@@ -18,7 +18,7 @@ namespace APP.API.Controllers
             _BLL = new CouponBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,BillManager,EventManager")]
         [HttpPost]
         public async Task<ActionResult> GetListCoupon([FromBody] dynamic request)
         {

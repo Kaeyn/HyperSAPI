@@ -25,7 +25,7 @@ namespace APP.API.Controllers
             return Ok(brands);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,ProductManager")]
         [HttpPost]
         public async Task<ActionResult> UpdateBrand([FromBody] dynamic request)
         {

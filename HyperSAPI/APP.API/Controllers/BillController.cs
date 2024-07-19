@@ -25,7 +25,7 @@ namespace APP.API.Controllers
             cartBillBLL = new CartBillBLL();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,BillManager")]
         [HttpPost]
         public async Task<ActionResult> GetListBill([FromBody] dynamic request)
         {
@@ -59,7 +59,7 @@ namespace APP.API.Controllers
             return NotFound();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff,Customer")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,BillManager,Customer")]
         [HttpPost]
         public async Task<ActionResult> UpdateBill([FromBody] dynamic request)
         {
