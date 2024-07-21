@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 using static APP.Bus.Repository.Mathmathics.StaticFunc;
@@ -44,6 +45,45 @@ namespace APP.Bus.Repository.BLLs
                                Birth = c.Birthday,
                                PhoneNumber = c.CodeUserNavigation.PhoneNumber,
                                Email = c.CodeUserNavigation.Email,
+                               CodeAccount = c.CodeUserNavigation.Code,
+                               StatusAccount = c.CodeUserNavigation.Status,
+                               StatusAccountStr = ConvertStatusToStr(c.CodeUserNavigation.Status),
+                               Permission = c.CodeUserNavigation.Permission,
+                           }).ToList();
+
+                respond.ObjectReturn = result.AsQueryable().ToDataSourceResult(dataSourceRequest);
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
+
+        public async Task<DTOResponse> GetCustomerInfo(dynamic requestParam)
+        {
+            DataSourceRequest dataSourceRequest = new DataSourceRequest();
+            dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
+            var respond = new DTOResponse();
+            var req = JsonConvert.DeserializeObject<DataSourceRequest>(requestParam.ToString());
+            try
+            {
+               string reqPhoneNumber = req.PhoneNumber;
+                var result = DB.Customers.AsQueryable()
+                           .Include(c => c.CodeUserNavigation).Where(c => c.CodeUserNavigation.PhoneNumber == reqPhoneNumber)
+                           .Select(c => new
+                           {
+                               Code = c.Code,
+                               IDCustomer = c.Idcustomer,
+                               Name = c.Name,
+                               ImageURL = c.ImageUrl,
+                               Gender = c.Gender,
+                               Birth = c.Birthday,
+                               PhoneNumber = c.CodeUserNavigation.PhoneNumber,
+                               Email = c.CodeUserNavigation.Email,
+                               Address = DB.Bills.FirstOrDefault(b => b.OrdererPhoneNumber == reqPhoneNumber).ShippingAddress ?? "",
                                CodeAccount = c.CodeUserNavigation.Code,
                                StatusAccount = c.CodeUserNavigation.Status,
                                StatusAccountStr = ConvertStatusToStr(c.CodeUserNavigation.Status),

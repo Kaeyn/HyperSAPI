@@ -30,6 +30,14 @@ namespace APP.API.Controllers
             return Ok(products);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Staff")]
+        [HttpPost]
+        public async Task<ActionResult> GetCustomerInfo([FromBody] dynamic request)
+        {
+            var products = await _BLL.GetCustomerInfo(request);
+            return Ok(products);
+        }
+
         [HttpPost]
         public async Task<ActionResult> GetListCustomer([FromBody] dynamic request)
         {
