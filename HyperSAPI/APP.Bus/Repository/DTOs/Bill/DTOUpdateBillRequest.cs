@@ -12,4 +12,10 @@ namespace APP.Bus.Repository.DTOs.Bill
         public DTOUpdateBill DTOUpdateBill { get; set; }
         public DTOProceedToPayment DTOProceedToPayment { get; set; }
     }
+
+    public class DTOUpdateBillStaffRequest
+    {
+        public DTOUpdateBillStaff DTOUpdateBill { get; set; }
+        public DTOProceedToPayment DTOProceedToPayment { get; set; }
+    }
 }

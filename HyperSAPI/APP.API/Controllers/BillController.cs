@@ -67,6 +67,14 @@ namespace APP.API.Controllers
             return Ok(brands);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,BillManager,Customer")]
+        [HttpPost]
+        public async Task<ActionResult> UpdateBillStaff([FromBody] dynamic request)
+        {
+            var brands = await _BLL.UpdateBillStaff(request);
+            return Ok(brands);
+        }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> GetBillAnalystic([FromBody] dynamic request)

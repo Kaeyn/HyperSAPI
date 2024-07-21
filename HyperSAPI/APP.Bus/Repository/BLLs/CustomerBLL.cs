@@ -67,7 +67,7 @@ namespace APP.Bus.Repository.BLLs
             DataSourceRequest dataSourceRequest = new DataSourceRequest();
             dataSourceRequest.Sort = GetSortDescriptor("Code", "desc");
             var respond = new DTOResponse();
-            var req = JsonConvert.DeserializeObject<DataSourceRequest>(requestParam.ToString());
+            var req = JsonConvert.DeserializeObject<DTOGetCustomerRequest>(requestParam.ToString());
             try
             {
                string reqPhoneNumber = req.PhoneNumber;

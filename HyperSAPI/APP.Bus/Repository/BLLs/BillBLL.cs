@@ -242,7 +242,58 @@ namespace APP.Bus.Repository.BLLs
 
             return respond;
         }
-      
+
+        public async Task<DTOResponse> UpdateBillStaff(dynamic requestParam)
+        {
+            var respond = new DTOResponse();
+            try
+            {
+                var param = JsonConvert.DeserializeObject<DTOUpdateBillStaffRequest>(requestParam.ToString());
+                /*options = StaticFunc.FormatFilter(options);*/
+                DTOUpdateBillStaff dTOUpdateBill = param.DTOUpdateBill;
+                DTOProceedToPayment dTOProceedToPayment = param.DTOProceedToPayment;
+                if (dTOProceedToPayment != null && dTOUpdateBill == null)
+                {
+                    var result = await cartBillBLL.ProceedToPayment(null, param.DTOProceedToPayment, false);
+                    respond = result;
+                }
+                else if (dTOProceedToPayment == null && dTOUpdateBill != null)
+                {
+                    int reqCodeBill = dTOUpdateBill.CodeBill;
+                    int reqStatus = dTOUpdateBill.Status;
+                    int reqTotalBill = dTOUpdateBill.TotalBill;
+                    List<DTOBillInfo> reqListOfBI = dTOUpdateBill.ListOfBillInfo;
+                    string reqNote = dTOUpdateBill.Note ?? "";
+
+                    var existedBill = DB.Bills.FirstOrDefault(b => b.Code == reqCodeBill);
+                    if (existedBill != null)
+                    {
+                        existedBill.Status = reqStatus;
+                        existedBill.Note = reqNote;
+                        existedBill.TotalBill = reqTotalBill;
+                        foreach (var bill in reqListOfBI)
+                        {
+                            var billInfoInDB = DB.BillInfos.FirstOrDefault(bi => bi.Code == bill.Code);
+                            billInfoInDB.Status = bill.Status;
+                            billInfoInDB.Note = bill.Note;
+                        }
+                        DB.SaveChanges();
+                    }
+                    else
+                    {
+                        respond.ErrorString = "Bill not found";
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respond.StatusCode = 500;
+                respond.ErrorString = ex.Message;
+            }
+
+            return respond;
+        }
         public async Task<DTOResponse> GetBillAnalystic()
         {
             var respond = new DTOResponse();
