@@ -8,6 +8,6 @@ namespace APP.Bus.Repository.DTOs.Customer
 {
     public class DTOGetCustomerRequest
     {
-        public string PhoneNumber { get; set; };
+        public string PhoneNumber { get; set; }
     }
 }
