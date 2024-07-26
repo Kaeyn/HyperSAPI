@@ -405,8 +405,7 @@ namespace APP.Bus.Repository.BLLs
                 };
 
                 respond.ErrorString = "Thành công";
-                respond.RedirectUrl = $"http://localhost:4200/HyperS/ecom/home?codeCustomer={HttpUtility.UrlEncode(objectRes.ToString())}&token={HttpUtility.UrlEncode(resulttoken.Token)}";
-                return respond;
+                respond.RedirectUrl = $"https://hypershop.online/ecom/home?codeCustomer={HttpUtility.UrlEncode(objectRes.ToString())}&token={HttpUtility.UrlEncode(resulttoken.Token)}"; return respond;
             }
             else
             {
@@ -451,7 +450,7 @@ namespace APP.Bus.Repository.BLLs
                 if(user != null)
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    resetLink = $"http://localhost:4200/HyperS/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
+                    resetLink = $"https://hypershop.online/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     await _emailSender.SendEmailAsync(user.Email, "Reset your password",
                     $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>");
                 }
