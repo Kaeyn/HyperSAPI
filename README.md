@@ -6,4 +6,4 @@ Frontend Git: https://github.com/Van-Phu/HyperS
 
 Technologies: Typescript, HTML, SCSS, AngularJS, Kendo UI
 
-Website: https://hypershop.online/
+Website: https://hypershop-scys.onrender.com
