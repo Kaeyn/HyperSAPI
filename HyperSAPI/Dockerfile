@@ -35,9 +35,13 @@
 #ENTRYPOINT ["dotnet", "APP.API.dll"]
 # Build stage
 
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-
 
 # Copy sln and restore
 COPY APP.API/HyperSAPI.sln .
@@ -53,7 +57,7 @@ WORKDIR /src/APP.API
 RUN dotnet publish APP.API.csproj -c Release -o /app/publish
 
 # ------------ Runtime Stage ------------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 

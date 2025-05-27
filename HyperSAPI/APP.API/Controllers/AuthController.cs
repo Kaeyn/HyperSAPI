@@ -102,5 +102,11 @@ namespace APP.API.Controllers
             var result = await _BLL.AddNewRole(request);
             return Ok(result);
         }
+
+        [HttpGet]
+        public ActionResult HealthCheck()
+        {       
+            return Ok("");
+        }
     }
 }
