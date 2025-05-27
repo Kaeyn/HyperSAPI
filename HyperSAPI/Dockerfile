@@ -40,17 +40,17 @@ WORKDIR /src
 
 
 # Copy sln and restore
-COPY HyperSAPI.sln .
-COPY APP.API.csproj APP.API/
-COPY ../APP.Bus/APP.Bus.csproj APP.Bus/
-COPY ../APP.DAL/APP.DAL.csproj APP.DAL/
+COPY APP.API/HyperSAPI.sln .
+COPY APP.API/APP.API.csproj APP.API/
+COPY APP.Bus/APP.Bus.csproj APP.Bus/
+COPY APP.DAL/APP.DAL.csproj APP.DAL/
 
 RUN dotnet restore APP.API/APP.API.csproj
 
 # Copy everything else and publish
 COPY . .
 WORKDIR /src/APP.API
-RUN dotnet publish App.API.csproj -c Release -o /app/publish
+RUN dotnet publish APP.API.csproj -c Release -o /app/publish
 
 # ------------ Runtime Stage ------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
