@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using static System.Net.WebRequestMethods;
 
 namespace APP.API.Controllers
@@ -81,7 +82,7 @@ namespace APP.API.Controllers
                     /*_BillBLL.SuccessPaymentUpdate()*/
                     int codeBill = ExtractOrderId(paymentResponse.OrderDescription);
                     cartBillBLL.SuccessPaymentUpdate(codeBill);
-                    return Redirect("http://localhost:4200/HyperS/ecom/home?status=success");
+                    return Redirect("https://hypershop.online/HyperS/ecom/home?status=success");
                 }
                 else
                 {

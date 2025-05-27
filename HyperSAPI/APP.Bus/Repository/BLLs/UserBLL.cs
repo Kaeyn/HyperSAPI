@@ -3,6 +3,7 @@ using APP.Bus.Repository.DTOs.Customer;
 using APP.Bus.Repository.DTOs.Login;
 using APP.Bus.Repository.DTOs.Staff;
 using APP.Bus.Repository.DTOs.User;
+using APP.Bus.Repository.Services;
 using APP.DAL.Repository.Auth;
 using APP.DAL.Repository.Entities;
 using KendoNET.DynamicLinq;
@@ -36,6 +37,7 @@ namespace APP.Bus.Repository.BLLs
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private IEmailSender _emailSender;
+        private EmailService _emailService;
         private string secretKey = "";
 
         public UserBLL(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
@@ -47,6 +49,8 @@ namespace APP.Bus.Repository.BLLs
             AuthDB = new AuthDBContext();
             secretKey = Environment.GetEnvironmentVariable("MYAPI_SECRET_KEY");
             _emailSender = emailSender;
+            string emailSecret = Environment.GetEnvironmentVariable("MYEMAIL_SECRET");
+            _emailService = new EmailService("smtp.gmail.com", 587, "tamtruong.dev@gmail.com", emailSecret, "tamtruong.dev@gmail.com");
         }
         public async Task<DTOResponse> GetListRoles()
         {
@@ -139,8 +143,8 @@ namespace APP.Bus.Repository.BLLs
                     DB.Database.ExecuteSqlRaw(sqlStatement);
                     // Send the confirmation email with a link including the token
                     confirmTokenStr = $"https://hypersapi.onrender.com/api/auth/confirmemail?userId={HttpUtility.UrlEncode(newUser.Id)}&token={HttpUtility.UrlEncode(confirmToken)}";
-                    await _emailSender.SendEmailAsync(newUser.Email, "Confirm your email",
-                    $"Please confirm your account by clicking this link: <button href='{confirmTokenStr}'>Confirm</button> <br/> Or this: <a href='{confirmTokenStr}'>Confirm</a>");
+                    _emailService.SendEmail("Confirm your email",
+                    $"Please confirm your account by clicking this link: <button href='{confirmTokenStr}'>Confirm</button> <br/> Or this: <a href='{confirmTokenStr}'>Confirm</a>", new List<string> { newUser.Email });
                 }
 
                 respond.ObjectReturn = new { Result = result, Path = confirmTokenStr };
@@ -451,8 +455,8 @@ namespace APP.Bus.Repository.BLLs
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
                     resetLink = $"https://hypershop.online/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
-                    await _emailSender.SendEmailAsync(user.Email, "Reset your password",
-                    $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>");
+                    _emailService.SendEmail("Reset your password",
+                    $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>", new List<string> { user.Email });
                 }
                 else
                 {
@@ -570,7 +574,5 @@ namespace APP.Bus.Repository.BLLs
 
             return token;
         }
-
-
     }
 }

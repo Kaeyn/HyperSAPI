@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Mailjet.Client;
 using Mailjet.Client.Resources;
 using Mailjet.Client.TransactionalEmails;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace APP.Bus.Repository.Services
 {
@@ -33,6 +35,61 @@ namespace APP.Bus.Repository.Services
                 .Build();
 
             var response = await _mailjetClient.SendTransactionalEmailAsync(request);
+        }
+    }
+
+    public class EmailService
+    {
+        private SmtpClient mailClient;
+
+        private string sender = null;
+
+        public EmailService(string server, int port, string user, string password, string emailsender)
+        {
+            mailClient = new SmtpClient(server, port);
+            mailClient.Timeout = 15000;
+            mailClient.Credentials = new NetworkCredential(user, password);
+            mailClient.EnableSsl = true;
+            sender = emailsender;
+        }
+
+        public string ReadTemplate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendEmail(string subject, string body, List<string> to, List<string> Cc = null, List<string> Bcc = null)
+        {
+            try
+            {
+                if (mailClient != null && sender != null)
+                {
+                    MailMessage mailMessage = new MailMessage();
+                    mailMessage.From = new MailAddress(sender);
+                    mailMessage.Subject = subject;
+                    mailMessage.Body = body;
+                    mailMessage.IsBodyHtml = true;
+                    mailMessage.To.Add(string.Join(",", to));
+                    if (Cc != null)
+                    {
+                        mailMessage.CC.Add(string.Join(",", Cc));
+                    }
+
+                    if (Bcc != null)
+                    {
+                        mailMessage.Bcc.Add(string.Join(",", Bcc));
+                    }
+
+                    mailClient.Send(mailMessage);
+                    return;
+                }
+
+                throw new Exception("Not config");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
