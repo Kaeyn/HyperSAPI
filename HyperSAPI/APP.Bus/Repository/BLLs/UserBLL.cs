@@ -409,7 +409,7 @@ namespace APP.Bus.Repository.BLLs
                 };
 
                 respond.ErrorString = "Thành công";
-                respond.RedirectUrl = $"https://hypershop.online/ecom/home?codeCustomer={HttpUtility.UrlEncode(objectRes.ToString())}&token={HttpUtility.UrlEncode(resulttoken.Token)}"; return respond;
+                respond.RedirectUrl = $"https://hypershop-scys.onrender.com/ecom/home?codeCustomer={HttpUtility.UrlEncode(objectRes.ToString())}&token={HttpUtility.UrlEncode(resulttoken.Token)}"; return respond;
             }
             else
             {
@@ -454,7 +454,7 @@ namespace APP.Bus.Repository.BLLs
                 if(user != null)
                 {
                     var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    resetLink = $"https://hypershop.online/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
+                    resetLink = $"https://hypershop-scys.onrender.com/account/forgot?username={HttpUtility.UrlEncode(user.Email)}&token={HttpUtility.UrlEncode(resetToken)}";
                     _emailService.SendEmail("Reset your password",
                     $"To reset your password please clicking this link: <a href='{resetLink}'>Confirm</a>", new List<string> { user.Email });
                 }
@@ -566,7 +566,7 @@ namespace APP.Bus.Repository.BLLs
 
             var token = new JwtSecurityToken(
                 issuer: "https://hypersapi.onrender.com",
-                audience: "https://hypershop.online",
+                audience: "https://hypershop-scys.onrender.com",
                 expires: DateTime.UtcNow.AddHours(20),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

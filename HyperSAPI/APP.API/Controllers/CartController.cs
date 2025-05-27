@@ -82,7 +82,7 @@ namespace APP.API.Controllers
                     /*_BillBLL.SuccessPaymentUpdate()*/
                     int codeBill = ExtractOrderId(paymentResponse.OrderDescription);
                     cartBillBLL.SuccessPaymentUpdate(codeBill);
-                    return Redirect("https://hypershop.online/HyperS/ecom/home?status=success");
+                    return Redirect("https://hypershop-scys.onrender.com/HyperS/ecom/home?status=success");
                 }
                 else
                 {
