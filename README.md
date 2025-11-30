@@ -5,7 +5,7 @@ Technologies: .NET 6, ASP.NET Core, Entity Framework Core, Kendo, C#, SQL Server
 Frontend Git: https://github.com/Van-Phu/HyperS
 # ADMIN ACCOUNT
 Username: hypersadmin@gmail.com
-Password: 123456
+Password: Qwerty@2025!
 
 Technologies: Typescript, HTML, SCSS, AngularJS, Kendo UI
 
